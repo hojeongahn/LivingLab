@@ -1,5 +1,4 @@
 import BasicLayout from '../layouts/BasicLayout';
-
 import CommunityPostComponent from '../components/main/CommunityPostComponent';
 import TeamPostComponent from '../components/main/TeamPostComponent';
 import MarketPostComponent from '../components/main/MarketPostComponent';
@@ -7,17 +6,11 @@ import BuyPostComponent from '../components/main/BuyPostComponent';
 import ShareRoomPostComponent from '../components/main/shareRoomPostComponent';
 import WeatherComponent from '../components/main/WeatherComponent';
 import MainSliderComponent from '../components/main/MainSliderComponent';
-
-
-
 import { Link } from 'react-router-dom';
 import React from "react";
 import TypingComponent from '../components/main/TypingComponent';
 
-
-
 const MainPage = () => {
-
   return (
     //가장 바깥, 배경
     <div className="bg-color">

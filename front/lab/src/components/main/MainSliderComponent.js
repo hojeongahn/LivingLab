@@ -14,6 +14,7 @@ const flickityOptions = {
   friction: 0.65, 
   pauseAutoPlayOnHover: false
 };
+
 const MainSliderComponent = () => {
   return (
     <Flickity
