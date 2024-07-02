@@ -12,7 +12,6 @@ import TypingComponent from '../components/main/TypingComponent';
 
 const MainPage = () => {
   return (
-    //가장 바깥, 배경
     <div className="bg-color">
       <hr className="vertical-line" />
       <BasicLayout>
