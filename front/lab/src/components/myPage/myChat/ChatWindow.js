@@ -53,7 +53,7 @@ const ChatWindow = ({ room }) => {
       }
     };
 
-    // 의존성 배열에 chat.roomId 추가하여 해당 값이 변경될 때만 호출
+    // 의존성 배열에 room.roomId 추가하여 해당 값이 변경될 때만 호출
     fetchChatHistory();
   }, [room.roomId]);
 
