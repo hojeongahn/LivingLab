@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeBuyDto {
+public class LikeDto {
     private Long likeNo;
+    private String type; //게시물 종류
     private Long id;
-    private Long buyNo;
+    private Long no; //게시물 번호
 }

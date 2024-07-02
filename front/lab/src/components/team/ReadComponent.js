@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/teamApi';
-import { likeTeam, unlikeTeam, likeInfoTeam,deleteLikeTeam } from '../../api/likeApi';
-import { getUser } from '../../api/userApi';
+import { likeTeam, unlikeTeam, likeInfo } from '../../api/likeApi';
 import { enterChatRoomTeam } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
@@ -16,7 +14,6 @@ import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
 import PartComponent from './PartComponent'
-import Profile_Img from '../../resources/images/profile_img.png';
 import LandingComponent from './../common/mapSearch/LandingComponent';
 import InfoModal from '../common/InfoModal';
 
@@ -35,11 +32,6 @@ const initState = {
   uploadFileNames: [],
 };
 
-const initUser = {
-  nickname: '',
-  profileImage: '',
-};
-
 const initState2 = {
   likeNo: 0,
   id: 0,
@@ -50,7 +42,6 @@ const host = API_SERVER_HOST;
 
 const ReadComponent = ({ teamNo }) => {
   const [team, setTeam] = useState(initState);
-  const [user, setUser] = useState(initUser);
   const [result, setResult] = useState(null);
   const [addResultModal, setAddResultModal] = useState(null);
   const { moveToList, moveToModify } = useCustomMove();
@@ -60,7 +51,6 @@ const ReadComponent = ({ teamNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
-  const [userId, setUserId] = useState('');
   const [ current, setCurrent ] = useState(0);
   const [ max, setMax ] = useState(0);
 
@@ -84,20 +74,12 @@ const ReadComponent = ({ teamNo }) => {
     });
   }, [teamNo, info]);
 
-  useEffect(() => {
-    getUser(ino).then((data) => {
-      fetchUserProfileImage(data.email);
-      setUser(data);
-    });
-  }, [ino]);
 
   useEffect(() => {
     if (email) {
-      //로그인시에만 실행
-      likeInfoTeam(teamNo, ino).then((data) => {
+      likeInfo('team',teamNo, ino).then((data) => {
         setLike(data);
         if (data) {
-          //data가 있으면 이미 좋아요 누른글
           setIsLiked(true);
         } else {
           setIsLiked(false);
@@ -134,15 +116,8 @@ const ReadComponent = ({ teamNo }) => {
   };
 
   const handleClickDelete = () => {
-    deleteLikeTeam(teamNo)
-    .then(() => {
-      return deleteOne(teamNo);
-    })
-    .then((result) => {
-      console.log('delete result : ' + result);
-      setResult('삭제되었습니다');
-      moveToList()
-    });
+    deleteOne(teamNo);
+    setResult('삭제되었습니다');
   };
 
 
@@ -196,30 +171,6 @@ const ReadComponent = ({ teamNo }) => {
     }
   };
 
-  //프로필 사진 읽어오는 함수
-  const fetchUserProfileImage = async (email) => {
-    try {
-      const res = await axios.get(`http://localhost:8282/api/user/userProfileImage?email=${email}`, {
-        responseType: 'arraybuffer', // 바이너리 데이터로 응답받기
-      });
-
-      // 받은 바이너리 데이터 처리
-      const blob = new Blob([res.data], { type: 'image/png' });
-      const imageUrl = URL.createObjectURL(blob);
-      setUser((prev) => ({
-        ...prev, // 이전 상태를 복사해야 이미지 삭제하고 다시 변경했을 대 바로 적용됨
-        profileImage: imageUrl, // 이미지 데이터 추가
-      }));
-      console.log('프로필 사진 읽기 최종 성공');
-    } catch (error) {
-      console.error('프로필 이미지가 없습니다', error);
-      // 오류가 발생하면 대체 이미지를 사용하도록 설정
-      setUser((prev) => ({
-        ...prev,
-        profileImage: Profile_Img,
-      }));
-    }
-  };
 
   return (
     <>

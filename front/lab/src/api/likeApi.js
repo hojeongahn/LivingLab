@@ -4,26 +4,25 @@ const prefix = `${API_SERVER_HOST}/api/like`;
 
 /* ============공동구매============== */
 
-export const likeBuy = async(likeBuy) => {
-    const res = await axios.post(`${prefix}/buy`,likeBuy);
+export const likeClick = async(type, no, id) => {
+    const res = await axios.post(`${prefix}/likeClick`,{
+            type: type,
+            no: no,
+            id: id
+    });
     return res.data;
 };
 
-export const unlikeBuy = async(likeNo) => {
-    const res = await axios.delete(`${prefix}/buy/${likeNo}`);
+export const unlikeClick = async(likeNo) => {
+    const res = await axios.delete(`${prefix}/unlikeClick/${likeNo}`);
     return res.data;
 };
 
-export const deleteLikeBuy = async (buyNo) => { // 해당 글에 찍힌 모든 좋아요 삭제
-    const res = await axios.delete(`${prefix}/buy/all/${buyNo}`);
-    console.log('deleting ', res.data);
-    return res.data;
-};
-
-export const likeInfoBuy = async(buyNo, id) => {
-    const res = await axios.get(`${prefix}/buy`,{
+export const likeInfo = async(type, no, id) => {
+    const res = await axios.get(`${prefix}/likeInfo`,{
         params : {
-            buyNo: buyNo,
+            type: type,
+            no: no,
             id: id
         }
     });
@@ -52,11 +51,6 @@ export const likeInfoTeam = async(teamNo, id) => {
     return res.data;
 };
 
-export const deleteLikeTeam = async (teamNo) => { // 해당 글에 찍힌 모든 좋아요 삭제
-    const res = await axios.delete(`${prefix}/team/all/${teamNo}`);
-    console.log('deleting ', res.data);
-    return res.data;
-};
 
 /* ============동네장터============== */
 
@@ -67,12 +61,6 @@ export const likeMarket = async(likeMarket) => {
 
 export const unlikeMarket = async(likeNo) => {
     const res = await axios.delete(`${prefix}/market/${likeNo}`);
-    return res.data;
-};
-
-export const deleteLikeMarket = async (marketNo) => { // 해당 글에 찍힌 모든 좋아요 삭제
-    const res = await axios.delete(`${prefix}/market/all/${marketNo}`);
-    console.log('deleting ', res.data);
     return res.data;
 };
 

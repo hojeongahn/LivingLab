@@ -10,7 +10,7 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
-import { likeMarket, unlikeMarket, likeInfoMarket, deleteLikeMarket } from '../../api/likeApi';
+import { likeMarket, unlikeMarket, likeInfoMarket } from '../../api/likeApi';
 import InfoModal from '../common/InfoModal';
 
 const initState = {
@@ -36,7 +36,7 @@ const initState2 = {
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ marketNo }) => {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(null); //삭제 전용 모달창
   const [market, setMarket] = useState(initState);
   const { moveToList, moveToModify } = useCustomMove();
   const loginInfo = useSelector((state) => state.loginSlice);
@@ -78,7 +78,7 @@ const ReadComponent = ({ marketNo }) => {
         }
       });
     }
-  }, [email, info]);
+  }, [marketNo, ino, email, info]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -91,17 +91,11 @@ const ReadComponent = ({ marketNo }) => {
   };
 
   const handleClickDelete = () => {
-    deleteLikeMarket(marketNo)
-    .then(() => {
-      return deleteOne(marketNo);
-    })
-    .then((result) => {
-      console.log('delete result : ' + result);
-      setResult('삭제되었습니다');
-    });
+    deleteOne(marketNo);
+    setResult('삭제되었습니다');
   };
 
-  const closeModal = () => {
+  const closeDeleteModal = () => { //삭제 모달창
     setResult(null);
     moveToList();
   };
@@ -229,7 +223,7 @@ const ReadComponent = ({ marketNo }) => {
           </div>
         </div>
         <ModalComponent show={showModal} onClose={handleCloseModal} />
-        {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeModal} />}
+        {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
         {/* 좋아요 기능 알림 모달 */}
         {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
       </div>

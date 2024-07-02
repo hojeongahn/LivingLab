@@ -7,7 +7,7 @@ import org.modelmapper.ModelMapper;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mlp.lab.dto.MarketDto;
-import com.mlp.lab.entity.like.LikeMarket;
+import com.mlp.lab.entity.like.Likes;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -69,7 +69,7 @@ public class Market extends BaseTimeEntity{
 
     @OneToMany(mappedBy = "market", cascade = CascadeType.REMOVE) // 게시글 삭제시 좋아요 정보도 삭제
     @JsonManagedReference
-    private List<LikeMarket> likeMarkets;
+    private List<Likes> likes;
 
     @ElementCollection
     @Builder.Default
