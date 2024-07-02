@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "likebuy")
+@Table(name = "likecommunity")
 public class LikeCommunity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
