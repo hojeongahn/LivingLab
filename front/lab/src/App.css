@@ -110,6 +110,8 @@
   width: 100%;
   height: 880px;
   overflow:hidden;
+  object-fit:cover;
+
 }
 
 .main-image {

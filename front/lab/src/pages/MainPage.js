@@ -7,7 +7,6 @@ import BuyPostComponent from '../components/main/BuyPostComponent';
 import ShareRoomPostComponent from '../components/main/shareRoomPostComponent';
 import WeatherComponent from '../components/main/WeatherComponent';
 import MainSliderComponent from '../components/main/MainSliderComponent';
-import img_main from '../resources/images/img_main5.png';
 
 
 
