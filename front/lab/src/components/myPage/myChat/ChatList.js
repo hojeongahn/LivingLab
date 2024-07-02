@@ -25,7 +25,7 @@ const ChatList = ({ onSelectChat }) => {
             <img src="https://via.placeholder.com/40" alt="Profile" className="rounded-full w-10 h-10" />
             <div>
               <h2 className="text-lg font-bold">{room.title}</h2>
-              <p className="text-sm text-gray-500">채팅방 마지막 메세지</p>
+              <p className="text-sm text-gray-500"> {room.type} 채팅방</p>
             </div>
           </div>
         ))
