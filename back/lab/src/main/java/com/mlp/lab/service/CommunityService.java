@@ -309,4 +309,11 @@ public class CommunityService {
                 .build();
         return responseDto;
     }
+
+    public Character getType(Long commNo) {
+        Optional<Community> result = communityRepository.findById(commNo);
+        Community community = result.orElseThrow();
+        Character ch = community.getType();
+        return ch;
+    }
 }

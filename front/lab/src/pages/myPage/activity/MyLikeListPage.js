@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import useCustomMyPage from '../../../hooks/useCustomMyPage';
 import { myLike } from '../../../api/likeApi';
+import { getType } from '../../../api/communityApi';
 import PageComponent from '../../../components/common/PageComponent';
 
 const initState = {
@@ -22,6 +24,7 @@ const MyLikeListPage = () => {
   const [serverData, setServerData] = useState(initState);
   const loginInfo = useSelector((state) => state.loginSlice);
   const id = loginInfo.id;
+  const navigate = useNavigate();
 
   useEffect(() => {
     myLike({ page, size }, id).then(data => {
@@ -29,6 +32,36 @@ const MyLikeListPage = () => {
     })
   }, [page, size, id]);
 
+
+  const handleRedirect = async (like) => {
+    if(like.buyNo != null){
+      navigate(`/buy/read/${like.buyNo}`);
+    }
+    else if(like.teamNo != null){
+      navigate(`/team/read/${like.teamNo}`);
+    }
+    else if(like.marketNo != null){
+      navigate(`/market/read/${like.marketNo}`);
+    }
+    else if(like.commNo != null){
+      const type = await getType(like.commNo);
+      if(type === '1'){
+        navigate(`/community/tip/read/${like.commNo}`);
+      }
+      if(type === '2'){
+        navigate(`/community/qna/read/${like.commNo}`);
+      }
+      if(type === '3'){
+        navigate(`/community/review/read/${like.commNo}`);
+      }
+      if(type === '4'){
+        navigate(`/community/help/read/${like.commNo}`);
+      }
+    }
+    else if(like.roomNo != null){
+      navigate(`/shareRoom/read/${like.roomNo}`);
+    }
+  }
 
   return (
     <div className="text-xl flex-col h-fit flex w-4/5">
@@ -57,7 +90,8 @@ const MyLikeListPage = () => {
                           {serverData.dtoList.length > 0 ? (
                             serverData.dtoList.map(like =>
                               <tr
-                                className="text-base border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 hover:cursor-pointer">
+                                className="text-base border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 hover:cursor-pointer"
+                                onClick={()=>handleRedirect(like)}>
                                 <td className="whitespace-nowrap py-4">
                                   {like.buyNo && '공동구매'}
                                   {like.teamNo && '동네모임'}
