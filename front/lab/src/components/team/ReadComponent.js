@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/teamApi';
-import { likeTeam, unlikeTeam, likeInfo } from '../../api/likeApi';
+import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import { enterChatRoomTeam } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
@@ -13,8 +13,8 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
+import BasicModal from '../common/BasicModal';
 import PartComponent from './PartComponent';
-import Profile_Img from '../../resources/images/profile_img.png';
 import LandingComponent from './../common/mapSearch/LandingComponent';
 import InfoModal from '../common/InfoModal';
 
@@ -36,14 +36,14 @@ const initState = {
 const initState2 = {
   likeNo: 0,
   id: 0,
-  teamNo: 0,
+  teamNo: 0
 };
 
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ teamNo }) => {
   const [team, setTeam] = useState(initState);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(null); //삭제 모달창
   const [addResultModal, setAddResultModal] = useState(null);
   const { moveToList, moveToModify } = useCustomMove();
   const loginInfo = useSelector((state) => state.loginSlice);
@@ -52,7 +52,6 @@ const ReadComponent = ({ teamNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
-  const [userId, setUserId] = useState('');
   const [current, setCurrent] = useState(0);
   const [max, setMax] = useState(0);
 
@@ -74,7 +73,7 @@ const ReadComponent = ({ teamNo }) => {
       setCurrent(data.current);
       setMax(data.max);
     });
-  }, [teamNo, info]);
+  }, [teamNo, info, addResultModal]);
 
 
   useEffect(() => {
@@ -88,7 +87,7 @@ const ReadComponent = ({ teamNo }) => {
         }
       });
     }
-  }, [email, info]);
+  }, [teamNo, ino, email, info]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -97,20 +96,20 @@ const ReadComponent = ({ teamNo }) => {
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('teamNo', teamNo); // buyNo 값을 formData에 추가
     if (current === max) {
-      setResult('더이상 참여할수 없습니다.');
+      setAddResultModal('더이상 참여할수 없습니다.');
     } else {
       try {
         await enterChatRoomTeam(formData); // FormData를 인자로 전달하여 호출
-        setResult('참여가 완료되었습니다.');
+        setAddResultModal('참여가 완료되었습니다.');
       } catch (error) {
-        setResult('이미 참여 중입니다.', error);
+        setAddResultModal('이미 참여 중입니다.', error);
       }
     }
   };
 
-  const closeModal = () => {
+  const closeDeleteModal = () => {
     setResult(null);
-    window.location.reload();
+    moveToList();
   };
 
   const handleCloseModal = () => {
@@ -126,21 +125,22 @@ const ReadComponent = ({ teamNo }) => {
     setInfo(null);
   };
 
+  const closeBasicModal = () => {
+    setAddResultModal(null);
+    window.location.reload();
+  };
+
   const handleLikeClick = () => {
     if (!email) {
       setInfo('로그인 후 이용 가능합니다');
       return;
     }
     if (isLiked) {
-      unlikeTeam(like.likeNo);
+      unlikeClick(like.likeNo);
       decreaseLike(teamNo);
       setInfo('좋아요 목록에서 삭제되었습니다');
     } else {
-      const data = {
-        id: ino,
-        teamNo: teamNo,
-      };
-      likeTeam(data);
+      likeClick('team', teamNo, ino);
       increaseLike(teamNo);
       setInfo('좋아요 목록에 추가되었습니다');
     }
@@ -266,8 +266,8 @@ const ReadComponent = ({ teamNo }) => {
           )}
           {/* </div>
           </div> */}
-          {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeModal} />}
-          {addResultModal && <ResultModal title={'알림'} content={`${addResultModal}`} callbackFn={() => setAddResultModal(null)} />}
+          {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
+          {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
           <ModalComponent show={showModal} onClose={handleCloseModal} />
           {/* 좋아요 기능 알림 모달 */}
           {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}

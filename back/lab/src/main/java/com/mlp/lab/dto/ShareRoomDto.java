@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShareRoomDto { // 화면에서 받을 데이터
-    private Integer roomNo;
-    private Integer userId;
+    private Long roomNo;
+    private Long userId;
     private String title;
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")

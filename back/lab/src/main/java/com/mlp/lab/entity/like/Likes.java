@@ -3,6 +3,7 @@ package com.mlp.lab.entity.like;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.Community;
 import com.mlp.lab.entity.Market;
+import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.entity.Team;
 import com.mlp.lab.entity.User;
 
@@ -40,13 +41,18 @@ public class Likes {
     @JoinColumn(name = "comm_no", referencedColumnName = "comm_no", nullable = true)
     private Community community;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "roomNo", referencedColumnName = "roomNo", nullable = true)
+    private ShareRoom shareRoom;
+
     @Builder
-    public Likes(Long likeNo, User user, Buy buy, Team team, Market market, Community community){
+    public Likes(Long likeNo, User user, Buy buy, Team team, Market market, Community community, ShareRoom shareRoom){
         this.likeNo = likeNo;
         this.user = user;
         this.buy = buy;
         this.team = team;
         this.market = market;
         this.community = community;
+        this.shareRoom = shareRoom;
     }
 }

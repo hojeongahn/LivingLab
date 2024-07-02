@@ -11,7 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LikeDto {
     private Long likeNo;
-    private String type; //게시물 종류
     private Long id;
-    private Long no; //게시물 번호
+    private Long teamNo;
+    private Long buyNo;
+    private Long marketNo;
+    private Long commNo;
+    private Long roomNo;
+    private String nickname;
+    private String title;
 }

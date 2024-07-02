@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API_SERVER_HOST, getOne, deleteOne, increaseLike, decreaseLike } from '../../api/shareRoomApi';
-import { likeRoom, unlikeRoom, likeInfoRoom, deleteLikeRoom } from '../../api/likeApi';
+import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import useRoomCustomMove from '../../hooks/useRoomCustomMove';
 import { useSelector } from 'react-redux';
 import MapComponentForRoom from '../../components/shareRoom/MapComponentForRoom';
@@ -38,6 +38,7 @@ const ReadComponent = ({ roomNo }) => {
   const [result, setResult] = useState(null);
   const loginState = useSelector((state) => state.loginSlice);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const email = loginState?.email;
   const ino = loginState.id;
 
   useEffect(() => {
@@ -45,12 +46,12 @@ const ReadComponent = ({ roomNo }) => {
       console.log(data);
       setShareRoom(data);
     });
-  }, [roomNo]);
+  }, [roomNo, info]);
 
   useEffect(() => {
-    if (loginState.id) {
+    if (email) {
       //로그인시에만 실행
-      likeInfoRoom(roomNo, ino).then((data) => {
+      likeInfo('shareroom',roomNo, ino).then((data) => {
         setLike(data);
         if (data) {
           //data가 있으면 이미 좋아요 누른글
@@ -60,18 +61,11 @@ const ReadComponent = ({ roomNo }) => {
         }
       });
     }
-  }, [loginState.id, info]);
+  }, [email, info, roomNo, ino]);
 
   const handleClickDelete = () => {
-    deleteLikeRoom(roomNo)
-      .then(() => {
-        return deleteOne(roomNo);
-      })
-      .then((result) => {
-        console.log('delete result : ' + result);
-        setResult('삭제되었습니다');
-        moveToList();
-      });
+    deleteOne(roomNo);
+    setResult('삭제되었습니다');
   };
 
   // Function to open modal with selected image
@@ -87,6 +81,7 @@ const ReadComponent = ({ roomNo }) => {
   // Function to close result modal
   const closeResultModal = () => {
     setResult(null);
+    moveToList();
   };
 
   const closeInfoModal = () => {
@@ -95,34 +90,18 @@ const ReadComponent = ({ roomNo }) => {
 
   // 좋아요 버튼 클릭
   const handleLikeClick = () => {
-    if (!loginState.id) {
+    if (!email) {
       setInfo('로그인 후 이용 가능합니다');
       return;
     }
     if (isLiked) {
-      unlikeRoom(like.likeNo);
-      decreaseLike(roomNo).then(() => {
-        // 서버에서 hit 수 감소 후 로컬 상태 업데이트
-        setShareRoom((prevState) => ({
-          ...prevState,
-          roomHit: prevState.roomHit - 1
-        }));
-        setInfo('좋아요 목록에서 삭제되었습니다');
-      });
+      unlikeClick(like.likeNo);
+      decreaseLike(roomNo);
+      setInfo('좋아요 목록에서 삭제되었습니다');
     } else {
-      const data = {
-        id: ino,
-        roomNo: roomNo,
-      };
-      likeRoom(data);
-      increaseLike(roomNo).then(() => {
-        // 서버에서 hit 수 증가 후 로컬 상태 업데이트
-        setShareRoom((prevState) => ({
-          ...prevState,
-          roomHit: prevState.roomHit + 1
-        }));
-        setInfo('좋아요 목록에 추가되었습니다');
-      });
+      likeClick('shareroom', roomNo, ino);
+      increaseLike(roomNo);
+      setInfo('좋아요 목록에 추가되었습니다');
     }
     setIsLiked(!isLiked);
   };

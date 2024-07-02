@@ -13,6 +13,7 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
+import BasicModal from '../common/BasicModal';
 import PartComponent from './PartComponent'
 import InfoModal from '../common/InfoModal';
 
@@ -34,16 +35,15 @@ const initState = {
 const initState2 = {
   likeNo: 0,
   id: 0,
-  no: 0,
-  type: ''
+  buyNo: 0
 };
 
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ buyNo }) => {
   const [buy, setBuy] = useState(initState);
-  const [result, setResult] = useState(null); //삭제 전용 모달창
-  const [addResultModal, setAddResultModal] = useState(null);
+  const [result, setResult] = useState(null); //삭제 모달창
+  const [addResultModal, setAddResultModal] = useState(null); //참여 모달창
   const { moveToList, moveToModify } = useCustomMove();
   const loginInfo = useSelector((state) => state.loginSlice);
   const email = loginInfo?.email;
@@ -121,6 +121,11 @@ const ReadComponent = ({ buyNo }) => {
 
   const closeInfoModal = () => {
     setInfo(null);
+  };
+
+  const closeBasicModal = () => {
+    setAddResultModal(null);
+    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -258,7 +263,7 @@ const ReadComponent = ({ buyNo }) => {
           {/* </div>
           </div> */}
           {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
-          {addResultModal && <ResultModal title={'알림'} content={`${addResultModal}`} callbackFn={() => setAddResultModal(null)} />}
+          {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
           <ModalComponent show={showModal} onClose={handleCloseModal} />
           {/* 좋아요 기능 알림 모달 */}
           {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}

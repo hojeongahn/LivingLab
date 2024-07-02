@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import com.mlp.lab.entity.Community;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
+    Community findByCommNo(@Param(value = "commNo") Long commNo);
 
     @Query("select c from Community c where c.type = '1' order by c.commNo desc")
     Page<Community> tipList(Pageable pageable);

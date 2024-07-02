@@ -46,14 +46,14 @@ public class ShareRoomController {
     }
 
     @DeleteMapping("/{roomNo}")
-    public Map<String, String> remove(@PathVariable(name = "roomNo") Integer roomNo) {
+    public Map<String, String> remove(@PathVariable(name = "roomNo") Long roomNo) {
         log.info("Remove :" + roomNo);
         shareRoomService.remove(roomNo);
         return Map.of("RESULT", "SUCCESS");
     }
 
     @GetMapping("/read/{roomNo}")
-    public ShareRoomDto read(@PathVariable(name = "roomNo") Integer roomNo) {
+    public ShareRoomDto read(@PathVariable(name = "roomNo") Long roomNo) {
         return shareRoomService.get(roomNo);
     }
 
@@ -77,7 +77,7 @@ public class ShareRoomController {
     }
 
     @PutMapping("/modify/{roomNo}")
-    public Map<String, String> modify(@PathVariable(name = "roomNo") Integer roomNo, ShareRoomDto shareRoomDto) {
+    public Map<String, String> modify(@PathVariable(name = "roomNo") Long roomNo, ShareRoomDto shareRoomDto) {
         shareRoomDto.setRoomNo(roomNo);
         ShareRoomDto oldDTO = shareRoomService.get(roomNo);
         // 기존 파일들(데이터베이스에 저장된 파일 이름)
@@ -108,7 +108,7 @@ public class ShareRoomController {
     }
 
     @PutMapping("/hide/{roomNo}")
-    public Map<String, String> hide(@PathVariable(name = "roomNo") Integer roomNo, ShareRoomDto shareRoomDto) {
+    public Map<String, String> hide(@PathVariable(name = "roomNo") Long roomNo, ShareRoomDto shareRoomDto) {
         shareRoomDto.setRoomNo(roomNo);
 
         shareRoomService.hide(shareRoomDto);
@@ -122,12 +122,12 @@ public class ShareRoomController {
     }
 
     @PutMapping("/increase/{roomNo}") // 좋아요 +1
-    public void increase(@PathVariable(name = "roomNo") Integer roomNo) {
+    public void increase(@PathVariable(name = "roomNo") Long roomNo) {
         shareRoomService.increase(roomNo);
     }
 
     @PutMapping("/decrease/{roomNo}") // 좋아요 +1
-    public void decrease(@PathVariable(name = "roomNo") Integer roomNo) {
+    public void decrease(@PathVariable(name = "roomNo") Long roomNo) {
         shareRoomService.decrease(roomNo);
     }
 
@@ -143,7 +143,7 @@ public class ShareRoomController {
 
     
     @DeleteMapping("/like/shareRoom/{roomNo}")
-    public Map<String, String> removeLike(@PathVariable(name = "roomNo") Integer roomNo) {
+    public Map<String, String> removeLike(@PathVariable(name = "roomNo") Long roomNo) {
         log.info("Remove :" + roomNo);
         shareRoomService.remove(roomNo);
         return Map.of("RESULT", "SUCCESS");

@@ -10,7 +10,7 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
-import { likeMarket, unlikeMarket, likeInfoMarket } from '../../api/likeApi';
+import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import InfoModal from '../common/InfoModal';
 
 const initState = {
@@ -45,6 +45,7 @@ const ReadComponent = ({ marketNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // 이미지 슬라이더
   const settings = {
@@ -67,11 +68,9 @@ const ReadComponent = ({ marketNo }) => {
 
   useEffect(() => {
     if (email) {
-      //로그인시에만 실행
-      likeInfoMarket(marketNo, ino).then((data) => {
+      likeInfo('market',marketNo, ino).then((data) => {
         setLike(data);
         if (data) {
-          //data가 있으면 이미 좋아요 누른글
           setIsLiked(true);
         } else {
           setIsLiked(false);
@@ -79,8 +78,6 @@ const ReadComponent = ({ marketNo }) => {
       });
     }
   }, [marketNo, ino, email, info]);
-
-  const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -110,15 +107,11 @@ const ReadComponent = ({ marketNo }) => {
       return;
     }
     if (isLiked) {
-      unlikeMarket(like.likeNo);
+      unlikeClick(like.likeNo);
       decreaseLike(marketNo);
       setInfo('좋아요 목록에서 삭제되었습니다');
     } else {
-      const data = {
-        id: ino,
-        marketNo: marketNo,
-      };
-      likeMarket(data);
+      likeClick('market', marketNo, ino);
       increaseLike(marketNo);
       setInfo('좋아요 목록에 추가되었습니다');
     }
@@ -227,6 +220,7 @@ const ReadComponent = ({ marketNo }) => {
           </div>
         </div>
         <ModalComponent show={showModal} onClose={handleCloseModal} />
+        {/* 삭제 알림 모달창 */}
         {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
         {/* 좋아요 기능 알림 모달 */}
         {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}

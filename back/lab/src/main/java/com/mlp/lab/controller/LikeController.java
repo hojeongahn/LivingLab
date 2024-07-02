@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.mlp.lab.dto.PageRequestDto;
+import com.mlp.lab.dto.PageResponseDto;
 import com.mlp.lab.dto.like.LikeDto;
+import com.mlp.lab.dto.like.LikeRequest;
 import com.mlp.lab.dto.like.LikeRoomDto;
 import com.mlp.lab.service.LikeService;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +23,11 @@ import lombok.RequiredArgsConstructor;
 public class LikeController {
     private final LikeService likeService;
 
-    /* ===============공동구매=============== */
-
     @PostMapping("/likeClick") // 좋아요 +1
-    public void likeClick(@RequestBody LikeDto likeDto) {
-        String type = likeDto.getType();
-        Long no = likeDto.getNo();
-        Long id = likeDto.getId();
+    public void likeClick(@RequestBody LikeRequest likeRequest) {
+        String type = likeRequest.getType();
+        Long no = likeRequest.getNo();
+        Long id = likeRequest.getId();
         likeService.addLike(type, no, id);
     }
 
@@ -41,22 +42,9 @@ public class LikeController {
     }
 
 
-    /* ===============동네장터=============== */
-
-    @PostMapping("/market") // 좋아요 +1
-    public void likeMarket(@RequestBody LikeDto likeDto) {
-        likeService.addMarket(likeDto);
-    }
-
-    @DeleteMapping("/market/{likeNo}") // 좋아요 -1
-    public void unlikeMarket(@PathVariable(name = "likeNo") Long likeNo) {
-        likeService.deleteMarket(likeNo);
-    }
-
-    @GetMapping("/market") // 좋아요 정보 조회
-    public LikeDto likeInfoMarket(@RequestParam(value = "marketNo") Long marketNo,
-            @RequestParam(value = "id") Long id) {
-        return likeService.readMarket(marketNo, id);
+    @GetMapping("/mylike") // 내가 좋아요 누른 게시물 조회
+    public PageResponseDto<LikeDto> mylike(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
+        return likeService.mylike(pageRequestDto, id);
     }
 
     /* ===============자취방쉐어=============== */
@@ -79,23 +67,6 @@ public class LikeController {
     @GetMapping("/shareRoom") // 좋아요 정보 조회
     public LikeRoomDto likeInfoRoom(@RequestParam(value = "roomNo") Long roomNo, @RequestParam(value = "id") Long id) {
         return likeService.readRoom(roomNo, id);
-    }
-
-    /* ===============커뮤니티=============== */
-
-    @PostMapping("/comm") // 좋아요 +1
-    public void likeComm(@RequestBody LikeDto likeDto) {
-        likeService.addComm(likeDto);
-    }
-    
-    @DeleteMapping("/comm/{likeNo}") // 좋아요 -1
-    public void unlikeComm(@PathVariable(name = "likeNo") Long likeNo) {
-        likeService.deleteComm(likeNo);
-    }
-    
-    @GetMapping("/comm") // 좋아요 정보 조회
-    public LikeDto likeInfoComm(@RequestParam(value = "commNo") Long commNo, @RequestParam(value = "id") Long id) {
-        return likeService.readComm(commNo, id);
     }
 
 }
