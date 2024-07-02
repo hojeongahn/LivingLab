@@ -131,3 +131,9 @@ export const myListAll = async (pageParam, id) => {
     const res = await axios.get(`${prefix}/mylistall`, { params: { page: page, size: size, id: id} });
     return res.data;
   };
+
+
+  export const getType = async(commNo) => {
+    const res = await axios.get(`${prefix}/type/${commNo}`);
+    return res.data;
+}

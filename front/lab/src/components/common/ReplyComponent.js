@@ -45,7 +45,6 @@ const ReplyComponent = ({ replyNo, id, content, regDate, isWriter, isEdit, callb
             <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
                     <p className="inline-flex items-center mr-1 text-sm text-gray-900 font-semibold">
-                        <img className="mr-2 w-6 h-6 rounded-full" src={userIcon} alt="User Icon" />
                         {nickname}
                     </p>
                     {isWriter && (

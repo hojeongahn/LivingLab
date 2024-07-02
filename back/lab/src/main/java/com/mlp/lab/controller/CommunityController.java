@@ -164,4 +164,9 @@ public class CommunityController {
         return communityService.mylistall(pageRequestDto, id);
     }
 
+    @GetMapping("/type/{commNo}")
+    public Character getType(@PathVariable(name = "commNo") Long commNo) {
+        return communityService.getType(commNo);
+    }
+
 }
