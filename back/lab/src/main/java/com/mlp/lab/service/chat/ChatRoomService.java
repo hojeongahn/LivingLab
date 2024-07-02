@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import com.mlp.lab.dto.chat.ChatRoomDataRequestDto;
 import com.mlp.lab.dto.chat.ChatRoomDataResponseDto;
 import com.mlp.lab.entity.Buy;
+import com.mlp.lab.entity.Market;
 import com.mlp.lab.entity.Team;
 import com.mlp.lab.entity.User;
 import com.mlp.lab.entity.chat.Chat;
 import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.repository.BuyRepository;
+import com.mlp.lab.repository.MarketRepository;
 import com.mlp.lab.repository.TeamRepository;
 import com.mlp.lab.repository.UserRepository;
 import com.mlp.lab.repository.chat.ChatRepository;
@@ -29,6 +31,7 @@ public class ChatRoomService {
     private final UserRepository userRepository;
     private final BuyRepository buyRepository;
     private final TeamRepository teamRepository;
+    private final MarketRepository marketRepository;
     private ChatRoom chatRoom;
 
     public List<ChatRoomDataResponseDto.Info> findAllRoomByUserId(Long userId) {
@@ -61,6 +64,17 @@ public class ChatRoomService {
             chatRoom = ChatRoom.builder()
                 .writer(user)
                 .team(team)
+                .title(title)
+                .type(type)
+                .build();
+            chatRoomRepository.save(chatRoom);
+        }
+        if(createRequest.getMarketNo()!=null){ //동네모임
+            Market market = marketRepository.findByMarketNo(createRequest.getMarketNo());
+            User user = market.getUser();
+            chatRoom = ChatRoom.builder()
+                .writer(user)
+                .market(market)
                 .title(title)
                 .type(type)
                 .build();
