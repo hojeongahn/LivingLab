@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { API_SERVER_HOST, getList } from '../../api/buyApi';
+import { API_SERVER_HOST, getList, updateBuyFlag } from '../../api/buyApi';
 import useCustomMove from '../../hooks/useCustomMove';
 import PageComponent from '../common/PageComponent';
 import userIcon from '../../resources/images/user.png';
@@ -42,10 +42,22 @@ const ListComponent = ({ search, sort }) => {
   const email = loginInfo?.email;
   const ino = loginInfo.id;
 
-  const checkDeadline = (deadline) => {
+  const checkDeadline = (buy) => {
     const currentDate = new Date();
-    const deadlineDate = new Date(deadline);
-    return currentDate > deadlineDate ? '모집 종료' : '모집 중';
+    const deadlineDate = new Date(buy.deadline);
+
+    if (currentDate > deadlineDate && !buy.flag) {
+      // 모집 종료로 결정되면 데이터베이스 업데이트
+      updateBuyFlag(buy.buyNo, true)
+        .then(() => {
+          console.log(`Buy No ${buy.buyNo} flag updated to true`);
+        })
+        .catch((error) => {
+          console.error(`Failed to update flag for buy No ${buy.buyNo}`, error);
+        });
+      return '모집 종료';
+    }
+    return '모집 중';
   };
 
   const formatDeadline = (deadline) => {
@@ -78,7 +90,7 @@ const ListComponent = ({ search, sort }) => {
   };
 
   useEffect(() => {
-    if(email){
+    if (email) {
       getUser(ino).then((data) => {
         setUser(data);
       });
@@ -91,7 +103,7 @@ const ListComponent = ({ search, sort }) => {
         ...data,
         dtoList: data.dtoList.map((buy) => ({
           ...buy,
-          recruit: checkDeadline(buy.deadline),
+          recruit: checkDeadline(buy),
         })),
       };
       console.log(updatedData);

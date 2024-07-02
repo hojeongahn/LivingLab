@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.dto.BuyDto;
+import com.mlp.lab.dto.MarketDto;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.service.BuyService;
 import com.mlp.lab.util.CustomFileUtilBuy;
@@ -133,6 +135,12 @@ public class BuyController {
     @GetMapping("/mylistall") // 작성한 게시물 조회 (전체)
     public PageResponseDto<BuyDto> mylistall(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
         return buyService.mylistall(pageRequestDto, id);
+    }
+
+    @PostMapping("/updateFlag")
+    public ResponseEntity<String> updateFlag(@RequestBody BuyDto buyDto) {
+        buyService.updateFlag(buyDto.getBuyNo(), buyDto.isFlag());
+        return ResponseEntity.ok("Flag updated successfully");
     }
 
 }

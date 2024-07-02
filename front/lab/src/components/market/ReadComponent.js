@@ -92,13 +92,13 @@ const ReadComponent = ({ marketNo }) => {
 
   const handleClickDelete = () => {
     deleteLikeMarket(marketNo)
-    .then(() => {
-      return deleteOne(marketNo);
-    })
-    .then((result) => {
-      console.log('delete result : ' + result);
-      setResult('삭제되었습니다');
-    });
+      .then(() => {
+        return deleteOne(marketNo);
+      })
+      .then((result) => {
+        console.log('delete result : ' + result);
+        setResult('삭제되었습니다');
+      });
   };
 
   const closeModal = () => {
@@ -167,7 +167,7 @@ const ReadComponent = ({ marketNo }) => {
       </div>
       <div className="grid grid-cols-10 w-full mx-auto mt-4 mb-1 text-xl bg-white">
         <div className="col-start-9 col-span-2 ml-5 mt-4 text-right flex justify-center">
-        <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
+          <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
           {market.marketHit}
         </div>
         <div className="col-start-3 col-span-6 h-72 mt-3 mb-10">
@@ -192,9 +192,13 @@ const ReadComponent = ({ marketNo }) => {
         </div>
         <div className="col-start-2 col-span-6 text-slate-700 text-2xl my-5">{market.title}</div>
         <div className="col-start-2 col-span-8 text-base">
-          <span>{market.price}원 / </span>
-          <img src={mapIcon} alt="..." className="w-5 inline" />
-          &ensp;{market.location}
+
+          <>{market.marketCategory !== '3' && market.marketCategory !== '4' && (
+            <span>{market.price}원 / </span>)}
+            <img src={mapIcon} alt="..." className="w-5 inline" />
+            &ensp;{market.location}
+          </>
+
         </div>
         <div className="col-start-2 col-span-8"></div>
         <div className="col-start-8 col-span-2 text-right text-base">{market.nickname}</div>
