@@ -32,8 +32,8 @@ public class TeamService {
 
     // 목록 가져오기(페이징 처리, 이미지 포함)
     public PageResponseDto<TeamDto> list(PageRequestDto pageRequestDto, String search, String sort, Character category,
-    double latitude,
-    double longitude) {
+            double latitude,
+            double longitude) {
         Pageable pageable = PageRequest.of(
                 pageRequestDto.getPage() - 1,
                 pageRequestDto.getSize(),
@@ -41,12 +41,34 @@ public class TeamService {
 
         Page<Object[]> result = null;
 
-        if (category != null && (search != null && !search.isEmpty())) {
-            // 카테고리와 검색 조건이 모두 지정된 경우
+        if (category != null && (search != null && !search.isEmpty())) { // 카테고리와 검색 조건이 모두 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = teamRepository.selectCategorySearchNewList(category, search, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = teamRepository.selectCategorySearchDeadlineList(category, search, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = teamRepository.selectCategorySearchDistanceList(category, search, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = teamRepository.selectCategorySearchLikeList(category, search, pageable);
+                }
+            } else {
             result = teamRepository.selectCategorySearchList(category, search, pageable);
-        } else if (category != null) {
-            // 카테고리만 지정된 경우
-            result = teamRepository.selectCategoryList(category, pageable);
+            }
+        } else if (category != null) { // 카테고리만 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = teamRepository.selectCategoryNewList(category, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = teamRepository.selectCategoryDeadlineList(category, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = teamRepository.selectCategoryDistanceList(category, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = teamRepository.selectCategoryLikeList(category, pageable);
+                }
+            } else {
+                result = teamRepository.selectCategoryList(category, pageable);
+            }
         } else if ((search == null || search.isEmpty()) && (sort == null || sort.isEmpty())) { // 페이지 클릭 시
             result = teamRepository.selectList(pageable);
         } else if ((search != null && !search.isEmpty()) && (sort == null || sort.isEmpty())) { // 검색
@@ -61,7 +83,7 @@ public class TeamService {
             if (sort.equals("거리순")) {
                 result = teamRepository.distanceList(latitude, longitude, pageable);
             }
-            if (sort.equals("좋아요순")){
+            if (sort.equals("좋아요순")) {
                 result = teamRepository.likeList(pageable);
             }
         } else if (search != null && sort != null) { // 검색&&정렬 둘다
@@ -74,7 +96,7 @@ public class TeamService {
             if (sort.equals("거리순")) {
                 result = teamRepository.searchDistanceList(search, latitude, longitude, pageable);
             }
-            if (sort.equals("좋아요순")){
+            if (sort.equals("좋아요순")) {
                 result = teamRepository.searchLikeList(search, pageable);
             }
         }
@@ -218,13 +240,13 @@ public class TeamService {
         return dtoList;
     }
 
-    public PageResponseDto<TeamDto> mylistall(PageRequestDto pageRequestDto, Long id){
+    public PageResponseDto<TeamDto> mylistall(PageRequestDto pageRequestDto, Long id) {
         Pageable pageable = PageRequest.of(
-            pageRequestDto.getPage() - 1,
-            pageRequestDto.getSize(),
-            Sort.by("teamNo").descending());
+                pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize(),
+                Sort.by("teamNo").descending());
         Page<Object[]> result = teamRepository.findAllByUser(id, pageable);
-        
+
         List<TeamDto> dtoList = result.get().map(arr -> {
             Team team = (Team) arr[0];
             TeamImage teamImage = (TeamImage) arr[1];
@@ -252,5 +274,13 @@ public class TeamService {
                 .build();
 
         return responseDTO;
+    }
+
+    // 마감 전환
+    public void updateFlag(Long teamNo, boolean flag) {
+        Team team = teamRepository.findById(teamNo.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid team No: " + teamNo));
+        team.setFlag(flag);
+        teamRepository.save(team);
     }
 }

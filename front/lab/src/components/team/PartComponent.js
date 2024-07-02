@@ -6,10 +6,11 @@ import ModalComponent from '../common/ModalComponent';
 import ResultModal from '../common/ResultModal';
 import InfoModal from '../common/InfoModal';
 import { chatUserInfoTeam, exitChatRoomTeam } from '../../api/chatApi';
-import { getUser } from '../../api/userApi'
+import { getUser, API_SERVER_HOST } from '../../api/userApi';
+
+const host = API_SERVER_HOST;
 
 const PartComponent = ({ teamNo }) => {
-
   const [showModal, setShowModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
@@ -18,7 +19,6 @@ const PartComponent = ({ teamNo }) => {
   const [result, setResult] = useState(null);
   const loginInfo = useSelector((state) => state.loginSlice);
   const userId = loginInfo?.id;
-
 
   useEffect(() => {
     const fetchChatroomData = async () => {
@@ -37,7 +37,6 @@ const PartComponent = ({ teamNo }) => {
         // 화면에 표시할 유저들 정보 설정
         const participants = [writerResponse, ...readerResponses];
         setDisplayUsers(participants);
-
       } catch (error) {
         console.error('데이터 가져오기 실패', error);
       }
@@ -73,10 +72,10 @@ const PartComponent = ({ teamNo }) => {
       formData.append('userId', userId);
       formData.append('teamNo', teamNo);
 
-      const isUserInRoom = displayUsers.some(user => user.id === userId);
-      if(!isUserInRoom){
+      const isUserInRoom = displayUsers.some((user) => user.id === userId);
+      if (!isUserInRoom) {
         setResult('참여중이 아닙니다.');
-      } else if(chatroomInfo.writerId == userId){
+      } else if (chatroomInfo.writerId == userId) {
         setResult('자신이 쓴 게시글은 참여를 취소할 수 없습니다.');
       } else {
         await exitChatRoomTeam(formData);
@@ -101,7 +100,7 @@ const PartComponent = ({ teamNo }) => {
           <div>
             {displayUsers.map((user) => (
               <div className="flex p-5" key={user.id}>
-                <img alt="Profile_Img" src={`http://localhost:8282/api/user/userProfileImage?email=${user.email}`} className="rounded-full size-10 mr-2" />
+                <img alt="Profile_Img" src={`${host}/api/user/display/${user.profileImage}`} className="rounded-full size-10 mr-2" />
                 {user.nickname}
               </div>
             ))}
@@ -112,7 +111,9 @@ const PartComponent = ({ teamNo }) => {
           <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={() => setShowModal(true)}>
             채팅
           </button>
-          <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={handleExitChatRoom}>참여 X</button>
+          <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={handleExitChatRoom}>
+            참여 X
+          </button>
         </div>
       </div>
       {result && <ResultModal title={'알림'} content={result} callbackFn={handleResultModalClose} />}

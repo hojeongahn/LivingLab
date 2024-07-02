@@ -13,7 +13,8 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
-import PartComponent from './PartComponent'
+import PartComponent from './PartComponent';
+import Profile_Img from '../../resources/images/profile_img.png';
 import LandingComponent from './../common/mapSearch/LandingComponent';
 import InfoModal from '../common/InfoModal';
 
@@ -51,8 +52,9 @@ const ReadComponent = ({ teamNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
-  const [ current, setCurrent ] = useState(0);
-  const [ max, setMax ] = useState(0);
+  const [userId, setUserId] = useState('');
+  const [current, setCurrent] = useState(0);
+  const [max, setMax] = useState(0);
 
   // 이미지 슬라이더
   const settings = {
@@ -94,9 +96,9 @@ const ReadComponent = ({ teamNo }) => {
     const formData = new FormData();
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('teamNo', teamNo); // buyNo 값을 formData에 추가
-    if(current === max){
+    if (current === max) {
       setResult('더이상 참여할수 없습니다.');
-    } else{
+    } else {
       try {
         await enterChatRoomTeam(formData); // FormData를 인자로 전달하여 호출
         setResult('참여가 완료되었습니다.');
@@ -119,7 +121,6 @@ const ReadComponent = ({ teamNo }) => {
     deleteOne(teamNo);
     setResult('삭제되었습니다');
   };
-
 
   const closeInfoModal = () => {
     setInfo(null);
@@ -144,7 +145,7 @@ const ReadComponent = ({ teamNo }) => {
       setInfo('좋아요 목록에 추가되었습니다');
     }
     setIsLiked(!isLiked);
-  };  
+  };
 
   //날짜 포맷 설정
   const formatDeadline = (deadline) => {
@@ -187,7 +188,7 @@ const ReadComponent = ({ teamNo }) => {
         </div>
         <div className="grid grid-cols-10 w-full mx-auto mt-4 mb-1 text-xl bg-white">
           <div className="col-start-9 col-span-2 ml-5 mt-4 text-right flex justify-center">
-          <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
+            <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
             {team.teamHit}
           </div>
           <div className="col-start-3 col-span-6 h-72 mt-3 mb-10">
@@ -241,9 +242,7 @@ const ReadComponent = ({ teamNo }) => {
                   </button>
                   {/* </div> */}
 
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500">
-                    참여하기
-                  </button>
+                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500">참여하기</button>
                   <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
                     목록
                   </button>
@@ -275,7 +274,7 @@ const ReadComponent = ({ teamNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent teamNo={teamNo} /> 
+      <PartComponent teamNo={teamNo} />
     </>
   );
 };

@@ -7,12 +7,11 @@ import ModalComponent from '../common/ModalComponent';
 import ResultModal from '../common/ResultModal';
 import InfoModal from '../common/InfoModal';
 import { chatUserInfoBuy, exitChatRoomBuy } from '../../api/chatApi';
-import { getUser, API_SERVER_HOST } from '../../api/userApi'
+import { getUser, API_SERVER_HOST } from '../../api/userApi';
 
 const host = API_SERVER_HOST;
 
 const PartComponent = ({ buyNo }) => {
-
   const [showModal, setShowModal] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
@@ -21,7 +20,6 @@ const PartComponent = ({ buyNo }) => {
   const [result, setResult] = useState(null);
   const loginInfo = useSelector((state) => state.loginSlice);
   const userId = loginInfo?.id;
-
 
   useEffect(() => {
     const fetchChatroomData = async () => {
@@ -40,7 +38,6 @@ const PartComponent = ({ buyNo }) => {
         // 화면에 표시할 유저들 정보 설정
         const participants = [writerResponse, ...readerResponses];
         setDisplayUsers(participants);
-
       } catch (error) {
         console.error('데이터 가져오기 실패', error);
       }
@@ -76,10 +73,10 @@ const PartComponent = ({ buyNo }) => {
       formData.append('userId', userId);
       formData.append('buyNo', buyNo);
 
-      const isUserInRoom = displayUsers.some(user => user.id === userId);
-      if(!isUserInRoom){
+      const isUserInRoom = displayUsers.some((user) => user.id === userId);
+      if (!isUserInRoom) {
         setResult('참여중이 아닙니다.');
-      } else if(chatroomInfo.writerId == userId) {
+      } else if (chatroomInfo.writerId === userId) {
         setResult('자신이 쓴 게시글은 참여를 취소할 수 없습니다.');
       } else {
         await exitChatRoomBuy(formData);
@@ -115,7 +112,9 @@ const PartComponent = ({ buyNo }) => {
           <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={() => setShowModal(true)}>
             채팅
           </button>
-          <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={handleExitChatRoom}>참여 X</button>
+          <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={handleExitChatRoom}>
+            참여 X
+          </button>
         </div>
       </div>
       {result && <ResultModal title={'알림'} content={result} callbackFn={handleResultModalClose} />}

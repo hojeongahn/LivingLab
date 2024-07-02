@@ -57,3 +57,7 @@ export const myListAll = async (pageParam, id) => {
   const res = await axios.get(`${prefix}/mylistall`, { params: { page: page, size: size, id: id} });
   return res.data;
 };
+
+export const updateTeamFlag = (teamNo, flag) => {
+  return axios.post(`${API_SERVER_HOST}/api/team/updateFlag`, { teamNo, flag });
+};
