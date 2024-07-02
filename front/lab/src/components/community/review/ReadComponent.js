@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { API_SERVER_HOST, getOneReview, deleteOne, increaseLike, decreaseLike } from "../../../api/communityApi";
 import { addReply, getList } from "../../../api/replyApi";
-import { likeComm, unlikeComm, likeInfoComm } from '../../../api/likeApi';
+import { likeClick, unlikeClick, likeInfo } from '../../../api/likeApi';
 import useCustomReview from "../../../hooks/useCustomReview";
 import ResultModal from "../../common/ResultModal";
 import emptyheart from '../../../resources/images/heart_empty.png';
@@ -22,7 +22,8 @@ const initState = {
 const initState2 = {
     likeNo: 0,
     id: 0,
-    commNo: 0,
+    no: 0,
+    type: ''
 };
 
 
@@ -60,7 +61,7 @@ const ReadComponent = ({commNo}) => {
     useEffect(() => {
         if (email) {
           //로그인시에만 실행
-          likeInfoComm(commNo, id).then((data) => {
+          likeInfo('community',commNo, id).then((data) => {
             setLike(data);
             if (data) {
               //data가 있으면 이미 좋아요 누른글
@@ -70,7 +71,7 @@ const ReadComponent = ({commNo}) => {
             }
           });
         }
-      }, [email, info]);
+      }, [commNo, id, email, info]);
 
     const handleClickDelete = (e) => {
         deleteOne(commNo);
@@ -119,15 +120,11 @@ const ReadComponent = ({commNo}) => {
           return;
         }
         if (isLiked) {
-          unlikeComm(like.likeNo);
+          unlikeClick(like.likeNo);
           decreaseLike(commNo);
           setInfo('좋아요 목록에서 삭제되었습니다');
         } else {
-          const data = {
-            id: id,
-            commNo: commNo,
-          };
-          likeComm(data);
+          likeClick('community',commNo, id);
           increaseLike(commNo);
           setInfo('좋아요 목록에 추가되었습니다');
         }

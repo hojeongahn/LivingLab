@@ -9,8 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeTeamDto {
+public class LikeDto {
     private Long likeNo;
     private Long id;
     private Long teamNo;
+    private Long buyNo;
+    private Long marketNo;
+    private Long commNo;
+    private Long roomNo;
+    private String nickname;
+    private String title;
 }

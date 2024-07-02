@@ -6,14 +6,11 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mlp.lab.dto.ShareRoomDto;
+import com.mlp.lab.entity.like.Likes;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,8 +27,8 @@ import lombok.ToString;
 public class ShareRoom {
     @Id // 기본키 설정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roomNo;
-    private Integer userId;
+    private Long roomNo;
+    private Long userId;
     private String title;
     private String content;
     private LocalDateTime regDate;
@@ -46,6 +43,10 @@ public class ShareRoom {
     private Integer days;
     private boolean flag;
     private Integer roomHit;
+
+    @OneToMany(mappedBy = "shareRoom", cascade = CascadeType.REMOVE) // 게시글 삭제시 좋아요 정보도 삭제
+    @JsonManagedReference
+    private List<Likes> likes;
 
     @ElementCollection
     @Builder.Default
