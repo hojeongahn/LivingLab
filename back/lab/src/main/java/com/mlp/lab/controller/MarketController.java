@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
+import com.mlp.lab.entity.Market;
 import com.mlp.lab.dto.MarketDto;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.service.MarketService;
@@ -63,11 +64,11 @@ public class MarketController {
     }
 
     @PostMapping("/add") // 작성
-    public void add(MarketDto marketDto) {
+    public Market add(MarketDto marketDto) {
         List<MultipartFile> files = marketDto.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         marketDto.setUploadFileNames(uploadFileNames);
-        marketService.add(marketDto);
+        return marketService.add(marketDto);
     }
 
     @PutMapping("/modify/{marketNo}") // 수정

@@ -126,10 +126,11 @@ public class MarketService {
         return responseDTO;
     }
 
-    public void add(MarketDto marketDto) { // 동네장터 등록(이미지 포함)
+    public Market add(MarketDto marketDto) { // 동네장터 등록(이미지 포함)
         Market market = Market.DtoToEntity(marketDto);
         market.setUser(userRepository.findByUserId(marketDto.getId()));
         marketRepository.save(market);
+        return market;
     }
 
     public MarketDto read(int marketNo) { // 동네장터 조회

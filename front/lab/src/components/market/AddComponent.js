@@ -7,6 +7,7 @@ import { getUser } from './../../api/userApi';
 import { useSelector } from 'react-redux';
 import iconNext from '../../resources/images/icon-next.png';
 import iconEdit from '../../resources/images/iconEdit.png';
+import { postCreateRoom } from '../../api/chatApi';
 
 const initState = {
   id: 0,
@@ -29,10 +30,10 @@ const AddComponent = () => {
   const [addResultModal, setAddResultModal] = useState(null);
   const imgRef = useRef();
   const [location, setLocation] = useState(null); // 현재 위치를 저장할 상태
-
   const [user, setUser] = useState(initState);
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo.id;
+  
   useEffect(() => {
     getUser(ino).then((data) => {
       setUser(data);
@@ -149,10 +150,10 @@ const AddComponent = () => {
       formData.append('marketHit', market.marketHit);
       formData.append('price', market.price);
 
-      for (const x of formData.entries()) {
-        console.log(x);
-      }
-      postAddMarket(formData);
+      const response = await postAddMarket(formData);
+      const createRequest = { marketNo: response.marketNo };
+      console.log("데이터: "+response, createRequest)
+      await postCreateRoom(formData.get('id'), formData.get('title'), '동네장터', createRequest);
       setResult('게시글이 등록되었습니다');
     } catch (error) {
       console.error('Error adding post:', error);
