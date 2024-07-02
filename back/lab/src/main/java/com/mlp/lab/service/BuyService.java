@@ -42,12 +42,34 @@ public class BuyService {
 
         Page<Object[]> result = null;
 
-        if (category != null && (search != null && !search.isEmpty())) {
-            // 카테고리와 검색 조건이 모두 지정된 경우
+        if (category != null && (search != null && !search.isEmpty())) { // 카테고리와 검색 조건이 모두 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = buyRepository.selectCategorySearchNewList(category, search, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = buyRepository.selectCategorySearchDeadlineList(category, search, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = buyRepository.selectCategorySearchDistanceList(category, search, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = buyRepository.selectCategorySearchLikeList(category, search, pageable);
+                }
+            } else {
             result = buyRepository.selectCategorySearchList(category, search, pageable);
-        } else if (category != null) {
-            // 카테고리만 지정된 경우
-            result = buyRepository.selectCategoryList(category, pageable);
+            }
+        } else if (category != null) { // 카테고리만 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = buyRepository.selectCategoryNewList(category, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = buyRepository.selectCategoryDeadlineList(category, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = buyRepository.selectCategoryDistanceList(category, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = buyRepository.selectCategoryLikeList(category, pageable);
+                }
+            } else {
+                result = buyRepository.selectCategoryList(category, pageable);
+            }
         } else if ((search == null || search.isEmpty()) && (sort == null || sort.isEmpty())) { // 페이지 클릭 시
             result = buyRepository.selectList(pageable);
         } else if ((search != null && !search.isEmpty()) && (sort == null || sort.isEmpty())) { // 검색

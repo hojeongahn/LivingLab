@@ -41,12 +41,34 @@ public class TeamService {
 
         Page<Object[]> result = null;
 
-        if (category != null && (search != null && !search.isEmpty())) {
-            // 카테고리와 검색 조건이 모두 지정된 경우
+        if (category != null && (search != null && !search.isEmpty())) { // 카테고리와 검색 조건이 모두 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = teamRepository.selectCategorySearchNewList(category, search, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = teamRepository.selectCategorySearchDeadlineList(category, search, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = teamRepository.selectCategorySearchDistanceList(category, search, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = teamRepository.selectCategorySearchLikeList(category, search, pageable);
+                }
+            } else {
             result = teamRepository.selectCategorySearchList(category, search, pageable);
-        } else if (category != null) {
-            // 카테고리만 지정된 경우
-            result = teamRepository.selectCategoryList(category, pageable);
+            }
+        } else if (category != null) { // 카테고리만 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = teamRepository.selectCategoryNewList(category, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = teamRepository.selectCategoryDeadlineList(category, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = teamRepository.selectCategoryDistanceList(category, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = teamRepository.selectCategoryLikeList(category, pageable);
+                }
+            } else {
+                result = teamRepository.selectCategoryList(category, pageable);
+            }
         } else if ((search == null || search.isEmpty()) && (sort == null || sort.isEmpty())) { // 페이지 클릭 시
             result = teamRepository.selectList(pageable);
         } else if ((search != null && !search.isEmpty()) && (sort == null || sort.isEmpty())) { // 검색
