@@ -142,9 +142,7 @@ const AddComponent = () => {
       formData.append('roomHit', shareRoom.roomHit); // roomHit 값을 formData에 추가
       formData.append('location', shareRoom.location);
 
-      const response = await postAddShareRoom(formData);
-      const createRequest = { roomNo: response.roomNo };
-      await postCreateRoom(formData.get('id'), formData.get('title'), '자취방쉐어', createRequest);
+      postAddShareRoom(formData);
       setResult('게시글이 등록되었습니다');
     } catch (error) {
       console.error('Error adding post:', error);

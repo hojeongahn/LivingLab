@@ -63,9 +63,8 @@ public class Market extends BaseTimeEntity{
     @Column(name = "price")
     private Integer price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "id")
+    private Long id;
 
     @OneToMany(mappedBy = "market", cascade = CascadeType.REMOVE) // 게시글 삭제시 좋아요 정보도 삭제
     @JsonManagedReference

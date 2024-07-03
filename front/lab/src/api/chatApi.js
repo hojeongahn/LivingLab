@@ -69,17 +69,31 @@ export const exitChatRoomTeam = async (formData) => {
       return response.data;
 };
 
-// 자취방쉐어 채팅방의 유저 조회(참여하기 표시)
+// 동네장터 채팅방의 유저 조회(참여하기 표시)
+export const chatUserInfoMarket = async (marketNo) => {
+  const res = await axios.get(`${host}/room/market/get`, {
+    params: { marketNo }
+  });
+  return res.data;
+};
+
+// 동네장터 채팅방 퇴장
+export const exitChatRoomMarket = async (formData) => {
+  const response = await axios.post(`${host}/room/market/exit`, formData);
+      return response.data;
+};
+
+// 자취방쉐어 채팅방의 유저 조회
 export const chatUserInfoShare = async (roomNo) => {
-  const res = await axios.get(`${host}/room/shareRoom/gett`, {
+  const res = await axios.get(`${host}/room/shareRoom/get`, {
     params: { roomNo }
   });
   return res.data;
 };
 
-// 자취방쉐어 채팅방 입장(문의)
-export const enterChatRoomShare = async (formData) => {
-  const response = await axios.post(`${host}/room/shareRoom/enter`, formData);
+// 자취방쉐어 채팅방 퇴장(참여x)
+export const exitChatRoomShare = async (formData) => {
+  const response = await axios.post(`${host}/room/shareRoom/exit`, formData);
       return response.data;
 };
 

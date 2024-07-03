@@ -10,6 +10,7 @@ import com.mlp.lab.entity.ShareRoom;
 
 //ShareRoom Entity의 기본키(PK) 타입인 Integer를 인자로 전달
 public interface ShareRoomRepository extends JpaRepository<ShareRoom, Integer> {
+    ShareRoom findShareRoomByRoomNo(@Param(value = "roomNo") Long marketNo);
 
     ShareRoom findByRoomNo(@Param(value = "roomNo") Long roomNo);
 
@@ -51,10 +52,10 @@ public interface ShareRoomRepository extends JpaRepository<ShareRoom, Integer> {
     Page<Object[]> latestShareRoomList(Pageable pageable);
 
     //마이페이지 내가 작성한 글
-    @Query("SELECT s FROM ShareRoom s WHERE s.user.id = :id ORDER BY s.roomNo DESC")
+    @Query("SELECT s FROM ShareRoom s WHERE s.id = :id ORDER BY s.roomNo DESC")
     Page<ShareRoom> findByUser(@Param(value = "id") Long id, Pageable pageable);
 
-    @Query("select s, si from ShareRoom s left join s.imageList si where s.user.id = :id and si.ord = 0 order by roomNo desc")
+    @Query("select s, si from ShareRoom s left join s.imageList si where s.id = :id and si.ord = 0 order by roomNo desc")
     Page<Object[]> findAllByUser(@Param(value = "id") Long id, Pageable pageable);
 
 }

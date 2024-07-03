@@ -40,10 +40,7 @@ public class ShareRoom extends BaseTimeEntity{
     private Integer days;
     private boolean flag;
     private Integer roomHit;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private User user;
+    private Long id;
 
     @OneToMany(mappedBy = "shareRoom", cascade = CascadeType.REMOVE) // 게시글 삭제시 좋아요 정보도 삭제
     @JsonManagedReference
