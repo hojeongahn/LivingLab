@@ -40,6 +40,7 @@ public class ChatService {
         ChatDataResponseDto.Message sendMessage = new ChatDataResponseDto.Message();
         sendMessage.setMessage(message.getMessage());
         sendMessage.setSender(user.getNickname());
+        sendMessage.setSenderProfileImage(user.getProfileImage());
         sendMessage.setType(ChatDataResponseDto.Message.MessageType.TALK);
 
         messagingTemplate.convertAndSend("/topic/chat/room/" + message.getRoomId(), sendMessage);

@@ -19,8 +19,7 @@ const ChatMessage = ({ message }) => {
         <div className="relative">
           <span className="absolute top-1.5 left-14 text-sm text-gray-500 transform -translate-y-full ml-2">{message.sender}</span>
           <div className="flex justify-start items-center ml-2 mt-3">
-            {/* <img alt="Profile_Img" src={`${host}/api/user/display/${user.profileImage}`} className="rounded-full size-10 mr-2" /> */}
-            <img src="https://via.placeholder.com/40" alt="Profile" className="rounded-full w-10 h-10" />
+            <img alt="Profile_Img" src={`${host}/api/user/display/${message.senderProfileImage}`} className="rounded-full size-10 mr-2" />
             <div className="px-4 py-2 m-2 rounded-3xl text-lg bg-white text-black shadow">{content}</div>
           </div>
         </div>

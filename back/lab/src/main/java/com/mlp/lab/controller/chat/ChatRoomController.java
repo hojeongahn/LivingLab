@@ -17,11 +17,11 @@ import com.mlp.lab.dto.chat.ChatRoomDataRequestDto;
 import com.mlp.lab.dto.chat.ChatRoomDataResponseDto;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.Team;
+import com.mlp.lab.entity.User;
 import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.repository.BuyRepository;
 import com.mlp.lab.repository.TeamRepository;
 import com.mlp.lab.service.BuyService;
-import com.mlp.lab.service.MarketService;
 import com.mlp.lab.service.ShareRoomService;
 import com.mlp.lab.service.TeamService;
 import com.mlp.lab.service.chat.ChatRoomService;
@@ -47,6 +47,15 @@ public class ChatRoomController {
         List<ChatRoomDataResponseDto.Info> roomsData = chatRoomService.findAllRoomByUserId(userId);
         return ResponseDto.setSuccessData(userId+"번 유저의 모든 채팅방 목록 반환", roomsData);
     }
+
+    // 채팅방의 모든 유저 목록 반환
+    @GetMapping("/room/userList")
+    @ResponseBody 
+    public List<User> getList(@RequestParam(name="roomId") Long roomId){
+        List<User> user = chatRoomService.getList(roomId);
+        return user;
+    }
+    
 
     // 채팅방 생성(글 작성시 자동으로)
     @PostMapping("/room/create")
