@@ -78,7 +78,7 @@ const IndexPage = () => {
   return (
     <div>
       <BasicLayout>
-        <div className="text-xl flex-grow bg-opacity-30 bg-cover" style={{ backgroundImage: `url(${bgImg})` }}>
+        <div className="text-xl flex-grow bg-opacity-20 bg-mainColor">
           <div className="min-h-screen flex flex-row w-4/5 mx-auto my-10">
             <div className="flex flex-col w-1/5 bg-white overflow-hidden h-fit rounded mr-5 shadow-md">
               <ul className="flex flex-col py-4 my-8">

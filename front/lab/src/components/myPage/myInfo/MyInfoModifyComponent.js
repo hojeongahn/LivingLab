@@ -19,7 +19,7 @@ const initState = {
 
 const host = API_SERVER_HOST;
 
-const MyInfoModifyComponent = ({ id }) => {
+const MyInfoModifyComponent = () => {
   const [user, setUser] = useState(initState);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
@@ -94,21 +94,19 @@ const MyInfoModifyComponent = ({ id }) => {
   return (
     <div>
       <div>
-        <div className="flex justify-center">
-          <div className="w-full p-3 my-3 text-left font-bold text-2xl text-emerald-400">회원정보 수정</div>
+        <div className="flex justify-end">
           <Link to={'/myPage/info'}>
-            <button type="button" className="rounded p-1 mt-8 text-m w-32 text-white bg-blue-500">
-              회원정보
+            <button type="button" className="rounded p-1 my-4 text-base w-32 text-white bg-gray-400 hover:bg-gray-500">
+              뒤로 가기
             </button>
           </Link>
         </div>
-
         <div className="border-2 border-sky-200 p-4  bg-gray-50">
           <div className="flex justify-center">
             <div className="w-1/3 p-3 text-left font-bold">프로필 사진</div>
             <div className="relative mb-4 flex w-full items-stretch">
               <div className="mt-2">
-                <img src={`${host}/api/user/display/${user.profileImage}`} alt="프로필이미지" className="rounded-full size-40 mx-auto" />
+                <img src={previewImageUrl ? previewImageUrl : `${host}/api/user/display/${user.profileImage}`} alt="프로필이미지" className="rounded-full size-40 mx-auto" />
                 <div class="flex">
                   <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} ref={inputRef} />
                   <button
@@ -235,7 +233,7 @@ const MyInfoModifyComponent = ({ id }) => {
 
           <div className="flex justify-center">
             <div className="relative mb-1 flex w-full flex-wrap justify-end">
-              <button type="button" className="rounded p-1 text-m w-32 text-white bg-blue-500" onClick={handleClickModify}>
+              <button type="button" className="rounded p-1 w-32 text-white bg-blue-500 hover:bg-blue-600" onClick={handleClickModify}>
                 수정완료
               </button>
             </div>
