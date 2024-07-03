@@ -1,16 +1,15 @@
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import BasicLayout from '../../layouts/BasicLayout';
 import { API_SERVER_HOST, getUser } from '../../api/userApi';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useCallback, useEffect } from 'react';
-import Profile_Img from '../../resources/images/profile_img.png';
 import chatIcon1 from '../../resources/images/chat_black.png';
 import chatIcon2 from '../../resources/images/chat_maincolor.png';
 import penIcon1 from '../../resources/images/pen_black.png';
 import penIcon2 from '../../resources/images/pen_maincolor.png';
 import userIcon1 from '../../resources/images/user_black.png';
 import userIcon2 from '../../resources/images/user_maincolor.png';
+import bgImg from '../../resources/images/background2.jpg';
 
 const initState = {
   id: 0,
@@ -79,7 +78,7 @@ const IndexPage = () => {
   return (
     <div>
       <BasicLayout>
-        <div className="text-xl flex-grow bg-gray-300 bg-opacity-30">
+        <div className="text-xl flex-grow bg-opacity-20 bg-mainColor">
           <div className="min-h-screen flex flex-row w-4/5 mx-auto my-10">
             <div className="flex flex-col w-1/5 bg-white overflow-hidden h-fit rounded mr-5 shadow-md">
               <ul className="flex flex-col py-4 my-8">

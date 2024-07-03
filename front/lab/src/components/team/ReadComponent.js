@@ -127,7 +127,6 @@ const ReadComponent = ({ teamNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -175,13 +174,13 @@ const ReadComponent = ({ teamNo }) => {
 
   return (
     <>
-      <div className=" bg-slate-200 w-1/4 rounded-md px-4 py-4">
+      <div className=" side-map">
         <LandingComponent />
       </div>
       <div className="bg-slate-100 w-[1000px] ml-5 p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <span className="text-left font-semibold ml-2 items-center flex">
-            {team.flag ? '모집 마감' : '모집 중'}
+            {team.flag ? '모집 종료' : '모집 중'}
             <img src={iconNext} alt="..." className="w-7 inline" />
           </span>
           <span className="text-right text-base">{formatDeadline(team.deadline)}</span>
@@ -220,6 +219,7 @@ const ReadComponent = ({ teamNo }) => {
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{team.location}
           </div>
+          <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {team.createdDate}</div>
           <div className="col-start-2 col-span-8"></div>
           <div className="col-start-8 col-span-2 text-right text-base">{team.nickname}</div>
           <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{team.content}</div>
@@ -242,7 +242,7 @@ const ReadComponent = ({ teamNo }) => {
                   </button>
                   {/* </div> */}
 
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500">참여하기</button>
+                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500">마감하기</button>
                   <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
                     목록
                   </button>
@@ -274,7 +274,7 @@ const ReadComponent = ({ teamNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent teamNo={teamNo} />
+      <PartComponent key={addResultModal} teamNo={teamNo} />
     </>
   );
 };

@@ -68,6 +68,7 @@ const ReadComponent = ({ buyNo }) => {
 
   useEffect(() => {
     getOne(buyNo).then((data) => {
+      console.log("data값은:",data);
       setBuy(data);
       setCurrent(data.current);
       setMax(data.max);
@@ -125,7 +126,6 @@ const ReadComponent = ({ buyNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -175,10 +175,10 @@ const ReadComponent = ({ buyNo }) => {
       <div className="bg-slate-100 w-[1000px] ml-auto p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <span className="text-left font-semibold ml-2 items-center flex">
-            {buy.flag ? '모집 마감' : '모집 중'}
+            {buy.flag ? '모집 종료' : '모집 중'}
             <img src={iconNext} alt="..." className="w-7 inline" />
           </span>
-          <span className="text-right text-base">{formatDeadline(buy.deadline)}</span>
+          <span className="text-right text-lg">{formatDeadline(buy.deadline)}</span>
         </div>
         <div className="grid grid-cols-10 w-full mx-auto mt-4 mb-1 text-xl bg-white">
           <div className="col-start-9 col-span-2 ml-5 mt-4 text-right flex justify-center">
@@ -214,6 +214,7 @@ const ReadComponent = ({ buyNo }) => {
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{buy.location}
           </div>
+          <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {buy.createdDate}</div>
           <div className="col-start-2 col-span-8"></div>
           <div className="col-start-8 col-span-2 text-right text-base">{buy.nickname}</div>
           <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{buy.content}</div>
@@ -235,9 +236,9 @@ const ReadComponent = ({ buyNo }) => {
                     삭제하기
                   </button>
                   {/* </div> */}
-                  {/* 글쓴이는 자동 참여하 참여하기 필요 X */}
+                  {/* 글쓴이는 자동 참여해서 참여하기 필요 X */}
                   <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500" >
-                    참여하기 
+                    마감하기 
                   </button>
                   <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
                     목록
@@ -270,7 +271,7 @@ const ReadComponent = ({ buyNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent buyNo={buyNo} />
+      <PartComponent key={addResultModal} buyNo={buyNo} />
     </>
   );
 };

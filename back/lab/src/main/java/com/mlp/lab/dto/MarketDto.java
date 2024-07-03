@@ -24,7 +24,7 @@ public class MarketDto { // 동네장터 화면에서 받을 데이터
     private String title;
     private String content;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime regDate;
+    private LocalDateTime createdDate;
     private String deadline;
     private Character marketCategory;
     private String location;

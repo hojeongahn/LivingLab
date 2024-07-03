@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getChatRoom } from '../../../api/chatApi';
-import { getUser, API_SERVER_HOST } from '../../../api/userApi';
-
-const host = API_SERVER_HOST;
+import bubble1 from '../../../resources/images/bubble1.png';
+import bubble2 from '../../../resources/images/bubble2.png';
+import bubble3 from '../../../resources/images/bubble3.png';
+import bubble4 from '../../../resources/images/bubble4.png';
 
 const ChatList = ({ onSelectChat }) => {
   const [chatRooms, setChatRooms] = useState('');
@@ -21,8 +22,10 @@ const ChatList = ({ onSelectChat }) => {
       {chatRooms.data && chatRooms.data.length > 0 ? (
         chatRooms.data.map((room) => (
           <div key={room.roomId} className="py-7 px-5 cursor-pointer hover:bg-gray-100 border-b flex items-center" onClick={() => onSelectChat(room)}>
-            {/* <img alt="Profile_Img" src={`${host}/api/user/display/${user.profileImage}`} className="rounded-full size-10 mr-2" /> */}
-            <img src="https://via.placeholder.com/40" alt="Profile" className="rounded-full w-10 h-10" />
+            { room.type === '공동구매' && <img src={bubble1} alt="Profile" className="rounded-full w-10 h-10 mr-2"/>}
+            { room.type === '동네모임' && <img src={bubble2} alt="Profile" className="rounded-full w-10 h-10 mr-2"/>}
+            { room.type === '동네장터' && <img src={bubble3} alt="Profile" className="rounded-full w-10 h-10 mr-2"/>}
+            { room.type === '자취방쉐어' && <img src={bubble4} alt="Profile" className="rounded-full w-10 h-10 mr-2"/>}
             <div>
               <h2 className="text-lg font-bold">{room.title}</h2>
               <p className="text-sm text-gray-500"> {room.type} 채팅방</p>

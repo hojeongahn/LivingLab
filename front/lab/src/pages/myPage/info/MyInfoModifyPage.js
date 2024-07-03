@@ -12,8 +12,7 @@ const MyInfoModifyPage = () => {
             <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
               <div className="overflow-hidden">
                 <div className="text-2xl pl-2 my-2 border-l-4 font-Jua border-teal-300">회원정보 수정 {id}</div>
-
-                <MyInfoModifyComponent id={id} />
+                <MyInfoModifyComponent />
               </div>
             </div>
           </div>

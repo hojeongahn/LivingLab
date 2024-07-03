@@ -230,14 +230,13 @@ const ReadComponent = ({ marketNo }) => {
         </div>
         <div className="col-start-2 col-span-6 text-slate-700 text-2xl my-5">{market.title}</div>
         <div className="col-start-2 col-span-8 text-base">
-
           <>{market.marketCategory !== '3' && market.marketCategory !== '4' && (
             <span>{market.price}원 / </span>)}
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{market.location}
           </>
-
         </div>
+        <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {market.createdDate}</div>
         <div className="col-start-2 col-span-8"></div>
         <div className="col-start-8 col-span-2 text-right text-base">{market.nickname}</div>
         <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{market.content}</div>
