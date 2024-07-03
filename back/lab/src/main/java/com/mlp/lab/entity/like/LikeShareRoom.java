@@ -2,13 +2,10 @@ package com.mlp.lab.entity.like;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.entity.User;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

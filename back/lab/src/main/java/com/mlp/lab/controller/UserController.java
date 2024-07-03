@@ -4,10 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +26,10 @@ import com.mlp.lab.service.UserService;
 import com.mlp.lab.util.CustomFileUtil;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 
 @CrossOrigin(origins = "*")
 @RestController
-@Log4j2
 @RequestMapping("/api/user")
 @RequiredArgsConstructor // 초기화 되지않은 final 필드나, @NonNull 이 붙은 필드에 대해 생성자를 생성
 public class UserController {

@@ -10,7 +10,7 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
-import { likeMarket, unlikeMarket, likeInfoMarket, deleteLikeMarket } from '../../api/likeApi';
+import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import InfoModal from '../common/InfoModal';
 
 const initState = {
@@ -36,7 +36,7 @@ const initState2 = {
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ marketNo }) => {
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(null); //삭제 전용 모달창
   const [market, setMarket] = useState(initState);
   const { moveToList, moveToModify } = useCustomMove();
   const loginInfo = useSelector((state) => state.loginSlice);
@@ -45,6 +45,7 @@ const ReadComponent = ({ marketNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   // 이미지 슬라이더
   const settings = {
@@ -67,20 +68,16 @@ const ReadComponent = ({ marketNo }) => {
 
   useEffect(() => {
     if (email) {
-      //로그인시에만 실행
-      likeInfoMarket(marketNo, ino).then((data) => {
+      likeInfo('market',marketNo, ino).then((data) => {
         setLike(data);
         if (data) {
-          //data가 있으면 이미 좋아요 누른글
           setIsLiked(true);
         } else {
           setIsLiked(false);
         }
       });
     }
-  }, [email, info]);
-
-  const [showModal, setShowModal] = useState(false);
+  }, [marketNo, ino, email, info]);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -91,17 +88,11 @@ const ReadComponent = ({ marketNo }) => {
   };
 
   const handleClickDelete = () => {
-    deleteLikeMarket(marketNo)
-    .then(() => {
-      return deleteOne(marketNo);
-    })
-    .then((result) => {
-      console.log('delete result : ' + result);
-      setResult('삭제되었습니다');
-    });
+    deleteOne(marketNo);
+    setResult('삭제되었습니다');
   };
 
-  const closeModal = () => {
+  const closeDeleteModal = () => { //삭제 모달창
     setResult(null);
     moveToList();
   };
@@ -116,15 +107,11 @@ const ReadComponent = ({ marketNo }) => {
       return;
     }
     if (isLiked) {
-      unlikeMarket(like.likeNo);
+      unlikeClick(like.likeNo);
       decreaseLike(marketNo);
       setInfo('좋아요 목록에서 삭제되었습니다');
     } else {
-      const data = {
-        id: ino,
-        marketNo: marketNo,
-      };
-      likeMarket(data);
+      likeClick('market', marketNo, ino);
       increaseLike(marketNo);
       setInfo('좋아요 목록에 추가되었습니다');
     }
@@ -167,7 +154,7 @@ const ReadComponent = ({ marketNo }) => {
       </div>
       <div className="grid grid-cols-10 w-full mx-auto mt-4 mb-1 text-xl bg-white">
         <div className="col-start-9 col-span-2 ml-5 mt-4 text-right flex justify-center">
-        <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
+          <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
           {market.marketHit}
         </div>
         <div className="col-start-3 col-span-6 h-72 mt-3 mb-10">
@@ -192,9 +179,13 @@ const ReadComponent = ({ marketNo }) => {
         </div>
         <div className="col-start-2 col-span-6 text-slate-700 text-2xl my-5">{market.title}</div>
         <div className="col-start-2 col-span-8 text-base">
-          <span>{market.price}원 / </span>
-          <img src={mapIcon} alt="..." className="w-5 inline" />
-          &ensp;{market.location}
+
+          <>{market.marketCategory !== '3' && market.marketCategory !== '4' && (
+            <span>{market.price}원 / </span>)}
+            <img src={mapIcon} alt="..." className="w-5 inline" />
+            &ensp;{market.location}
+          </>
+
         </div>
         <div className="col-start-2 col-span-8"></div>
         <div className="col-start-8 col-span-2 text-right text-base">{market.nickname}</div>
@@ -229,7 +220,8 @@ const ReadComponent = ({ marketNo }) => {
           </div>
         </div>
         <ModalComponent show={showModal} onClose={handleCloseModal} />
-        {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeModal} />}
+        {/* 삭제 알림 모달창 */}
+        {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
         {/* 좋아요 기능 알림 모달 */}
         {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
       </div>

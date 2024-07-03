@@ -2,12 +2,10 @@ package com.mlp.lab.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.log4j.Log4j2;
 import java.time.ZonedDateTime;
 import java.util.*;
 import javax.crypto.SecretKey;
 
-@Log4j2
 public class JWTUtil {
 
   private static String key = "1234567890123456789012345678901234567890";

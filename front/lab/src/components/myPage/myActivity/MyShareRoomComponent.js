@@ -46,7 +46,7 @@ const MyShareRoomComponent = ({id}) => {
                       {room.rentStartDate} ~ {room.rentEndDate}
                       </span>
                       <span className="text-sm text-black font-semibold p-1 rounded mr-1 bg-yellow-100">
-                      총 {room.rent_fee}원
+                      총 {parseInt(room.rent_fee).toLocaleString()}원
                       </span>
                     </div>
                   </div>

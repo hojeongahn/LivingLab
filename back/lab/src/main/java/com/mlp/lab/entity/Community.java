@@ -7,8 +7,7 @@ import org.modelmapper.ModelMapper;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mlp.lab.dto.CommunityDto;
-import com.mlp.lab.entity.like.LikeBuy;
-import com.mlp.lab.entity.like.LikeCommunity;
+import com.mlp.lab.entity.like.Likes;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +28,7 @@ import lombok.ToString;
 public class Community extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "commNo")
+    @Column(name = "comm_no")
     private Long commNo;
 
     @Column(name = "type")
@@ -62,9 +61,9 @@ public class Community extends BaseTimeEntity {
     @JsonManagedReference
     private List<Reply> replies;
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<LikeCommunity> likeCommunities;
+    private List<Likes> likes;
 
     @ElementCollection
     @Builder.Default

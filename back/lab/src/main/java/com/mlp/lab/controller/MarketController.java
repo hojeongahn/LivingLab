@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
+import com.mlp.lab.entity.Market;
 import com.mlp.lab.dto.MarketDto;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.service.MarketService;
@@ -62,11 +64,11 @@ public class MarketController {
     }
 
     @PostMapping("/add") // 작성
-    public void add(MarketDto marketDto) {
+    public Market add(MarketDto marketDto) {
         List<MultipartFile> files = marketDto.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         marketDto.setUploadFileNames(uploadFileNames);
-        marketService.add(marketDto);
+        return marketService.add(marketDto);
     }
 
     @PutMapping("/modify/{marketNo}") // 수정
@@ -125,5 +127,12 @@ public class MarketController {
     @GetMapping("/mylistall") // 작성한 게시물 조회 (전체)
     public PageResponseDto<MarketDto> mylistall(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
         return marketService.mylistall(pageRequestDto, id);
+    }
+
+    // 마감 전환
+    @PostMapping("/updateFlag")
+    public ResponseEntity<String> updateFlag(@RequestBody MarketDto marketDto) {
+        marketService.updateFlag(marketDto.getMarketNo(), marketDto.isFlag());
+        return ResponseEntity.ok("Flag updated successfully");
     }
 }

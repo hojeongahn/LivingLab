@@ -2,8 +2,6 @@ package com.mlp.lab.controller.chat;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mlp.lab.dto.chat.ChatDataRequestDto;
 import com.mlp.lab.service.chat.ChatService;
@@ -17,12 +15,12 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/chat/message")
-    public void sendMessage(@RequestBody ChatDataRequestDto.Message message,
-            @RequestParam Long userId) {
+    // @SendTo("/topic/chat/room/{roomId}")
+    public void sendMessage(ChatDataRequestDto message) {
         System.out.println("받은 메시지: " + message.getMessage());
         System.out.println("메시지 유형: " + message.getType());
         System.out.println("채팅방 ID: " + message.getRoomId());
-        chatService.sendMessage(userId, message);
+        chatService.sendMessage(message.getUserId(), message);
     }
 }
 

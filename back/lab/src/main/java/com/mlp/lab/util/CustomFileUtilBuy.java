@@ -19,10 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 
 @Component
-@Log4j2
 @RequiredArgsConstructor
 public class CustomFileUtilBuy {
 

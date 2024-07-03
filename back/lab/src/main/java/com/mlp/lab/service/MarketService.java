@@ -29,9 +29,8 @@ public class MarketService {
     private final UserRepository userRepository;
 
     // 목록 가져오기(페이징 처리, 이미지 포함)
-    public PageResponseDto<MarketDto> list(PageRequestDto pageRequestDto, String search, String sort, Character category,
-            double latitude,
-            double longitude) {
+    public PageResponseDto<MarketDto> list(PageRequestDto pageRequestDto, String search, String sort,
+            Character category, double latitude, double longitude) {
         Pageable pageable = PageRequest.of(
                 pageRequestDto.getPage() - 1,
                 pageRequestDto.getSize(),
@@ -40,9 +39,33 @@ public class MarketService {
         Page<Object[]> result = null;
 
         if (category != null && (search != null && !search.isEmpty())) { // 카테고리와 검색 조건이 모두 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = marketRepository.selectCategorySearchNewList(category, search, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = marketRepository.selectCategorySearchDeadlineList(category, search, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = marketRepository.selectCategorySearchDistanceList(category, search, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = marketRepository.selectCategorySearchLikeList(category, search, pageable);
+                }
+            } else {
             result = marketRepository.selectCategorySearchList(category, search, pageable);
-        } else if (category != null) {  // 카테고리만 지정된 경우
-            result = marketRepository.selectCategoryList(category, pageable);
+            }
+        } else if (category != null) { // 카테고리만 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = marketRepository.selectCategoryNewList(category, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = marketRepository.selectCategoryDeadlineList(category, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = marketRepository.selectCategoryDistanceList(category, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = marketRepository.selectCategoryLikeList(category, pageable);
+                }
+            } else {
+                result = marketRepository.selectCategoryList(category, pageable);
+            }
         } else if ((search == null || search.isEmpty()) && (sort == null || sort.isEmpty())) { // 페이지 클릭 시
             result = marketRepository.selectList(pageable);
         } else if ((search != null && !search.isEmpty()) && (sort == null || sort.isEmpty())) { // 검색
@@ -50,39 +73,40 @@ public class MarketService {
         } else if ((sort != null && !sort.isEmpty()) && (search == null || search.isEmpty())) { // 정렬
             if (sort.equals("최신순")) {
                 result = marketRepository.newList(pageable);
-            }
-            if (sort.equals("마감임박순")) {
+            } else if (sort.equals("마감임박순")) {
                 result = marketRepository.deadLineList(pageable);
-            }
-            if (sort.equals("거리순")) {
+            } else if (sort.equals("거리순")) {
                 result = marketRepository.distanceList(latitude, longitude, pageable);
-            }
-            if (sort.equals("좋아요순")){
+            } else if (sort.equals("좋아요순")) {
                 result = marketRepository.likeList(pageable);
             }
         } else if (search != null && sort != null) { // 검색&&정렬 둘다
             if (sort.equals("최신순")) {
                 result = marketRepository.searchNewList(search, pageable);
-            }
-            if (sort.equals("마감임박순")) {
+            } else if (sort.equals("마감임박순")) {
                 result = marketRepository.searchDeadLineList(search, pageable);
-            }
-            if (sort.equals("거리순")) {
+            } else if (sort.equals("거리순")) {
                 result = marketRepository.searchDistanceList(search, latitude, longitude, pageable);
-            }
-            if (sort.equals("좋아요순")){
+            } else if (sort.equals("좋아요순")) {
                 result = marketRepository.searchLikeList(search, pageable);
             }
         }
+
         List<MarketDto> dtoList = result.get().map(arr -> {
             Market market = (Market) arr[0];
             MarketImage marketImage = (MarketImage) arr[1];
             String defaultImageStr = "default.png";// 기본 이미지 파일명 설정
 
             MarketDto marketDto = MarketDto.builder()
-                    .marketNo(market.getMarketNo()).title(market.getTitle()).marketCategory(market.getMarketCategory())
-                    .location(market.getLocation()).deadline(market.getDeadline()).nickname(market.getNickname())
-                    .marketHit(market.getMarketHit()).price(market.getPrice()).build();
+                    .marketNo(market.getMarketNo())
+                    .title(market.getTitle())
+                    .marketCategory(market.getMarketCategory())
+                    .location(market.getLocation())
+                    .deadline(market.getDeadline())
+                    .nickname(market.getNickname())
+                    .marketHit(market.getMarketHit())
+                    .price(market.getPrice())
+                    .build();
 
             if (marketImage != null) {
                 String imageStr = marketImage.getFileName();
@@ -102,10 +126,11 @@ public class MarketService {
         return responseDTO;
     }
 
-    public void add(MarketDto marketDto) { // 동네장터 등록(이미지 포함)
+    public Market add(MarketDto marketDto) { // 동네장터 등록(이미지 포함)
         Market market = Market.DtoToEntity(marketDto);
         market.setUser(userRepository.findByUserId(marketDto.getId()));
         marketRepository.save(market);
+        return market;
     }
 
     public MarketDto read(int marketNo) { // 동네장터 조회
@@ -139,6 +164,7 @@ public class MarketService {
         market.setLongitude(marketDto.getLongitude());
         market.setMarketCategory(marketDto.getMarketCategory());
         market.setDeadline(marketDto.getDeadline());
+        market.setPrice(marketDto.getPrice());
 
         // 파일들 삭제
         market.clearList();
@@ -197,7 +223,7 @@ public class MarketService {
     }
 
     public List<MyActivityDto> mylist(Long id) {
-        PageRequest pageRequest = PageRequest.of(0,3);
+        PageRequest pageRequest = PageRequest.of(0, 3);
         Page<Market> result = marketRepository.findByUser(id, pageRequest);
 
         List<MyActivityDto> dtoList = result.getContent().stream().map(market -> {
@@ -212,13 +238,13 @@ public class MarketService {
         return dtoList;
     }
 
-    public PageResponseDto<MarketDto> mylistall(PageRequestDto pageRequestDto, Long id){
+    public PageResponseDto<MarketDto> mylistall(PageRequestDto pageRequestDto, Long id) {
         Pageable pageable = PageRequest.of(
-            pageRequestDto.getPage() - 1,
-            pageRequestDto.getSize(),
-            Sort.by("marketNo").descending());
+                pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize(),
+                Sort.by("marketNo").descending());
         Page<Object[]> result = marketRepository.findAllByUser(id, pageable);
-        
+
         List<MarketDto> dtoList = result.get().map(arr -> {
             Market market = (Market) arr[0];
             MarketImage marketImage = (MarketImage) arr[1];
@@ -246,5 +272,13 @@ public class MarketService {
                 .build();
 
         return responseDTO;
+    }
+
+    // 마감 전환
+    public void updateFlag(Long marketNo, boolean flag) {
+        Market market = marketRepository.findById(marketNo.intValue())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid market No: " + marketNo));
+        market.setFlag(flag);
+        marketRepository.save(market);
     }
 }

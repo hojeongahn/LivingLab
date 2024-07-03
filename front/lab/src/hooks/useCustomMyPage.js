@@ -93,6 +93,21 @@ const useCustomMyPage = () => {
     navigate({ pathname: `/myPage/activity/community`, search: queryStr });
   };
 
+  const moveToLikeList = (pageParam) => {
+    let queryStr = "";
+    if (pageParam) {
+      const pageNum = getNum(pageParam.page, 1);
+      const sizeNum = getNum(pageParam.size, 10);
+      queryStr = createSearchParams({
+        page: pageNum,
+        size: sizeNum,
+      }).toString();
+    } else {
+      queryStr = queryDefault;
+    }
+    navigate({ pathname: `/myPage/activity/like`, search: queryStr });
+  };
+
   const moveToRead = (type,num) => {
     navigate({ pathname: `/${type}/read/${num}`, search: queryDefault });
   };
@@ -112,7 +127,7 @@ const useCustomMyPage = () => {
     }
   };
 
-  return { moveToBuyList, moveToTeamList, moveToMarketList, moveToShareRoomList, moveToCommunityList, moveToRead, moveToReadCommunity, page, size };
+  return { moveToBuyList, moveToTeamList, moveToMarketList, moveToShareRoomList, moveToCommunityList, moveToLikeList, moveToRead, moveToReadCommunity, page, size };
 };
 
 export default useCustomMyPage;

@@ -5,7 +5,18 @@ import com.mlp.lab.entity.chat.Chat;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class ChatDataResponseDto {
+    private Long roomId;
+    private String message;
+    private String sender;
+
+    public ChatDataResponseDto(Long roomId, String message, String sender) {
+        this.roomId = roomId;
+        this.message = message;
+        this.sender = sender;
+    }
 
     @Getter
     @Setter
@@ -18,8 +29,7 @@ public class ChatDataResponseDto {
         private String sender;
         private String message;
 
-        public Message() {
-        }
+        public Message() {}
 
         public Message(Chat chat) {
             this.type = MessageType.TALK;

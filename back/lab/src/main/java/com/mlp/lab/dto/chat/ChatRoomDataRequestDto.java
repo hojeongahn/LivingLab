@@ -10,8 +10,6 @@ public class ChatRoomDataRequestDto {
         private Long buyNo;
         private Long teamNo;
         private Long marketNo;
-        private Integer roomNo;
-        private String title;
-        private String type;
+        private Long roomNo;
     }
 }

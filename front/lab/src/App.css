@@ -107,12 +107,19 @@
 .main-image-box {
   position: relative;
   margin: 0 auto;
+  width: 100%;
+  height: 880px;
+  overflow:hidden;
+  object-fit:cover;
+
 }
 
 .main-image {
   width: auto;
   height: auto;
   margin: 0 auto;
+  object-fit:cover;
+
 }
 
 .main-image-text {
@@ -291,7 +298,7 @@
   width: 2px;
   border-left: 1px dashed #bbb;
   border-right: 1px dashed #fff;
-  top: 1120px;
+  top: 1170px;
   left: 50%;
   z-index: 49;
 }
@@ -1100,8 +1107,4 @@ select option:disabled {
 .card1 .back1 {
   background: white; /* 뒷면 배경색 설정 */
   transform: rotateX(180deg); /* 초기 상태에서 뒷면을 회전 */
-}
-
-.card1:hover {
-  transform: rotateX(180deg); /* 호버 시 카드 회전 */
 }

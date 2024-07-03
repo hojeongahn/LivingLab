@@ -11,6 +11,8 @@ import com.mlp.lab.entity.ShareRoom;
 //ShareRoom Entity의 기본키(PK) 타입인 Integer를 인자로 전달
 public interface ShareRoomRepository extends JpaRepository<ShareRoom, Integer> {
 
+    ShareRoom findByRoomNo(@Param(value = "roomNo") Long roomNo);
+
     // JPQL을 이용해서 쿼리를 작성하고, 조인 처리
     // 글의 내용과 이미지를 가져옴(이미지가 삭제되지않은)
     @Query("select s, si from ShareRoom s left join s.imageList si where si.ord = 0 and s.flag = true order by roomNo desc")
@@ -49,9 +51,10 @@ public interface ShareRoomRepository extends JpaRepository<ShareRoom, Integer> {
     Page<Object[]> latestShareRoomList(Pageable pageable);
 
     //마이페이지 내가 작성한 글
-    @Query("SELECT s FROM ShareRoom s WHERE s.userId = :id ORDER BY s.roomNo DESC")
+    @Query("SELECT s FROM ShareRoom s WHERE s.user.id = :id ORDER BY s.roomNo DESC")
     Page<ShareRoom> findByUser(@Param(value = "id") Long id, Pageable pageable);
 
-    @Query("select s, si from ShareRoom s left join s.imageList si where s.userId = :id and si.ord = 0 order by roomNo desc")
+    @Query("select s, si from ShareRoom s left join s.imageList si where s.user.id = :id and si.ord = 0 order by roomNo desc")
     Page<Object[]> findAllByUser(@Param(value = "id") Long id, Pageable pageable);
+
 }

@@ -41,12 +41,34 @@ public class BuyService {
 
         Page<Object[]> result = null;
 
-        if (category != null && (search != null && !search.isEmpty())) {
-            // 카테고리와 검색 조건이 모두 지정된 경우
+        if (category != null && (search != null && !search.isEmpty())) { // 카테고리와 검색 조건이 모두 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = buyRepository.selectCategorySearchNewList(category, search, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = buyRepository.selectCategorySearchDeadlineList(category, search, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = buyRepository.selectCategorySearchDistanceList(category, search, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = buyRepository.selectCategorySearchLikeList(category, search, pageable);
+                }
+            } else {
             result = buyRepository.selectCategorySearchList(category, search, pageable);
-        } else if (category != null) {
-            // 카테고리만 지정된 경우
-            result = buyRepository.selectCategoryList(category, pageable);
+            }
+        } else if (category != null) { // 카테고리만 지정된 경우
+            if (sort != null && !sort.isEmpty()) {
+                if (sort.equals("최신순")) {
+                    result = buyRepository.selectCategoryNewList(category, pageable);
+                } else if (sort.equals("마감임박순")) {
+                    result = buyRepository.selectCategoryDeadlineList(category, pageable);
+                } else if (sort.equals("거리순")) {
+                    result = buyRepository.selectCategoryDistanceList(category, latitude, longitude, pageable);
+                } else if (sort.equals("좋아요순")) {
+                    result = buyRepository.selectCategoryLikeList(category, pageable);
+                }
+            } else {
+                result = buyRepository.selectCategoryList(category, pageable);
+            }
         } else if ((search == null || search.isEmpty()) && (sort == null || sort.isEmpty())) { // 페이지 클릭 시
             result = buyRepository.selectList(pageable);
         } else if ((search != null && !search.isEmpty()) && (sort == null || sort.isEmpty())) { // 검색
@@ -61,8 +83,8 @@ public class BuyService {
             if (sort.equals("거리순")) {
                 result = buyRepository.distanceList(latitude, longitude, pageable);
             }
-            if (sort.equals("좋아요순")){
-            result = buyRepository.likeList(pageable);
+            if (sort.equals("좋아요순")) {
+                result = buyRepository.likeList(pageable);
             }
         } else if (search != null && sort != null) { // 검색&&정렬 둘다
             if (sort.equals("최신순")) {
@@ -74,7 +96,7 @@ public class BuyService {
             if (sort.equals("거리순")) {
                 result = buyRepository.searchDistanceList(search, latitude, longitude, pageable);
             }
-            if (sort.equals("좋아요순")){
+            if (sort.equals("좋아요순")) {
                 result = buyRepository.searchLikeList(search, pageable);
             }
         }
@@ -253,13 +275,13 @@ public class BuyService {
         return dtoList;
     }
 
-    public PageResponseDto<BuyDto> mylistall(PageRequestDto pageRequestDto, Long id){
+    public PageResponseDto<BuyDto> mylistall(PageRequestDto pageRequestDto, Long id) {
         Pageable pageable = PageRequest.of(
-            pageRequestDto.getPage() - 1,
-            pageRequestDto.getSize(),
-            Sort.by("buyNo").descending());
+                pageRequestDto.getPage() - 1,
+                pageRequestDto.getSize(),
+                Sort.by("buyNo").descending());
         Page<Object[]> result = buyRepository.findAllByUser(id, pageable);
-        
+
         List<BuyDto> dtoList = result.get().map(arr -> {
             Buy buy = (Buy) arr[0];
             BuyImage buyImage = (BuyImage) arr[1];
@@ -287,5 +309,13 @@ public class BuyService {
                 .build();
 
         return responseDTO;
+    }
+
+    // 마감 전환
+    public void updateFlag(Long buyNo, boolean flag) {
+        Buy buy = buyRepository.findById(buyNo)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid buy No: " + buyNo));
+        buy.setFlag(flag);
+        buyRepository.save(buy);
     }
 }

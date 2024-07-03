@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/buyApi';
-import { likeBuy, unlikeBuy, likeInfoBuy, deleteLikeBuy } from '../../api/likeApi';
-import { getUser } from '../../api/userApi';
+import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import { enterChatRoomBuy } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
@@ -15,8 +13,8 @@ import mapIcon from '../../resources/images/map.png';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
+import BasicModal from '../common/BasicModal';
 import PartComponent from './PartComponent'
-import Profile_Img from '../../resources/images/profile_img.png';
 import InfoModal from '../common/InfoModal';
 
 const initState = {
@@ -37,15 +35,15 @@ const initState = {
 const initState2 = {
   likeNo: 0,
   id: 0,
-  buyNo: 0,
+  buyNo: 0
 };
 
 const host = API_SERVER_HOST;
 
 const ReadComponent = ({ buyNo }) => {
   const [buy, setBuy] = useState(initState);
-  const [result, setResult] = useState(null);
-  const [addResultModal, setAddResultModal] = useState(null);
+  const [result, setResult] = useState(null); //삭제 모달창
+  const [addResultModal, setAddResultModal] = useState(null); //참여 모달창
   const { moveToList, moveToModify } = useCustomMove();
   const loginInfo = useSelector((state) => state.loginSlice);
   const email = loginInfo?.email;
@@ -74,22 +72,20 @@ const ReadComponent = ({ buyNo }) => {
       setCurrent(data.current);
       setMax(data.max);
     });
-  }, [buyNo, info]);
+  }, [buyNo, info, addResultModal]);
 
   useEffect(() => {
-    if (email) {
-      //로그인시에만 실행
-      likeInfoBuy(buyNo, ino).then((data) => {
+    if (email) { // 로그인시에만 실행
+      likeInfo('buy',buyNo, ino).then((data) => {
         setLike(data);
-        if (data) {
-          //data가 있으면 이미 좋아요 누른글
+        if (data) { //data가 있으면 이미 좋아요 누른 글
           setIsLiked(true);
         } else {
           setIsLiked(false);
         }
       });
     }
-  }, [email, info]);
+  }, [buyNo, ino, email, info]);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -98,13 +94,13 @@ const ReadComponent = ({ buyNo }) => {
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('buyNo', buyNo); // buyNo 값을 formData에 추가
     if(current === max){
-      setResult('더이상 참여할수 없습니다.');
+      setAddResultModal('더이상 참여할수 없습니다.');
     } else{
       try {
         await enterChatRoomBuy(formData); // FormData를 인자로 전달하여 호출
-        setResult('참여가 완료되었습니다.');
+        setAddResultModal('참여가 완료되었습니다.');
       } catch (error) {
-        setResult('이미 참여 중입니다.', error);
+        setAddResultModal('이미 참여 중입니다.', error);
       }
     }
   };
@@ -114,24 +110,22 @@ const ReadComponent = ({ buyNo }) => {
   };
 
   const handleClickDelete = () => {
-    deleteLikeBuy(buyNo)
-    .then(() => {
-      return deleteOne(buyNo);
-    })
-    .then((result) => {
-      console.log('delete result : ' + result);
-      setResult('삭제되었습니다');
-      moveToList()
-    });
+    deleteOne(buyNo);
+    setResult('삭제되었습니다');
   };
 
-  const closeModal = () => {
+  const closeDeleteModal = () => {
     setResult(null);
-    window.location.reload();
+    moveToList();
   };
 
   const closeInfoModal = () => {
     setInfo(null);
+  };
+
+  const closeBasicModal = () => {
+    setAddResultModal(null);
+    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -140,15 +134,11 @@ const ReadComponent = ({ buyNo }) => {
       return;
     }
     if (isLiked) {
-      unlikeBuy(like.likeNo);
+      unlikeClick(like.likeNo);
       decreaseLike(buyNo);
       setInfo('좋아요 목록에서 삭제되었습니다');
     } else {
-      const data = {
-        id: ino,
-        buyNo: buyNo,
-      };
-      likeBuy(data);
+      likeClick('buy', buyNo, ino);
       increaseLike(buyNo);
       setInfo('좋아요 목록에 추가되었습니다');
     }
@@ -272,8 +262,8 @@ const ReadComponent = ({ buyNo }) => {
           )}
           {/* </div>
           </div> */}
-          {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeModal} />}
-          {addResultModal && <ResultModal title={'알림'} content={`${addResultModal}`} callbackFn={() => setAddResultModal(null)} />}
+          {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
+          {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
           <ModalComponent show={showModal} onClose={handleCloseModal} />
           {/* 좋아요 기능 알림 모달 */}
           {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}

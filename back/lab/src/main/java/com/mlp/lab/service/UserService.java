@@ -3,21 +3,18 @@ package com.mlp.lab.service;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.mlp.lab.dto.UserDto;
 import com.mlp.lab.entity.User;
 import com.mlp.lab.repository.UserRepository;
-import com.mlp.lab.util.CustomFileUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +25,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UserService {
   // final 붙여야지 생성자 만들어줌(RequiredArgsConstructor)
-  private final ModelMapper modelMapper;
+  // private final ModelMapper modelMapper;
   private final UserRepository userRepository;
-  private final CustomFileUtil fileUtil; // CustomFileUtil 추가
 
   // 이럴 때 비밀번호는 인코딩해서 넣어줘야된다.(스프링 시큐리티)
   // private final PasswordEncoder passwordEncoder;

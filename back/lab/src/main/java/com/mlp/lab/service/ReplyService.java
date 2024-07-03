@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mlp.lab.dto.ReplyDto;
 import com.mlp.lab.entity.Community;
 import com.mlp.lab.entity.Reply;
+import com.mlp.lab.entity.User;
 import com.mlp.lab.repository.CommunityRepository;
 import com.mlp.lab.repository.ReplyRepository;
+import com.mlp.lab.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +25,7 @@ public class ReplyService {
     private final ModelMapper modelMapper;
     private final ReplyRepository replyRepository;
     private final CommunityRepository communityRepository;
+    private final UserRepository userRepository;
 
     public void addReply(ReplyDto replyDto){
         Reply reply = modelMapper.map(replyDto, Reply.class);
@@ -48,4 +51,9 @@ public class ReplyService {
         replyRepository.modify(replyNo, editReply);
     }
 
+    public List<ReplyDto> mylist(Long id) {
+        User user = userRepository.findByUserId(id);
+        List<Reply> replies = replyRepository.findByUser(user);
+        return replies.stream().map(reply -> modelMapper.map(reply, ReplyDto.class)).collect(Collectors.toList());
+    }
 }

@@ -108,7 +108,7 @@ const ModifyComponent = ({ roomNo }) => {
         
         const formData = new FormData();
         const daysBetween = calculateDaysBetweenDates(shareRoom.rentStartDate, shareRoom.rentEndDate);
-        const averFee = shareRoom.rentFee / daysBetween;
+        const averFee = Math.floor(shareRoom.rentFee / daysBetween);
 
         for (let i = 0; i < files.length; i++) {
             formData.append("files", files[i]);

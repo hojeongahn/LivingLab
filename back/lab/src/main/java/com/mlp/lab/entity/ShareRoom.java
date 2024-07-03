@@ -1,19 +1,15 @@
 package com.mlp.lab.entity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mlp.lab.dto.ShareRoomDto;
+import com.mlp.lab.entity.like.Likes;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,14 +23,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @Table(name = "shareroom")
 @ToString(exclude = "imageList")
-public class ShareRoom {
+public class ShareRoom extends BaseTimeEntity{
     @Id // 기본키 설정
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roomNo;
-    private Integer userId;
+    private Long roomNo;
     private String title;
     private String content;
-    private LocalDateTime regDate;
     private String rentFee;
     private Character parking;
     private String location;
@@ -46,6 +40,14 @@ public class ShareRoom {
     private Integer days;
     private boolean flag;
     private Integer roomHit;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", referencedColumnName = "id")
+    private User user;
+
+    @OneToMany(mappedBy = "shareRoom", cascade = CascadeType.REMOVE) // 게시글 삭제시 좋아요 정보도 삭제
+    @JsonManagedReference
+    private List<Likes> likes;
 
     @ElementCollection
     @Builder.Default

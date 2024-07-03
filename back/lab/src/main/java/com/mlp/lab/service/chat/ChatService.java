@@ -25,7 +25,7 @@ public class ChatService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void sendMessage(Long userId, ChatDataRequestDto.Message message) {
+    public void sendMessage(Long userId, ChatDataRequestDto message) {
         ChatRoom chatRoom = chatRoomRepository.findByChatroomId(message.getRoomId());
         User user = userRepository.findByUserId(userId);
 
@@ -42,6 +42,6 @@ public class ChatService {
         sendMessage.setSender(user.getNickname());
         sendMessage.setType(ChatDataResponseDto.Message.MessageType.TALK);
 
-        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), sendMessage);
+        messagingTemplate.convertAndSend("/topic/chat/room/" + message.getRoomId(), sendMessage);
     }
 }

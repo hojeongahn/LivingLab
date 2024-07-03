@@ -17,7 +17,6 @@ import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
 import com.mlp.lab.entity.Community;
-import com.mlp.lab.entity.CommunityImage;
 import com.mlp.lab.repository.CommunityRepository;
 import com.mlp.lab.repository.UserRepository;
 
@@ -309,5 +308,12 @@ public class CommunityService {
                 .totalCount(totalCount)
                 .build();
         return responseDto;
+    }
+
+    public Character getType(Long commNo) {
+        Optional<Community> result = communityRepository.findById(commNo);
+        Community community = result.orElseThrow();
+        Character ch = community.getType();
+        return ch;
     }
 }

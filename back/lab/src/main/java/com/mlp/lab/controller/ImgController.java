@@ -28,8 +28,8 @@ public class ImgController {
   @PostMapping("/modify/updateImg")
   public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
       @RequestParam("email") String email) {
-    String fileName = file.getOriginalFilename();
-    String contentType = file.getContentType();
+    // String fileName = file.getOriginalFilename();
+    // String contentType = file.getContentType();
 
     try {
       imgService.updateUserImg(email, file);

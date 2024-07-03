@@ -2,7 +2,6 @@ package com.mlp.lab.service;
 
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +18,7 @@ import com.mlp.lab.dto.ShareRoomDto;
 import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.entity.ShareRoomImage;
 import com.mlp.lab.repository.ShareRoomRepository;
+import com.mlp.lab.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class ShareRoomService {
     private final ShareRoomRepository shareRoomRepository;
+    private final UserRepository userRepository;
+
     public RoomPageResponseDto<ShareRoomDto> list(RoomPageRequestDto roomPageRequestDto,String search, String sort) {
 
         Pageable pageable = PageRequest.of(
@@ -98,20 +100,22 @@ public class ShareRoomService {
         return responseDTO;
     }
 
-    public void add(ShareRoomDto shareRoomDto) { // 룸쉐어 등록(이미지 포함)
+    public ShareRoom add(ShareRoomDto shareRoomDto) { // 룸쉐어 등록(이미지 포함)
         ShareRoom shareRoom = ShareRoom.DtoToEntity(shareRoomDto);
+        shareRoom.setUser(userRepository.findByUserId(shareRoomDto.getId()));
         shareRoomRepository.save(shareRoom);
+        return shareRoom;
     }
 
-    public ShareRoomDto get(Integer roomNo) {
-        Optional<ShareRoom> result = shareRoomRepository.findById(roomNo);
+    public ShareRoomDto get(Long roomNo) {
+        Optional<ShareRoom> result = shareRoomRepository.findById(roomNo.intValue());
         ShareRoom shareRoom = result.orElseThrow();
         ShareRoomDto shareRoomDto = shareRoom.entityToDto(shareRoom);
         return shareRoomDto;
     }
 
-    public void remove(Integer roomNo) {
-        shareRoomRepository.deleteById(roomNo);
+    public void remove(Long roomNo) {
+        shareRoomRepository.deleteById(roomNo.intValue());
     }
 
     public void modify(ShareRoomDto shareRoomDto) { // 수정하기
@@ -187,14 +191,14 @@ public class ShareRoomService {
         return dtoList;
     }
 
-    public void increase(Integer roomNo) { // 좋아요 +1
+    public void increase(Long roomNo) { // 좋아요 +1
         Optional<ShareRoom> result = shareRoomRepository.findById(roomNo.intValue());
         ShareRoom shareRoom = result.orElseThrow();
         shareRoom.setRoomHit(shareRoom.getRoomHit()+1);
         shareRoomRepository.save(shareRoom);
     }
 
-    public void decrease(Integer roomNo) { // 좋아요 -1
+    public void decrease(Long roomNo) { // 좋아요 -1
         Optional<ShareRoom> result = shareRoomRepository.findById(roomNo.intValue());
         ShareRoom shareRoom = result.orElseThrow();
         shareRoom.setRoomHit(shareRoom.getRoomHit()-1);
