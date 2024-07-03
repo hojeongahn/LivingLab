@@ -91,7 +91,7 @@ const PartComponent = ({ buyNo }) => {
   };
 
   return (
-    <div className="flex justify-center bg-slate-100 w-1/5 p-4 ml-10 mr-20 rounded-lg h-30">
+    <div className="side-part">
       <div className="w-full">
         <div className="bg-blue-200 rounded-lg text-center p-4">
           <h2>참여 인원</h2>
