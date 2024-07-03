@@ -138,7 +138,7 @@ const ChatWindow = ({ room }) => {
         </div>
         {/* 사이드바 토글 버튼 */}
         <div className="text-sm flex items-center">
-          <span className="bg-white px-2 py-1 ml-1 rounded text-black font-bold">3명 참여중</span>
+          {/* <span className="bg-white px-2 py-1 ml-1 rounded text-black font-bold">3명 참여중</span> */}
           <button
             onClick={toggleSidebar}
             className="ml-2 bg-gray-700 hover:bg-gray-500 text-white rounded-full w-8 h-8 flex items-center justify-center">
