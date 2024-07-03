@@ -69,6 +69,21 @@ export const exitChatRoomTeam = async (formData) => {
       return response.data;
 };
 
+// 자취방쉐어 채팅방의 유저 조회(참여하기 표시)
+export const chatUserInfoShare = async (roomNo) => {
+  const res = await axios.get(`${host}/room/shareRoom/gett`, {
+    params: { roomNo }
+  });
+  return res.data;
+};
+
+// 자취방쉐어 채팅방 입장(문의)
+export const enterChatRoomShare = async (formData) => {
+  const response = await axios.post(`${host}/room/shareRoom/enter`, formData);
+      return response.data;
+};
+
+
 
 
 
