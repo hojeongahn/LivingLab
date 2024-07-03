@@ -170,10 +170,14 @@ const ListComponent = ({ search, sort }) => {
                   </div>
                 </div>
                 <div className="flex justify-end w-full">
-                  <div className="font-bold text-green-700 text-base">{formatDeadline(team.deadline)}</div>
+                  <div className={`font-bold text-base ${team.recruit === '모집 중' ? 'text-green-700' : 'text-gray-900'}`}>
+                      {formatDeadline(team.deadline)}
+                  </div>
                 </div>
                 <div className="flex justify-end">
-                  <div className="font-bold text-red-500 text-base">{team.recruit}</div>
+                  <div className={`font-bold text-base ${team.recruit === '모집 중' ? 'text-red-500' : 'text-gray-900'}`}>
+                      {team.recruit}
+                  </div>
                 </div>
                 <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900">{team.title}</div>
                 <div className="mb-3 text-base text-gray-700">
