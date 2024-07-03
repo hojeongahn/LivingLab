@@ -175,7 +175,7 @@ const ReadComponent = ({ teamNo }) => {
 
   return (
     <>
-      <div className=" bg-slate-200 w-1/4 rounded-md px-4 py-4">
+      <div className=" side-map">
         <LandingComponent />
       </div>
       <div className="bg-slate-100 w-[1000px] ml-5 p-4 rounded-lg">
