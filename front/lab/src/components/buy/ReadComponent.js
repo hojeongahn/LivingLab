@@ -175,7 +175,7 @@ const ReadComponent = ({ buyNo }) => {
       <div className="bg-slate-100 w-[1000px] ml-auto p-4 rounded-lg">
         <div className="flex justify-between items-center">
           <span className="text-left font-semibold ml-2 items-center flex">
-            {buy.flag ? '모집 마감' : '모집 중'}
+            {buy.flag ? '모집 종료' : '모집 중'}
             <img src={iconNext} alt="..." className="w-7 inline" />
           </span>
           <span className="text-right text-base">{formatDeadline(buy.deadline)}</span>
@@ -235,9 +235,9 @@ const ReadComponent = ({ buyNo }) => {
                     삭제하기
                   </button>
                   {/* </div> */}
-                  {/* 글쓴이는 자동 참여하 참여하기 필요 X */}
+                  {/* 글쓴이는 자동 참여해서 참여하기 필요 X */}
                   <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500" >
-                    참여하기 
+                    마감하기 
                   </button>
                   <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
                     목록
