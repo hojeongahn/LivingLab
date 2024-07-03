@@ -7,11 +7,6 @@ import Stomp from 'webstomp-client';  // Stomp.js의 브라우저 버전인 webs
 import { useSelector } from 'react-redux';
 import { getChatHistory } from '../../../api/chatApi';
 
-const initState = {
-  id: 0,
-  text: '',
-  sender: '',
-};
 
 const ChatWindow = ({ room }) => {
   const navigate = useNavigate();
@@ -48,6 +43,7 @@ const ChatWindow = ({ room }) => {
       try {
         const res = await getChatHistory(room.roomId); // 수정된 API 호출
         setMessages(res.data.messageHistory);
+
       } catch (error) {
         console.error('채팅 기록 불러오기 실패: ', error);
       }
@@ -154,7 +150,7 @@ const ChatWindow = ({ room }) => {
         {/* 참여자 목록 사이드바 */}
         <div
           className={`absolute top-0 right-0 h-full bg-white shadow-lg transition-transform transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
-            } w-1/3`}
+            } w-1/3 flex flex-col`}
         >
           <div className="p-4 border-b">
             <h2 className="text-base font-bold">참여자 목록</h2>
@@ -164,11 +160,20 @@ const ChatWindow = ({ room }) => {
               &times;
             </button>
           </div>
-          <div className="p-4 text-base">
+          <div className="flex-grow p-4 overflow-y-auto text-base">
             <ul>
               <li>참여자 1</li>
               <li>참여자 2</li>
+              <li>참여자 3</li>
             </ul>
+          </div>
+          <div className="p-4 border-t">
+            <button
+              onClick={toggleSidebar}
+              className="w-full py-2 px-4 text-base bg-red-400 text-white font-bold rounded hover:bg-red-500"
+            >
+              나가기
+            </button>
           </div>
         </div>
       </div>
