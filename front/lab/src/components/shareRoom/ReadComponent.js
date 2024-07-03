@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_SERVER_HOST, getOne, deleteOne, increaseLike, decreaseLike } from '../../api/shareRoomApi';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
+import { postCreateRoom, chatUserInfoShare } from '../../api/chatApi';
 import useRoomCustomMove from '../../hooks/useRoomCustomMove';
 import { useSelector } from 'react-redux';
 import MapComponentForRoom from '../../components/shareRoom/MapComponentForRoom';
@@ -9,10 +10,13 @@ import ResultModal from '../common/ResultModal';
 import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import InfoModal from '../common/InfoModal';
+import BasicModal from '../common/BasicModal';
+
 
 const host = API_SERVER_HOST;
 
 const initState = {
+  id: 0,
   roomNo: 0,
   title: '',
   rentFee: 0,
@@ -32,6 +36,7 @@ const initState2 = {
 const ReadComponent = ({ roomNo }) => {
   const [shareRoom, setShareRoom] = useState(initState);
   const [like, setLike] = useState(initState2);
+  const [addResultModal, setAddResultModal] = useState(null); //참여 모달창
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [info, setInfo] = useState(null);
   const { moveToModify, moveToList } = useRoomCustomMove();
@@ -40,13 +45,14 @@ const ReadComponent = ({ roomNo }) => {
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const email = loginState?.email;
   const ino = loginState.id;
+  const [roomData, setRoomData] = useState(null);
 
   useEffect(() => {
     getOne(roomNo).then((data) => {
       console.log(data);
       setShareRoom(data);
     });
-  }, [roomNo, info]);
+  }, [roomNo, info, addResultModal]);
 
   useEffect(() => {
     if (email) {
@@ -62,6 +68,52 @@ const ReadComponent = ({ roomNo }) => {
       });
     }
   }, [email, info, roomNo, ino]);
+
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      try {
+        const response = await chatUserInfoShare(roomNo);
+        console.log('응답 데이터:', response);
+
+        if (response.result) {
+          setRoomData(response.data);
+        } else {
+          console.error('특정 채팅방 조회 실패:', response.message);
+        }
+      } catch (error) {
+        console.error('API 요청 중 오류 발생:', error);
+      }
+    };
+
+    fetchRoomData();
+  }, [roomNo]);
+
+  const handleClickAdd = async () => {  //동네장터는 참여하기 클릭 시 채팅방 생성(1대1 채팅방)
+    if (roomData) {
+      try {
+        const formData = new FormData();
+        formData.append('id', ino); 
+        formData.append('title', shareRoom.title);
+        const createRequest = { roomNo };
+
+        // 각 채팅방 정보에 접근하여 reader 배열에서 id가 ino인 사용자가 포함되어 있는지 확인
+        const isAlreadyJoined = roomData.some(room => room.reader.some(reader => reader.id === ino));
+
+        if (isAlreadyJoined) {
+          setAddResultModal('이미 문의한 글입니다.');
+        } else {
+          // 채팅방 생성 요청
+          await postCreateRoom(formData.get('id'), formData.get('title'), '자취방쉐어', createRequest);
+          setAddResultModal('문의가 완료되었습니다.');
+        }
+      } catch (error) {
+        console.error('API 요청 중 오류 발생:', error);
+        setAddResultModal('API 요청 중 오류가 발생했습니다.');
+      }
+    } else {
+      console.warn('채팅방 데이터가 로드되지 않았습니다.');
+    }
+  };
 
   const handleClickDelete = () => {
     deleteOne(roomNo);
@@ -86,6 +138,11 @@ const ReadComponent = ({ roomNo }) => {
 
   const closeInfoModal = () => {
     setInfo(null);
+  };
+
+  const closeBasicModal = () => {
+    setAddResultModal(null);
+    window.location.reload();
   };
 
   // 좋아요 버튼 클릭
@@ -244,7 +301,7 @@ const ReadComponent = ({ roomNo }) => {
                 <div id="buttons" className="flex items-center w-full mt-8">
                   <div>
                     <button className="inline-flex items-center justify-center w-[211px] px-4 text-white bg-blue-600 h-[56px] text-sm leading-6 font-bold rounded-sm cursor-pointer transition-all duration-150 ease-out">
-                      <span className="">문의하기</span>
+                      <span className="" onClick={handleClickAdd}>문의하기</span>
                     </button>
                   </div>
                   <div className="w-[85px] ml-4 border">
@@ -273,6 +330,7 @@ const ReadComponent = ({ roomNo }) => {
         </div>
       </div>
       {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeResultModal} />}
+      {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
     </div>
   );
 }

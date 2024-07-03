@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/teamApi';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
-import { enterChatRoomTeam } from '../../api/chatApi';
+import { enterChatRoomTeam, chatUserInfoTeam } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
 import useCustomMove from '../../hooks/useCustomMove';
@@ -99,10 +99,17 @@ const ReadComponent = ({ teamNo }) => {
       setAddResultModal('더이상 참여할수 없습니다.');
     } else {
       try {
-        await enterChatRoomTeam(formData); // FormData를 인자로 전달하여 호출
-        setAddResultModal('참여가 완료되었습니다.');
+        const data = await chatUserInfoTeam(teamNo);
+        const readerIds = data.data.readerId;
+
+        if(readerIds.includes(ino)){
+          setAddResultModal('이미 참여 중입니다.');
+        } else {
+          await enterChatRoomTeam(formData); // FormData를 인자로 전달하여 호출
+          setAddResultModal('참여가 완료되었습니다.');
+        }
       } catch (error) {
-        setAddResultModal('이미 참여 중입니다.', error);
+        setAddResultModal('참여 중 오류가 발생했습니다.');
       }
     }
   };

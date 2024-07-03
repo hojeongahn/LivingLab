@@ -17,6 +17,7 @@ import com.mlp.lab.dto.chat.ChatRoomDataRequestDto;
 import com.mlp.lab.dto.chat.ChatRoomDataResponseDto;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.Team;
+import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.repository.BuyRepository;
 import com.mlp.lab.repository.TeamRepository;
 import com.mlp.lab.service.BuyService;
@@ -35,7 +36,6 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final BuyService buyService;
     private final TeamService teamService;
-    private final MarketService marketService;
     private final ShareRoomService shareRoomService;
     private final BuyRepository buyRepository;
     private final TeamRepository teamRepository;
@@ -133,46 +133,28 @@ public class ChatRoomController {
         return ResponseDto.setSuccessData("특정 채팅방 조회", roomData);
     }
 
-    // 동네장터 특정 채팅방 입장
-    @PostMapping("/room/market/enter")
-    @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> enterMarketRoom(@RequestParam(name="userId") Long userId, @RequestParam(name = "marketNo") Long marketNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.enterRoomMarket(userId, marketNo);
-        marketService.get(marketNo);
-        return ResponseDto.setSuccessData("채팅방 입장", roomData);
-    }
-
     // 동네장터 특정 채팅방 퇴장
-    @PostMapping("/room/market/exit")
-    @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> exitMarketRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="marketNo") Long marketNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomMarket(userId, marketNo);
-        marketService.get(marketNo);
-        return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
-    }
+    // @PostMapping("/room/market/exit")
+    // @ResponseBody
+    // public ResponseDto<ChatRoomDataResponseDto.Info> exitMarketRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="marketNo") Long marketNo) {
+    //     ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomMarket(userId, marketNo);
+    //     marketService.get(marketNo);
+    //     return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
+    // }
 
     // 동네장터 특정 채팅방 조회
     @GetMapping("/room/market/get")
     @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> chatUserInfoMarket(@RequestParam(name="marketNo") Long marketNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.findRoomByMarketNo(marketNo);
+    public ResponseDto<List<ChatRoom>> chatUserInfoMarket(@RequestParam(name="marketNo") Long marketNo) {
+        List<ChatRoom> roomData = chatRoomService.findRoomByMarketNo(marketNo);
         return ResponseDto.setSuccessData("특정 채팅방 조회", roomData);
-    }
-
-    // 자취방쉐어 특정 채팅방 입장
-    @PostMapping("/room/shareRoom/enter")
-    @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> enterShareRoom(@RequestParam(name="userId") Long userId, @RequestParam(name = "roomNo") Long roomNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.enterRoomShare(userId, roomNo);
-        shareRoomService.get(roomNo);
-        return ResponseDto.setSuccessData("채팅방 입장", roomData);
     }
 
     // 자취방쉐어 특정 채팅방 조회
     @GetMapping("/room/shareRoom/get")
     @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> chatUserInfoShare(@RequestParam(name="roomNo") Long roomNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.findRoomByMarketNo(roomNo);
+    public ResponseDto<List<ChatRoom>> chatUserInfoShare(@RequestParam(name="roomNo") Long roomNo) {
+        List<ChatRoom> roomData = chatRoomService.findRoomByRoomNo(roomNo);
         return ResponseDto.setSuccessData("특정 채팅방 조회", roomData);
     }
 }

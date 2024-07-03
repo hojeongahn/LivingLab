@@ -7,7 +7,6 @@ import { getUser } from './../../api/userApi';
 import { useSelector } from 'react-redux';
 import iconNext from '../../resources/images/icon-next.png';
 import iconEdit from '../../resources/images/iconEdit.png';
-import { postCreateRoom } from '../../api/chatApi';
 
 const initState = {
   id: 0,
@@ -150,9 +149,7 @@ const AddComponent = () => {
       formData.append('marketHit', market.marketHit);
       formData.append('price', market.price);
 
-      const response = await postAddMarket(formData);
-      const createRequest = { marketNo: response.marketNo };
-      await postCreateRoom(formData.get('id'), formData.get('title'), '동네장터', createRequest);
+      postAddMarket(formData);
       setResult('게시글이 등록되었습니다');
     } catch (error) {
       console.error('Error adding post:', error);
