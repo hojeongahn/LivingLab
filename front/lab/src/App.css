@@ -1101,7 +1101,3 @@ select option:disabled {
   background: white; /* 뒷면 배경색 설정 */
   transform: rotateX(180deg); /* 초기 상태에서 뒷면을 회전 */
 }
-
-.card1:hover {
-  transform: rotateX(180deg); /* 호버 시 카드 회전 */
-}
