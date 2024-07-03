@@ -17,7 +17,6 @@ import com.mlp.lab.dto.BuyDto;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.BuyImage;
-import com.mlp.lab.entity.Market;
 import com.mlp.lab.repository.BuyRepository;
 import com.mlp.lab.repository.UserRepository;
 import com.mlp.lab.repository.chat.ChatRoomRepository;

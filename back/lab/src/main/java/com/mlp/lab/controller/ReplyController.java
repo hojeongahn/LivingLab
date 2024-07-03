@@ -41,4 +41,9 @@ public class ReplyController {
     public void modifyReply(@PathVariable(name = "replyNo") Long replyNo, @RequestBody ReplyDto replyDto) {
         replyService.modify(replyNo, replyDto);
     }
+
+    @GetMapping("/mylist/{id}")
+    public List<ReplyDto> myList(@PathVariable(name = "id") Long id) {
+        return replyService.mylist(id);
+    }
 }

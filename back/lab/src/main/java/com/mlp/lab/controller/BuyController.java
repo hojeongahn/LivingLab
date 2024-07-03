@@ -20,7 +20,6 @@ import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.dto.BuyDto;
-import com.mlp.lab.dto.MarketDto;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.service.BuyService;
 import com.mlp.lab.util.CustomFileUtilBuy;

@@ -7,15 +7,16 @@ import PostComponentForRoom from '../../components/shareRoom/PostComponentForRoo
 import Image1 from '../../resources/images/radio1.svg';
 import Image2 from '../../resources/images/radio2.svg';
 import iconEdit from '../../resources/images/iconEdit.png';
+import { postCreateRoom } from '../../api/chatApi';
 
 const AddComponent = () => {
   const [addResultModal, setAddResultModal] = useState(null);
   const [result, setResult] = useState(null);
   const [postImageFiles, setPostImageFiles] = useState([]); // 이미지 파일 프리뷰
   const { moveToList } = useRoomCustomMove();
-  const loginState = useSelector((state) => state.loginSlice);
   const imgRef = useRef();
-  const [userId, setUserId] = useState(loginState.id);
+  const loginInfo = useSelector((state) => state.loginSlice);
+  const ino = loginInfo.id;
 
   const setAddress = (address) => {
     setShareRoom((prev) => ({ ...prev, location: address }));
@@ -68,7 +69,7 @@ const AddComponent = () => {
     option1: '',
     location: '',
     files: [],
-    userId: userId,
+    id : 0,
     roomHit: 0,
     uploadFileNames: [],
   };
@@ -87,60 +88,68 @@ const AddComponent = () => {
     return Math.round(daysDiff); // 소수점은 제거하고 정수로 반환
   };
 
-  const handleClickAdd = (e) => {
-    const files = imgRef.current.files;
-    const formData = new FormData();
-    const daysBetween = calculateDaysBetweenDates(shareRoom.rentStartDate, shareRoom.rentEndDate);
-    const averFee = Math.ceil(shareRoom.rentFee / daysBetween);
+  const handleClickAdd = async () => {
+    try {
+      const files = imgRef.current.files;
+      const formData = new FormData();
+      const daysBetween = calculateDaysBetweenDates(shareRoom.rentStartDate, shareRoom.rentEndDate);
+      const averFee = Math.ceil(shareRoom.rentFee / daysBetween);
 
-    if (!shareRoom.title || !shareRoom.content) {
-      setAddResultModal('제목과 내용을 입력해주세요');
-      return;
-    }
-    if (!shareRoom.rentFee) {
-      setAddResultModal('금액을 입력해 주세요');
-      return;
-    }
-    if (!shareRoom.option1) {
-      setAddResultModal('옵션을 입력해 주세요');
-      return;
-    }
-    if (!shareRoom.parking) {
-      setAddResultModal('주차 가능여부를 선택해 주세요');
-      return;
-    }
-    if (!shareRoom.rentStartDate || !shareRoom.rentEndDate) {
-      setAddResultModal('시작일과 종료일을 입력해 주세요');
-      return;
-    }
-    if (!shareRoom.location) {
-      setAddResultModal('주소를 입력해주세요');
-      return;
-    }
-    if (!files[0]) {
-      setAddResultModal('사진을 등록해주세요');
-      return;
-    }
+      if (!shareRoom.title || !shareRoom.content) {
+        setAddResultModal('제목과 내용을 입력해주세요');
+        return;
+      }
+      if (!shareRoom.rentFee) {
+        setAddResultModal('금액을 입력해 주세요');
+        return;
+      }
+      if (!shareRoom.option1) {
+        setAddResultModal('옵션을 입력해 주세요');
+        return;
+      }
+      if (!shareRoom.parking) {
+        setAddResultModal('주차 가능여부를 선택해 주세요');
+        return;
+      }
+      if (!shareRoom.rentStartDate || !shareRoom.rentEndDate) {
+        setAddResultModal('시작일과 종료일을 입력해 주세요');
+        return;
+      }
+      if (!shareRoom.location) {
+        setAddResultModal('주소를 입력해주세요');
+        return;
+      }
+      if (!files[0]) {
+        setAddResultModal('사진을 등록해주세요');
+        return;
+      }
 
-    for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
-    }
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
 
-    // 파일이 아닌 데이터를 formData에 추가
-    formData.append('userId', shareRoom.userId);
-    formData.append('title', shareRoom.title);
-    formData.append('content', shareRoom.content);
-    formData.append('rentFee', shareRoom.rentFee);
-    formData.append('parking', shareRoom.parking);
-    formData.append('option1', shareRoom.option1);
-    formData.append('rentEndDate', shareRoom.rentEndDate);
-    formData.append('rentStartDate', shareRoom.rentStartDate);
-    formData.append('averFee', averFee);
-    formData.append('days', daysBetween);
-    formData.append('roomHit', shareRoom.roomHit); // roomHit 값을 formData에 추가
-    formData.append('location', shareRoom.location);
-    postAddShareRoom(formData);
-    setResult('게시글이 등록되었습니다');
+      // 파일이 아닌 데이터를 formData에 추가
+      formData.append('id', ino);
+      formData.append('title', shareRoom.title);
+      formData.append('content', shareRoom.content);
+      formData.append('rentFee', shareRoom.rentFee);
+      formData.append('parking', shareRoom.parking);
+      formData.append('option1', shareRoom.option1);
+      formData.append('rentEndDate', shareRoom.rentEndDate);
+      formData.append('rentStartDate', shareRoom.rentStartDate);
+      formData.append('averFee', averFee);
+      formData.append('days', daysBetween);
+      formData.append('roomHit', shareRoom.roomHit); // roomHit 값을 formData에 추가
+      formData.append('location', shareRoom.location);
+
+      const response = await postAddShareRoom(formData);
+      const createRequest = { roomNo: response.roomNo };
+      await postCreateRoom(formData.get('id'), formData.get('title'), '자취방쉐어', createRequest);
+      setResult('게시글이 등록되었습니다');
+    } catch (error) {
+      console.error('Error adding post:', error);
+      setAddResultModal('게시글 등록에 실패했습니다.');
+    }
   };
 
   const closeModal = () => {

@@ -152,7 +152,6 @@ const AddComponent = () => {
 
       const response = await postAddMarket(formData);
       const createRequest = { marketNo: response.marketNo };
-      console.log("데이터: "+response, createRequest)
       await postCreateRoom(formData.get('id'), formData.get('title'), '동네장터', createRequest);
       setResult('게시글이 등록되었습니다');
     } catch (error) {

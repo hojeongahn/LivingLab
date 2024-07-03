@@ -6,6 +6,8 @@ import useCustomMove from '../../hooks/useCustomMove';
 import PageComponent from '../common/PageComponent';
 import nolist from "../../resources/images/nolist2.png"
 import heart from "../../resources/images/heart_full.png"
+import { getUser } from '../../api/userApi';
+import { useSelector } from 'react-redux';
 
 const initState = {
   dtoList: [], // 한 페이지에 불러오는 게시물 갯수
@@ -34,6 +36,10 @@ const ListComponent = ({ search, sort }) => {
   const [serverData, setServerData] = useState(initState);
   const [selectedCategory, setSelectedCategory] = useState(null); // 선택된 카테고리 
   const [user, setUser] = useState(initUser);
+
+  const loginInfo = useSelector((state) => state.loginSlice);
+  const email = loginInfo?.email;
+  const ino = loginInfo.id;
 
   const checkDeadline = (team) => {
     const currentDate = new Date();
@@ -83,6 +89,14 @@ const ListComponent = ({ search, sort }) => {
   const handleCategoryClick = (category) => { // 카테고리 태그 클릭 이벤트
     setSelectedCategory(category === selectedCategory ? null : category);
   };
+
+  useEffect(() => {
+    if (email) {
+      getUser(ino).then((data) => {
+        setUser(data);
+      });
+    }
+  }, [ino, email]);
 
   useEffect(() => {
     getList({ page, size }, search, sort, selectedCategory, user.latitude, user.longitude).then((data) => {

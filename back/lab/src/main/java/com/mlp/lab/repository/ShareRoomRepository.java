@@ -1,7 +1,5 @@
 package com.mlp.lab.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -53,10 +51,10 @@ public interface ShareRoomRepository extends JpaRepository<ShareRoom, Integer> {
     Page<Object[]> latestShareRoomList(Pageable pageable);
 
     //마이페이지 내가 작성한 글
-    @Query("SELECT s FROM ShareRoom s WHERE s.userId = :id ORDER BY s.roomNo DESC")
+    @Query("SELECT s FROM ShareRoom s WHERE s.user.id = :id ORDER BY s.roomNo DESC")
     Page<ShareRoom> findByUser(@Param(value = "id") Long id, Pageable pageable);
 
-    @Query("select s, si from ShareRoom s left join s.imageList si where s.userId = :id and si.ord = 0 order by roomNo desc")
+    @Query("select s, si from ShareRoom s left join s.imageList si where s.user.id = :id and si.ord = 0 order by roomNo desc")
     Page<Object[]> findAllByUser(@Param(value = "id") Long id, Pageable pageable);
 
 }
