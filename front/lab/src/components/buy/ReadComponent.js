@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/buyApi';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
-import { enterChatRoomBuy } from '../../api/chatApi';
+import { enterChatRoomBuy, chatUserInfoBuy } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
 import useCustomMove from '../../hooks/useCustomMove';
@@ -51,8 +51,8 @@ const ReadComponent = ({ buyNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
-  const [ current, setCurrent ] = useState(0);
-  const [ max, setMax ] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [max, setMax] = useState(0);
 
   // 이미지 슬라이더
   const settings = {
@@ -68,7 +68,7 @@ const ReadComponent = ({ buyNo }) => {
 
   useEffect(() => {
     getOne(buyNo).then((data) => {
-      console.log("data값은:",data);
+      console.log("data값은:", data);
       setBuy(data);
       setCurrent(data.current);
       setMax(data.max);
@@ -77,7 +77,7 @@ const ReadComponent = ({ buyNo }) => {
 
   useEffect(() => {
     if (email) { // 로그인시에만 실행
-      likeInfo('buy',buyNo, ino).then((data) => {
+      likeInfo('buy', buyNo, ino).then((data) => {
         setLike(data);
         if (data) { //data가 있으면 이미 좋아요 누른 글
           setIsLiked(true);
@@ -94,14 +94,21 @@ const ReadComponent = ({ buyNo }) => {
     const formData = new FormData();
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('buyNo', buyNo); // buyNo 값을 formData에 추가
-    if(current === max){
+    if (current === max) {
       setAddResultModal('더이상 참여할수 없습니다.');
-    } else{
+    } else {
       try {
-        await enterChatRoomBuy(formData); // FormData를 인자로 전달하여 호출
-        setAddResultModal('참여가 완료되었습니다.');
+        const data = await chatUserInfoBuy(buyNo);
+        const readerIds = data.data.readerId;
+
+        if (readerIds.includes(ino)) { 
+          setAddResultModal('이미 참여 중입니다.');
+        } else {
+          await enterChatRoomBuy(formData); // FormData를 인자로 전달하여 호출
+          setAddResultModal('참여가 완료되었습니다.');
+        }
       } catch (error) {
-        setAddResultModal('이미 참여 중입니다.', error);
+        setAddResultModal('참여 중 오류가 발생했습니다.');
       }
     }
   };
@@ -238,7 +245,7 @@ const ReadComponent = ({ buyNo }) => {
                   {/* </div> */}
                   {/* 글쓴이는 자동 참여해서 참여하기 필요 X */}
                   <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500" >
-                    마감하기 
+                    마감하기
                   </button>
                   <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
                     목록
