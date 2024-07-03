@@ -219,6 +219,7 @@ const ReadComponent = ({ teamNo }) => {
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{team.location}
           </div>
+          <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {team.createdDate}</div>
           <div className="col-start-2 col-span-8"></div>
           <div className="col-start-8 col-span-2 text-right text-base">{team.nickname}</div>
           <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{team.content}</div>
