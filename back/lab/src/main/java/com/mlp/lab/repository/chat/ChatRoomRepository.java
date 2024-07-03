@@ -24,9 +24,9 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
        ChatRoom findByTeam_TeamNo(Long teamNo);
 
-       ChatRoom findByMarket_MarketNo(Long marketNo);
+       List<ChatRoom> findByMarket_MarketNo(Long marketNo);
 
-       ChatRoom findByShareRoom_RoomNo(Long roomNo);
+       List<ChatRoom> findByShareRoom_RoomNo(Long roomNo);
 
        @Modifying
        @Transactional
