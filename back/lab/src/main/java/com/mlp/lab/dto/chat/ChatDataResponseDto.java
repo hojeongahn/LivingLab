@@ -27,6 +27,7 @@ public class ChatDataResponseDto {
 
         private MessageType type;
         private String sender;
+        private String senderProfileImage;
         private String message;
 
         public Message() {}
@@ -34,6 +35,7 @@ public class ChatDataResponseDto {
         public Message(Chat chat) {
             this.type = MessageType.TALK;
             this.sender = chat.getSenderNickname();
+            this.senderProfileImage = chat.getSenderProfileImage();
             this.message = chat.getContent();
         }
     }

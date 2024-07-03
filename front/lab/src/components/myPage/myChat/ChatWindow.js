@@ -5,22 +5,17 @@ import { useNavigate } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';  // Stomp.js의 브라우저 버전인 webstomp-client 사용
 import { useSelector } from 'react-redux';
-import { getChatHistory } from '../../../api/chatApi';
+import { getChatHistory, getList } from '../../../api/chatApi';
 
 
 const ChatWindow = ({ room }) => {
   const navigate = useNavigate();
-  //const [messages, setMessages] = useState(initState);
-  // const [messages, setMessages] = useState([
-  //   { id: 1, text: '안녕!', sender: 'other' },
-  //   { id: 2, text: '오랜만이야', sender: 'other' },
-  //   { id: 3, text: '잘 지내?', sender: 'me' },
-  // ]);
   const [stompClient, setStompClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const loginInfo = useSelector((state) => state.loginSlice);
   const nickname = loginInfo.nickname;
+  const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8282/ws'); // SockJS 연결 URL
@@ -70,9 +65,22 @@ const ChatWindow = ({ room }) => {
     };
   }, [stompClient, room.roomId]);
 
-  // const handleSend = (message) => {
-  //   setMessages([...messages, { id: messages.length + 1, text: message, sender: 'me' }]);
-  // };
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      console.log("채팅방 번호: " + room.roomId);
+      try {
+        if (!room.roomId) return; // room.roomId가 없으면 종료
+
+        const userList = await getList(room.roomId);
+        console.log('참여자 목록:', userList);
+        setParticipants(userList);
+      } catch (error) {
+        console.error('참여자 정보 불러오기 실패: ', error);
+      }
+    };
+
+    fetchParticipants();
+  }, [room.roomId]);
 
   const handleSend = (message) => {
     if (!stompClient || !message) return;
@@ -124,6 +132,7 @@ const ChatWindow = ({ room }) => {
     }
   }
 
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between p-4 bg-gray-600 text-white rounded-t">
@@ -145,7 +154,7 @@ const ChatWindow = ({ room }) => {
       {/* 메시지 목록 표시 영역 */}
       <div className="flex-1 overflow-y-auto p-2 bg-slate-100 relative overflow-x-hidden">
         {messages.map((message, index) => (
-          <ChatMessage key={index} message={message} />
+          <ChatMessage key={index} message={message}/>
         ))}
         {/* 참여자 목록 사이드바 */}
         <div
@@ -162,9 +171,9 @@ const ChatWindow = ({ room }) => {
           </div>
           <div className="flex-grow p-4 overflow-y-auto text-base">
             <ul>
-              <li>참여자 1</li>
-              <li>참여자 2</li>
-              <li>참여자 3</li>
+              {participants.map(participant => (
+                <li key={participant.id}>{participant.nickname}</li>
+              ))}
             </ul>
           </div>
           <div className="p-4 border-t">

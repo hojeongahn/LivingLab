@@ -11,6 +11,12 @@ export const postCreateRoom = async (userId, title, type, createRequest) => {
   return res.data;
 };
 
+// 채팅방의 유저들 목록
+export const getList = async (roomId) => {
+  const res = await axios.get(`${host}/room/userList`, { params: { roomId } });
+  return res.data;
+};
+
 // 특정 채팅방 삭제
 export const deleteChatRoom = async (roomId) => {
   const res = await axios.delete(`${host}/room/delete/${roomId}`);

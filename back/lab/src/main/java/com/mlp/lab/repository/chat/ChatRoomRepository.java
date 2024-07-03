@@ -37,4 +37,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
        @Transactional
        @Query("UPDATE ChatRoom c SET c.team = NULL WHERE c.team.teamNo = :teamNo")
        int updateTeamRoom(@Param("teamNo") Long teamNo);
+
+       
 }
