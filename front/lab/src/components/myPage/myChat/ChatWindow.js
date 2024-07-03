@@ -168,10 +168,7 @@ const ChatWindow = ({ room }) => {
             </ul>
           </div>
           <div className="p-4 border-t">
-            <button
-              onClick={toggleSidebar}
-              className="w-full py-2 px-4 text-base bg-red-400 text-white font-bold rounded hover:bg-red-500"
-            >
+            <button className="w-full py-2 px-4 text-base bg-red-400 text-white font-bold rounded hover:bg-red-500">
               나가기
             </button>
           </div>

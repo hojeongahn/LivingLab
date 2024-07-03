@@ -1,23 +1,17 @@
 import { useEffect, useState } from 'react';
-import ProfileComponent from '../common/ProfileComponent';
-import { useDispatch, useSelector } from 'react-redux';
-import useCustomLogin from './../../hooks/useCustomLogin';
-import useCustomMove from '../../hooks/useCustomMove';
-import ModalComponent from '../common/ModalComponent';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import ResultModal from '../common/ResultModal';
-import InfoModal from '../common/InfoModal';
 import { chatUserInfoBuy, exitChatRoomBuy } from '../../api/chatApi';
 import { getUser, API_SERVER_HOST } from '../../api/userApi';
 
 const host = API_SERVER_HOST;
 
 const PartComponent = ({ buyNo }) => {
-  const [showModal, setShowModal] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
   const [chatroomInfo, setChatroomInfo] = useState(null);
   const [displayUsers, setDisplayUsers] = useState([]);
   const [result, setResult] = useState(null);
+  const navigate = useNavigate();
   const loginInfo = useSelector((state) => state.loginSlice);
   const userId = loginInfo?.id;
 
@@ -45,23 +39,6 @@ const PartComponent = ({ buyNo }) => {
     fetchChatroomData();
   }, [buyNo]);
 
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  const handleDeleteClick = () => {
-    setModalMessage('삭제하시겠습니까?');
-    setShowConfirm(true);
-  };
-
-  const handleCancel = () => {
-    setShowConfirm(false);
-  };
-
   const handleResultModalClose = () => {
     setResult(null);
     window.location.reload();
@@ -72,23 +49,22 @@ const PartComponent = ({ buyNo }) => {
       const formData = new FormData();
       formData.append('userId', userId);
       formData.append('buyNo', buyNo);
-
-      const isUserInRoom = displayUsers.some((user) => user.id === userId);
-      if (!isUserInRoom) {
-        setResult('참여중이 아닙니다.');
-      } else if (chatroomInfo.writerId === userId) {
+      
+      if (chatroomInfo.writerId === userId) {
         setResult('자신이 쓴 게시글은 참여를 취소할 수 없습니다.');
       } else {
         await exitChatRoomBuy(formData);
         setDisplayUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
         setResult('참여를 취소했습니다.');
-        setShowModal(false);
       }
     } catch (error) {
       setResult('참여 취소 실패:', error);
-      setShowModal(false);
     }
   };
+
+  const moveChat = () => {
+    navigate('/myPage/chat');
+  }
 
   return (
     <div className="side-part">
@@ -107,18 +83,22 @@ const PartComponent = ({ buyNo }) => {
             ))}
           </div>
         </div>
-
-        <div className="flex mt-5">
-          <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={() => setShowModal(true)}>
-            채팅
-          </button>
-          <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={handleExitChatRoom}>
-            참여 X
-          </button>
-        </div>
+        {displayUsers.some((user) => user.id === userId) ? (
+          <div className="flex mt-5">
+            <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={moveChat}>
+              채팅하기
+            </button>
+            <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={handleExitChatRoom}>
+              나가기
+            </button>
+          </div>
+        )
+        :
+        (
+          <></>
+        )}
       </div>
       {result && <ResultModal title={'알림'} content={result} callbackFn={handleResultModalClose} />}
-      <ModalComponent show={showModal} onClose={handleCloseModal} />
     </div>
   );
 };

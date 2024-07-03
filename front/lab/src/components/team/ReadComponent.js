@@ -127,7 +127,6 @@ const ReadComponent = ({ teamNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -274,7 +273,7 @@ const ReadComponent = ({ teamNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent teamNo={teamNo} />
+      <PartComponent key={addResultModal} teamNo={teamNo} />
     </>
   );
 };
