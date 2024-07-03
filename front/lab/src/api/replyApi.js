@@ -23,3 +23,8 @@ export const modifyReply = async(replyNo, editedContent) => {
   });
   return res.data;
 }
+
+export const myList = async (id) => {
+  const res = await axios.get(`${prefix}/mylist/${id}`);
+  return res.data;
+};

@@ -10,11 +10,14 @@ import org.springframework.stereotype.Repository;
 
 import com.mlp.lab.entity.Community;
 import com.mlp.lab.entity.Reply;
+import com.mlp.lab.entity.User;
 
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long>{
 
     List<Reply> findByCommunity(Community community);
+
+    List<Reply> findByUser(User user);
 
     @Modifying
     @Query("UPDATE Reply r SET r.content = :editedContent WHERE r.replyNo = :replyNo")
