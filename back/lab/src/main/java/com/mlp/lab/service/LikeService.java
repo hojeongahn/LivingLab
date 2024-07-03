@@ -180,7 +180,7 @@ public class LikeService {
                     else if(likes.getShareRoom() != null){
                         dto.setRoomNo(likes.getShareRoom().getRoomNo());
                         dto.setTitle(likes.getShareRoom().getTitle());
-                        User user = userRepository.findByUserId(likes.getShareRoom().getUserId());
+                        User user = userRepository.findByUserId(likes.getShareRoom().getUser().getId());
                         dto.setNickname(user.getNickname());
                     }
                     return dto;
