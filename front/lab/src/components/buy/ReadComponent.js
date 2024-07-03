@@ -125,7 +125,6 @@ const ReadComponent = ({ buyNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -270,7 +269,7 @@ const ReadComponent = ({ buyNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent buyNo={buyNo} />
+      <PartComponent key={addResultModal} buyNo={buyNo} />
     </>
   );
 };
