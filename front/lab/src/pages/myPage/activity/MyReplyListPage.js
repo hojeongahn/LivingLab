@@ -1,58 +1,60 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import useCustomMyPage from '../../../hooks/useCustomMyPage';
-import { API_SERVER_HOST, myListAll } from '../../../api/buyApi';
-import PageComponent from '../../../components/common/PageComponent';
+import { useNavigate } from 'react-router-dom';
+import { myList } from '../../../api/replyApi';
+import { getType } from '../../../api/communityApi';
 
-const initState = {
-  dtoList: [], // 한 페이지에 불러오는 게시물 갯수
-  pageNumList: [],
-  pageRequestDto: null,
-  prev: false,
-  next: false,
-  totalCount: 0,
-  prevPage: 0,
-  nextPage: 0,
-  totalPage: 0,
-  current: 0,
-};
-
-const host = API_SERVER_HOST;
 
 const MyReplyListPage = () => {
-  const { page, size, moveToBuyList, moveToRead } = useCustomMyPage();
-  const [serverData, setServerData] = useState(initState);
+  const [loadedReplies, setLoadedReplies] = useState([]);
   const loginInfo = useSelector((state) => state.loginSlice);
   const id = loginInfo.id;
+  const navigate = useNavigate();
 
   useEffect(() => {
-    myListAll({ page, size }, id).then(data => {
-      setServerData(data);
-    })
-  }, [page, size, id]);
-
-  const formatDeadline = (deadline) => {
-    const now = new Date();
-    const deadlineDate = new Date(deadline);
-
-    const padZero = (num) => num.toString().padStart(2, '0');
-    const isToday = (date) => {
-      return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && date.getDate() === now.getDate();
+    const fetchReplies = async () => {
+      try {
+        const data = await myList(id);
+        const repliesWithTypes = await Promise.all(
+          data.map(async (reply) => {
+            const type = await getType(reply.commNo);
+            let formattedType = '';
+            let root = '';
+            switch (type) {
+              case '1':
+                formattedType = '자취TIP공유';
+                root = 'tip';
+                break;
+              case '2':
+                formattedType = '질문게시판';
+                root = 'qna';
+                break;
+              case '3':
+                formattedType = '리뷰게시판';
+                root = 'review';
+                break;
+              case '4':
+                formattedType = '도움요청';
+                root = 'help';
+                break;
+              default:
+                formattedType = '기타';
+                root = 'tip';
+            }
+            return { ...reply, formattedType, root };
+          })
+        );
+        setLoadedReplies(repliesWithTypes);
+      } catch (error) {
+        console.error("Error fetching replies:", error);
+      }
     };
 
-    const hours = deadlineDate.getHours();
-    const minutes = padZero(deadlineDate.getMinutes());
-    const amPm = hours < 12 ? '오전' : '오후';
-    const displayHours = padZero(hours % 12 || 12);
+    fetchReplies();
+  }, [id]);
 
-    if (isToday(deadlineDate)) {
-      return `오늘 ${amPm} ${displayHours}:${minutes}까지`;
-    } else {
-      const year = deadlineDate.getFullYear();
-      const month = padZero(deadlineDate.getMonth() + 1);
-      const day = padZero(deadlineDate.getDate());
-      return `${year}-${month}-${day} ${amPm} ${displayHours}:${minutes}까지`;
-    }
+  const handleRedirect = (root, commNo) => {
+        navigate(`/community/${root}/read/${commNo}`);
   };
 
   return (
@@ -70,41 +72,35 @@ const MyReplyListPage = () => {
                         <h3 className="text-xl font-bold leading-none text-gray-900">나의 댓글</h3>
                       </div>
                       <hr className="my-4" />
-                      <div id="items" className="flex flex-wrap">
-                        {serverData.dtoList.length > 0 ? (
-                          serverData.dtoList.map((buy) => (
-                            <div className="flex border p-2 m-1 w-[49%] h-48 box-border cursor-pointer hover:bg-slate-100" onClick={() => moveToRead(`buy`, buy.buyNo)}>
-                              <div className="h-full w-48">
-                                <img className="object-cover h-full w-full shadow" src={`${host}/api/buy/display/${buy.uploadFileNames[0]}`} alt='...' />
-                              </div>
-                              <div className="p-5 w-full">
-                                <div className="flex justify-between items-start">
-                                  <div className="w-full">
-                                    <span className="text-base font-semibold bg-slate-200 text-center pb-0.5 px-2 mr-2 rounded">
-                                      {buy.buyCategory === '1' && '배달음식'}
-                                      {buy.buyCategory === '2' && '생필품'}
-                                      {buy.buyCategory === '3' && '식료품'}
-                                      {buy.buyCategory === '4' && '가구/가전'}
-                                      {buy.buyCategory === '5' && '기타'}
-                                    </span>
-                                    <span className="bg-amber-400 text-white pb-0.5 px-2 text-center text-sm rounded-full">{buy.current} / {buy.max}</span>
-                                    <div className="block mt-3 text-lg text-black">{buy.title}</div>
-                                    <p className="mt-2 text-slate-500 text-sm w-72 whitespace-nowrap overflow-hidden text-ellipsis">{buy.location}</p>
-                                    <div className="text-right text-sm mt-2">{formatDeadline(buy.deadline)}</div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )
-                          )
-                        )
-                          :
-                          (
-                            <div>작성한 게시물이 없습니다</div>
-                          )
-                        }
-                      </div>
-                      <PageComponent serverData={serverData} movePage={moveToBuyList} />
+                      <table className="min-w-full text-center text-lg font-light text-surface">
+                        <thead className="text-sm border-b-2 border-neutral-500 font-semibold">
+                          <tr>
+                            <th scope="col" className="w-2/12 py-4">게시판</th>
+                            <th scope="col" className="w-7/12 py-4">내용</th>
+                            <th scope="col" className="w-3/12 py-4">작성일</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {loadedReplies.length > 0 ? (
+                            loadedReplies.map(reply =>
+                              <tr
+                                className="text-base border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 hover:cursor-pointer"
+                                onClick={()=>handleRedirect(reply.root, reply.commNo)}>
+                                <td className="whitespace-nowrap py-4">{reply.formattedType}</td>
+                                <td className="whitespace-nowrap py-4">{reply.content}</td>
+                                <td className="whitespace-nowrap py-4">{reply.regDate}</td>
+                              </tr>
+                            ))
+                            :
+                            (
+                              <tr>
+                                <td colSpan="5" className="py-4">
+                                  작성한 댓글이 없습니다
+                                </td>
+                              </tr>
+                            )}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
