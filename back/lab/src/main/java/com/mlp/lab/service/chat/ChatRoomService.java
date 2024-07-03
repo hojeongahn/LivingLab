@@ -9,12 +9,14 @@ import com.mlp.lab.dto.chat.ChatRoomDataRequestDto;
 import com.mlp.lab.dto.chat.ChatRoomDataResponseDto;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.Market;
+import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.entity.Team;
 import com.mlp.lab.entity.User;
 import com.mlp.lab.entity.chat.Chat;
 import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.repository.BuyRepository;
 import com.mlp.lab.repository.MarketRepository;
+import com.mlp.lab.repository.ShareRoomRepository;
 import com.mlp.lab.repository.TeamRepository;
 import com.mlp.lab.repository.UserRepository;
 import com.mlp.lab.repository.chat.ChatRepository;
@@ -30,9 +32,12 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final BuyRepository buyRepository;
+    private final ShareRoomRepository shareRoomRepository;
     private final TeamRepository teamRepository;
     private final MarketRepository marketRepository;
     private ChatRoom chatRoom;
+
+    // ------ 공통 사항 -------
 
     public List<ChatRoomDataResponseDto.Info> findAllRoomByUserId(Long userId) {
         List<ChatRoom> ChatRooms = chatRoomRepository.findByUserId(userId);
@@ -80,12 +85,18 @@ public class ChatRoomService {
                 .build();
             chatRoomRepository.save(chatRoom);
         }
-        // if (chatRoomRepository.findByUserIdAndBuyNo(UserId,
-        // createRequest.getBuyNo()).isPresent()) {
-        // throw new Exception("이미 채팅방이 생성");
-        // }
+        if(createRequest.getRoomNo()!=null){ //자취방쉐어
+            ShareRoom shareRoom = shareRoomRepository.findByRoomNo(createRequest.getRoomNo());
+            User user = shareRoom.getUser();
+            chatRoom = ChatRoom.builder()
+                .writer(user)
+                .shareRoom(shareRoom)
+                .title(title)
+                .type(type)
+                .build();
+            chatRoomRepository.save(chatRoom);
+        }
 
-        // TODO : 이미 채팅방이 생성되 있을 수도 있음
         return ChatRoomDataResponseDto.Info.of(chatRoom);
     }
 
@@ -97,6 +108,8 @@ public class ChatRoomService {
         List<Chat> chatHistory = chatRepository.getChatByRoomId(roomId);
         return new ChatRoomDataResponseDto.ChatHistory(chatHistory);
     }
+
+    // ------ 세부 사항 -------
 
     public ChatRoomDataResponseDto.Info findRoomByBuyNo(Long buyNo) {
         ChatRoom chatRoom = chatRoomRepository.findByBuy_BuyNo(buyNo);
@@ -160,6 +173,20 @@ public class ChatRoomService {
         User user = userRepository.findByUserId(userId);  // 참여x를 누른 유저
         ChatRoom chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
         chatRoom.removeReader(user);
+        chatRoomRepository.save(chatRoom);
+        return ChatRoomDataResponseDto.Info.of(chatRoom);
+    }
+
+    public ChatRoomDataResponseDto.Info findRoomByRoomNo(Long roomNo) {
+        ChatRoom chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
+        return ChatRoomDataResponseDto.Info.of(chatRoom);
+    }
+    
+    public ChatRoomDataResponseDto.Info enterRoomShare(Long userId, Long roomNo) {
+        User user = userRepository.findByUserId(userId);  // 글을 읽고 문의하기를 누른 유저
+        ChatRoom chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
+        List<User> readers = chatRoom.getReader();
+        readers.add(user);
         chatRoomRepository.save(chatRoom);
         return ChatRoomDataResponseDto.Info.of(chatRoom);
     }

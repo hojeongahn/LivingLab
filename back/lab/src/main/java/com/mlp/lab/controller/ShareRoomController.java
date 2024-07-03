@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.mlp.lab.dto.ShareRoomDto;
+import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
@@ -63,7 +64,7 @@ public class ShareRoomController {
     }
 
     @PostMapping("/add") // 작성(이미지 포함)
-    public void add(ShareRoomDto shareRoomDto) {
+    public ShareRoom add(ShareRoomDto shareRoomDto) {
         List<MultipartFile> files = shareRoomDto.getFiles();
         List<String> uploadFileNames = fileUtil.saveFiles(files);
         if (uploadFileNames == null || uploadFileNames.isEmpty()) {
@@ -73,7 +74,7 @@ public class ShareRoomController {
         }
         shareRoomDto.setUploadFileNames(uploadFileNames);
         log.info("===========shareRoomDto add : " + shareRoomDto);
-        shareRoomService.add(shareRoomDto);
+        return shareRoomService.add(shareRoomDto);
     }
 
     @PutMapping("/modify/{roomNo}")

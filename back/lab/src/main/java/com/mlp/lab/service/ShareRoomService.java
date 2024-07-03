@@ -18,6 +18,7 @@ import com.mlp.lab.dto.ShareRoomDto;
 import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.entity.ShareRoomImage;
 import com.mlp.lab.repository.ShareRoomRepository;
+import com.mlp.lab.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import java.util.List;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class ShareRoomService {
     private final ShareRoomRepository shareRoomRepository;
+    private final UserRepository userRepository;
+
     public RoomPageResponseDto<ShareRoomDto> list(RoomPageRequestDto roomPageRequestDto,String search, String sort) {
 
         Pageable pageable = PageRequest.of(
@@ -97,9 +100,11 @@ public class ShareRoomService {
         return responseDTO;
     }
 
-    public void add(ShareRoomDto shareRoomDto) { // 룸쉐어 등록(이미지 포함)
+    public ShareRoom add(ShareRoomDto shareRoomDto) { // 룸쉐어 등록(이미지 포함)
         ShareRoom shareRoom = ShareRoom.DtoToEntity(shareRoomDto);
+        shareRoom.setUser(userRepository.findByUserId(shareRoomDto.getId()));
         shareRoomRepository.save(shareRoom);
+        return shareRoom;
     }
 
     public ShareRoomDto get(Long roomNo) {
