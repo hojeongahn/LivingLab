@@ -46,18 +46,28 @@ const ListComponent = ({ search, sort }) => {
     const currentDate = new Date();
     const deadlineDate = new Date(buy.deadline);
 
-    if (currentDate > deadlineDate && !buy.flag) {
-      // 모집 종료로 결정되면 데이터베이스 업데이트
-      updateBuyFlag(buy.buyNo, true)
-        .then(() => {
-          console.log(`Buy No ${buy.buyNo} flag updated to true`);
-        })
-        .catch((error) => {
-          console.error(`Failed to update flag for buy No ${buy.buyNo}`, error);
-        });
+    if (buy.flag) {      
+      console.log(buy.flag);
       return '모집 종료';
+    } else {
+      // 모집 종료로 결정되면 데이터베이스 업데이트
+      if (currentDate > deadlineDate) {
+        updateBuyFlag(buy.buyNo, true)
+          .then(() => {
+            console.log(`Buy No ${buy.buyNo} flag updated to true`);
+          })
+          .catch((error) => {
+            console.error(`Failed to update flag for buy No ${buy.buyNo}`, error);
+          });
+          console.log(buy.flag);
+
+        return '모집 종료';
+      } else {
+        console.log(buy.flag);
+
+        return '모집 중';
+      }
     }
-    return '모집 중';
   };
 
   const formatDeadline = (deadline) => {
@@ -162,7 +172,7 @@ const ListComponent = ({ search, sort }) => {
                       {formatDeadline(buy.deadline)}
                     </div>
                   </div>
-            
+
                   <div className="flex justify-end">
                     <div className={`font-bold text-base ${buy.recruit === '모집 중' ? 'text-red-500' : 'text-gray-900'}`}>
                       {buy.recruit}

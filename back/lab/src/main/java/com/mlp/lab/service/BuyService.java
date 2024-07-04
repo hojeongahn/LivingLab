@@ -108,7 +108,7 @@ public class BuyService {
             BuyDto buyDto = BuyDto.builder()
                     .buyNo(buy.getBuyNo()).title(buy.getTitle()).buyCategory(buy.getBuyCategory())
                     .location(buy.getLocation()).max(buy.getMax()).current(buy.getCurrent())
-                    .deadline(buy.getDeadline()).nickname(buy.getNickname()).buyHit(buy.getBuyHit()).build();
+                    .deadline(buy.getDeadline()).nickname(buy.getNickname()).buyHit(buy.getBuyHit()).flag(buy.isFlag()).build();
 
             if (buyImage != null) {
                 String imageStr = buyImage.getFileName();
