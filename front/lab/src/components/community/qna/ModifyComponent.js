@@ -27,7 +27,6 @@ const ModifyComponent = ({commNo}) => {
 
     useEffect(() => {
         getOneQna(commNo).then(data => {
-            console.log(data)
             setQna(data)
         })
     }, [commNo])

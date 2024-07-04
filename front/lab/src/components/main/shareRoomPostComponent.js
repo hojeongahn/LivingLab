@@ -13,7 +13,6 @@ const ShareComponent = () => {
             try {
                 const pageParam = { page: 1, size: 3 };
                 const posts = await getLatestShareRoom(pageParam);
-                console.log('Success:', posts);
                 setLatestPosts(posts);
             } catch (error) {
                 console.error('Error :', error);

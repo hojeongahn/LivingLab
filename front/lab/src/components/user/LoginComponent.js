@@ -42,8 +42,6 @@ function LoginComponent(props) {
 
   const handleClickLogin = (e) => {
     loginPost(loginParam).then((userInfo) => {
-      console.log('----------------------------');
-      console.log(userInfo);
       dispatch(login(userInfo));
 
       // 로그인 후 메인으로
@@ -82,7 +80,6 @@ function LoginComponent(props) {
 
   const handleFindPwd = async () => { //비밀번호 찾기위한 이메일 인증받기
     const response = await mailSend({ email });
-    console.log("인증번호:"+authNum);
     setAuthNum(response.data)
     setStep((prevStep) => prevStep + 1);
   };

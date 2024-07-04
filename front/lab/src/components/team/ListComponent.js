@@ -46,7 +46,6 @@ const ListComponent = ({ search, sort }) => {
     const deadlineDate = new Date(team.deadline);
 
     if (team.flag) {      
-      console.log(team.flag);
       return '모집 종료';
     } else {
       // 모집 종료로 결정되면 데이터베이스 업데이트
@@ -57,12 +56,8 @@ const ListComponent = ({ search, sort }) => {
           .catch((error) => {
             console.error(`Failed to update flag for team No ${team.teamNo}`, error);
           });
-          console.log(team.flag);
-
         return '모집 종료';
       } else {
-        console.log(team.flag);
-
         return '모집 중';
       }
     }
@@ -116,7 +111,6 @@ const ListComponent = ({ search, sort }) => {
           recruit: checkDeadline(team),
         })),
       };
-      console.log(updatedData);
       setServerData(updatedData);
     });
   }, [page, size, search, sort, selectedCategory, user.latitude, user.longitude]);

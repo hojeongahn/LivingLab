@@ -68,7 +68,6 @@ const ReadComponent = ({ buyNo }) => {
 
   useEffect(() => {
     getOne(buyNo).then((data) => {
-      console.log("data값은:", data);
       setBuy(data);
       setCurrent(data.current);
       setMax(data.max);

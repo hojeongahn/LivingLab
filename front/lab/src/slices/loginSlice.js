@@ -21,27 +21,20 @@ const loginSlice = createSlice({
   initialState: loadUserCookie() || initState,
   reducers: {
     login: (state, action) => {
-      console.log('login............', action);
-      console.log(action.payload); // 진짜 데이터
-      console.log('-----------------');
-
       const data = action.payload; // 로그인한 정보 {email, pwd로 구성}
       setCookie('user', JSON.stringify(data), 1); // 로그인한 정보를 user에 저장 (1일 동안)
 
       return data; //새로운 상태
     },
     logout: () => {
-      console.log('logout...........');
-
       removeCookie('user'); // 로그아웃하면 쿠키 삭제
-
       return { ...initState }; // 초기 상태 (빈 문자열)
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loginPostAsync.fulfilled, (state, action) => {
-        console.log('fulfilled'); // 로그인 성공
+        //console.log('fulfilled'); // 로그인 성공
         const payload = action.payload; // 로그인 성공한 결과(진짜 데이터)
 
         // error 속성이 없어 로그인 성공한 경우
@@ -54,10 +47,10 @@ const loginSlice = createSlice({
         return payload;
       })
       .addCase(loginPostAsync.pending, (state, action) => {
-        console.log('pending'); // 로그인 중
+        //console.log('pending'); // 로그인 중
       })
       .addCase(loginPostAsync.rejected, (state, action) => {
-        console.log('rejected'); // 로그인 실패
+        //console.log('rejected'); // 로그인 실패
       });
   },
 });
