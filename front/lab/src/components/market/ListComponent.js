@@ -43,18 +43,28 @@ const ListComponent = ({ search, sort }) => {
   const checkDeadline = (market) => {
     const currentDate = new Date();
     const deadlineDate = new Date(market.deadline);
-    if (currentDate > deadlineDate && !market.flag) {
-      // 모집 종료로 결정되면 데이터베이스 업데이트
-      updateMarketFlag(market.marketNo, true)
-        .then(() => {
-          console.log(`Market No ${market.marketNo} flag updated to 1`);
-        })
-        .catch((error) => {
-          console.error(`Failed to update flag for market No ${market.marketNo}`, error);
-        });
+
+    if (market.flag) {      
+      console.log(market.flag);
       return '모집 종료';
+    } else {
+      // 모집 종료로 결정되면 데이터베이스 업데이트
+      if (currentDate > deadlineDate) {
+        updateMarketFlag(market.marketNo, true)
+          .then(() => {
+          })
+          .catch((error) => {
+            console.error(`Failed to update flag for market No ${market.marketNo}`, error);
+          });
+          console.log(market.flag);
+
+        return '모집 종료';
+      } else {
+        console.log(market.flag);
+
+        return '모집 중';
+      }
     }
-    return '모집 중';
   };
 
   const formatDeadline = (deadline) => {

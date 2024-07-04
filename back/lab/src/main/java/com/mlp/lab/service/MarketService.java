@@ -106,6 +106,7 @@ public class MarketService {
                     .nickname(market.getNickname())
                     .marketHit(market.getMarketHit())
                     .price(market.getPrice())
+                    .flag(market.isFlag())
                     .build();
 
             if (marketImage != null) {

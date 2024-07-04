@@ -109,7 +109,7 @@ public class TeamService {
             TeamDto teamDto = TeamDto.builder()
                     .teamNo(team.getTeamNo()).title(team.getTitle()).teamCategory(team.getTeamCategory())
                     .location(team.getLocation()).max(team.getMax()).current(team.getCurrent())
-                    .deadline(team.getDeadline()).nickname(team.getNickname()).teamHit(team.getTeamHit()).build();
+                    .deadline(team.getDeadline()).nickname(team.getNickname()).teamHit(team.getTeamHit()).flag(team.isFlag()).build();
 
             if (teamImage != null) {
                 String imageStr = teamImage.getFileName();

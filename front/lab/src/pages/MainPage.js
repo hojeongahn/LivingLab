@@ -30,6 +30,7 @@ const MainPage = () => {
           <div className="main-container text-7xl">
             #커뮤니케이션
           </div>
+          <div className='main-container-space'/>
           <div className="main-container">
             <div className='main-box'>
               <div className="main-comm">
@@ -53,7 +54,9 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-        <div className="background-container mb-20">
+        <div className='main-container-space'/>
+
+        <div className="background-container mb-10">
           <div className="main-container">
             <div className='main-textbox'>
               <div className='main-desc'>
@@ -77,8 +80,8 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-        <div className='my-20'>
-          <div className="main-container text-7xl my-20">
+        <div className='mb-10'>
+          <div className="main-container text-7xl">
             #마켓
           </div>
           <div className="main-container">

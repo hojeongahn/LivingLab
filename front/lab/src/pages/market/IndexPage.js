@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 
 const IndexPage = () => {
   return (
-    <div>
+    <div className=' header-space'>
       <BasicLayout>
         <div className="text-xl p-4 flex-grow">
             <Outlet/>

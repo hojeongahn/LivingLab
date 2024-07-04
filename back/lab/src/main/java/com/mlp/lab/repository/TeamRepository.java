@@ -75,7 +75,7 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
                         "* FUNCTION('cos', FUNCTION('radians', t.latitude)) " +
                         "* FUNCTION('cos', FUNCTION('radians', t.longitude) - FUNCTION('radians', :longitude)) " +
                         "+ FUNCTION('sin', FUNCTION('radians', :latitude)) " +
-                        "* FUNCTION('sin', FUNCTION('radians', t.latitude)))) < 2 " +
+                        "* FUNCTION('sin', FUNCTION('radians', t.latitude)))) < 5 " +
                         "ORDER BY distance ASC")
         Page<Object[]> selectCategoryDistanceList(@Param("category") Character category,
                         @Param("latitude") double latitude,
@@ -117,7 +117,7 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
                         "* FUNCTION('cos', FUNCTION('radians', t.latitude)) " +
                         "* FUNCTION('cos', FUNCTION('radians', t.longitude) - FUNCTION('radians', :longitude)) " +
                         "+ FUNCTION('sin', FUNCTION('radians', :latitude)) " +
-                        "* FUNCTION('sin', FUNCTION('radians', t.latitude)))) < 2 " +
+                        "* FUNCTION('sin', FUNCTION('radians', t.latitude)))) < 5 " +
                         "ORDER BY distance ASC")
         Page<Object[]> selectCategorySearchDistanceList(@Param("category") Character category,
                         @Param("title") String title,
@@ -172,7 +172,7 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
                         "* FUNCTION('cos', FUNCTION('radians', t.latitude)) " +
                         "* FUNCTION('cos', FUNCTION('radians', t.longitude) - FUNCTION('radians', :longitude)) " +
                         "+ FUNCTION('sin', FUNCTION('radians', :latitude)) " +
-                        "* FUNCTION('sin', FUNCTION('radians', t.latitude)))) < 2 " +
+                        "* FUNCTION('sin', FUNCTION('radians', t.latitude)))) < 5 " +
                         "ORDER BY distance ASC")
         Page<Object[]> searchDistanceList(
                         @Param(value = "title") String title,

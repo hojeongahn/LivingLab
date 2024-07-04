@@ -1,31 +1,31 @@
-import React, { useEffect, useRef } from 'react';
-import { textTyping } from 'text-typing';
+import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
-const TypingComponent = () => {
-    const headingRef = useRef(null);
+const MovementEffect = () => {
+  const text1Ref = useRef(null);
+  const text2Ref = useRef(null);
 
-    useEffect(() => {
-        const initializeTyping = async () => {
-            const txt1 = textTyping(headingRef.current);
+  useEffect(() => {
+    const tl = gsap.timeline();
 
-            await txt1.typeText("자취연구소.", "main-title");
-            txt1.lineBreak(); // 줄바꿈
+    // Animation for the first text
+    tl.from(text1Ref.current, { x: -100, opacity: 0, duration: 1.5, ease: "power4.out", delay: 0.5 });
 
-            await txt1.typeText("내 자취생활의 길라잡이", "main-subtitle").then(async (resp) => {
-                await resp.sleep(1000); 
-            });
-        };
+    // Animation for the second text
+    tl.from(text2Ref.current, { x: 100, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1"); // "-=1" makes sure it starts 1 second after the previous animation starts
+  }, []);
 
-        initializeTyping();
-    }, []);
-
-    return (
-        <div className="">
-            <div className="text-center">
-                <h1 ref={headingRef}></h1>
-            </div>
-        </div>
-    );
+  return (
+    <div>
+      <div ref={text1Ref} className="movement-text text-4xl	mb-2">
+        내 자취생활의 길라잡이
+      </div>
+      <hr/>
+      <div ref={text2Ref} className="movement-text text-center font-bold text-7xl mt-2">
+        자취연구소
+      </div>
+    </div>
+  );
 };
 
-export default TypingComponent;
+export default MovementEffect;

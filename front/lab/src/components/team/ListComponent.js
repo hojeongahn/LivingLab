@@ -45,18 +45,27 @@ const ListComponent = ({ search, sort }) => {
     const currentDate = new Date();
     const deadlineDate = new Date(team.deadline);
 
-    if (currentDate > deadlineDate && !team.flag) {
-      // 모집 종료로 결정되면 데이터베이스 업데이트
-      updateTeamFlag(team.teamNo, true)
-        .then(() => {
-          console.log(`Team No ${team.teamNo} flag updated to true`);
-        })
-        .catch((error) => {
-          console.error(`Failed to update flag for team No ${team.teamNo}`, error);
-        });
+    if (team.flag) {      
+      console.log(team.flag);
       return '모집 종료';
+    } else {
+      // 모집 종료로 결정되면 데이터베이스 업데이트
+      if (currentDate > deadlineDate) {
+        updateTeamFlag(team.teamNo, true)
+          .then(() => {
+          })
+          .catch((error) => {
+            console.error(`Failed to update flag for team No ${team.teamNo}`, error);
+          });
+          console.log(team.flag);
+
+        return '모집 종료';
+      } else {
+        console.log(team.flag);
+
+        return '모집 중';
+      }
     }
-    return '모집 중';
   };
 
   // 날짜 포맷 설정
