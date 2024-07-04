@@ -9,7 +9,6 @@ export const setCookie = (name, value, days = 1) => {
 };
 
 export const getCookie = (name) => {
-  console.log(cookies.get(name));
   return cookies.get(name);
 };
 

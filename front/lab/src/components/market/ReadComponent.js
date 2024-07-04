@@ -65,7 +65,6 @@ const ReadComponent = ({ marketNo }) => {
 
   useEffect(() => {
     getOne(marketNo).then((data) => {
-      console.log(data);
       setMarket(data);
     });
   }, [marketNo, info, addResultModal]);
@@ -87,7 +86,6 @@ const ReadComponent = ({ marketNo }) => {
     const fetchRoomData = async () => {
       try {
         const response = await chatUserInfoMarket(marketNo);
-        console.log('응답 데이터:', response);
 
         if (response.result) {
           setRoomData(response.data);

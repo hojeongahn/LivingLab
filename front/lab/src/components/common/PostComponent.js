@@ -20,7 +20,7 @@ const PostComponent = ({ setAddress }) => {
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
     setAddress(fullAddress); // setAddress를 호출하여 부모 컴포넌트 상태를 업데이트(중요!)
-    console.log(fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
+    //console.log(fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
   };
 
   const handleClick = () => {

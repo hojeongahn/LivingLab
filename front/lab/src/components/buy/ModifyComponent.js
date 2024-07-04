@@ -110,9 +110,6 @@ const ModifyComponent = ({ buyNo }) => {
       formData.append('deadline', buy.deadline);
       formData.append('uploadFileNames', buy.uploadFileNames);
 
-      console.log(location.latitude);
-      console.log(location.longitude);
-
       await modify(buyNo, formData);
       setResult('게시글이 수정되었습니다');
     } catch (error) {

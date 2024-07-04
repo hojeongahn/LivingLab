@@ -22,7 +22,7 @@ const ChatWindow = ({ room }) => {
     const stomp = Stomp.over(socket);
 
     stomp.connect({}, frame => {
-      console.log('연결: ' + frame);
+      //console.log('연결: ' + frame);
       setStompClient(stomp);
     }, error => {
       console.error('연결 에러: ', error);
@@ -54,7 +54,7 @@ const ChatWindow = ({ room }) => {
     // 채팅방 topic을 구독하여 메시지 수신
     const subscription = stompClient.subscribe(`/topic/chat/room/${room.roomId}`, message => {
       const receivedMessage = JSON.parse(message.body);
-      console.log('받은 메시지:', receivedMessage);
+      //console.log('받은 메시지:', receivedMessage);
       setMessages(prevMessages => [...prevMessages, receivedMessage]);
     }, error => {
       console.error('구독 실패: ', error);
@@ -67,12 +67,10 @@ const ChatWindow = ({ room }) => {
 
   useEffect(() => {
     const fetchParticipants = async () => {
-      console.log("채팅방 번호: " + room.roomId);
       try {
         if (!room.roomId) return; // room.roomId가 없으면 종료
 
         const userList = await getList(room.roomId);
-        console.log('참여자 목록:', userList);
         setParticipants(userList);
       } catch (error) {
         console.error('참여자 정보 불러오기 실패: ', error);
@@ -93,7 +91,7 @@ const ChatWindow = ({ room }) => {
       userId: loginInfo.id
     };
 
-    console.log('보낸 메세지: ', newMessage);
+    //console.log('보낸 메세지: ', newMessage);
 
     // WebSocket을 통해 메시지 전송
     stompClient.send('/app/chat/message', JSON.stringify(newMessage), {});

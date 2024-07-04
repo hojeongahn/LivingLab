@@ -24,8 +24,6 @@ const MyInfoComponent = () => {
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo.id;
 
-  console.log(ino);
-
   useEffect(() => {
     getUser(ino).then((data) => {
       setUser(data);

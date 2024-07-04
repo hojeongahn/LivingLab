@@ -45,7 +45,6 @@ const ListComponent = ({ search, sort }) => {
     const deadlineDate = new Date(market.deadline);
 
     if (market.flag) {      
-      console.log(market.flag);
       return '모집 종료';
     } else {
       // 모집 종료로 결정되면 데이터베이스 업데이트
@@ -56,12 +55,9 @@ const ListComponent = ({ search, sort }) => {
           .catch((error) => {
             console.error(`Failed to update flag for market No ${market.marketNo}`, error);
           });
-          console.log(market.flag);
 
         return '모집 종료';
       } else {
-        console.log(market.flag);
-
         return '모집 중';
       }
     }

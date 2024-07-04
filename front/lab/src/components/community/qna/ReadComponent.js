@@ -44,7 +44,6 @@ const ReadComponent = ({commNo}) => {
 
     useEffect(() => {
         getOneQna(commNo).then(data => {
-            console.log(data)
             setQna(data)
         })
     }, [commNo, info])

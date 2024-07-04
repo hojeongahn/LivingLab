@@ -49,7 +49,6 @@ const ReadComponent = ({ roomNo }) => {
 
   useEffect(() => {
     getOne(roomNo).then((data) => {
-      console.log(data);
       setShareRoom(data);
     });
   }, [roomNo, info, addResultModal]);
@@ -73,8 +72,6 @@ const ReadComponent = ({ roomNo }) => {
     const fetchRoomData = async () => {
       try {
         const response = await chatUserInfoShare(roomNo);
-        console.log('응답 데이터:', response);
-
         if (response.result) {
           setRoomData(response.data);
         } else {
