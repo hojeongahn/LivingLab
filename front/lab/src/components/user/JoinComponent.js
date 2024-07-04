@@ -71,7 +71,7 @@ const JoinComponent = () => {
         validEmail: result,
       });
     }
-  }, [user.email, emailRegex, user]);
+  }, [user.email]);
 
   useEffect(() => {
     if(user.pwd !== ''){
@@ -82,7 +82,7 @@ const JoinComponent = () => {
         validPwd: result,
       });
     }
-  }, [user.pwd, pwRegex, user]);
+  }, [user.pwd]);
 
   useEffect(() => {
     if(user.confirmPwd !== ''){
@@ -93,7 +93,7 @@ const JoinComponent = () => {
         validConfirmPwd: result,
       });
     }
-  }, [user.confirmPwd, user.pwd, user]);
+  }, [user.confirmPwd, user.pwd]);
 
   useEffect(() => {
     if(user.name !== ''){
@@ -104,7 +104,7 @@ const JoinComponent = () => {
         validName: result,
       });
     }
-  }, [user.name, nameRegex, user]);
+  }, [user.name]);
 
 
   useEffect(() => {
@@ -127,7 +127,7 @@ const JoinComponent = () => {
         validNickname: result,
       });
     }
-  }, [user.nickname, nicknameRegexv, user]);
+  }, [user.nickname]);
 
   useEffect(() => {
     const result = user.addr && user.detailAddr;
@@ -136,7 +136,7 @@ const JoinComponent = () => {
         errorAddr : result? '주소가 입력되었습니다' : '주소를 입력해주세요',
         validAddr: result,
       });
-  }, [user.addr, user.detailAddr, user]);
+  }, [user.addr, user.detailAddr]);
 
   useEffect(() => {
     const result = user.file !== null;
@@ -145,7 +145,7 @@ const JoinComponent = () => {
         errorFile : result? '프로필 이미지가 등록되었습니다' : '프로필 이미지를 등록해주세요',
         validFile: result,
       });
-  }, [user.file, user]);
+  }, [user.file]);
 
 
   // addr(팝업 검색주소)만 따로 상태변경
