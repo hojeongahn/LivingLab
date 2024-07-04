@@ -10,7 +10,6 @@ export const getList = async (pageParam, search, sort) => {
 
 export const getOne = async (roomNo) => {
   const res = await axios.get(`${prefix}/read/${roomNo}`);
-  console.log(res);
   return res.data;
 };
 
@@ -34,7 +33,6 @@ export const postAddShareRoom = async (shareRoom) => {
 
 export const deleteOne = async (roomNo) => {
   const res = await axios.delete(`${prefix}/${roomNo}`);
-  console.log('deleting ', res.data);
   return res.data;
 };
 

@@ -20,7 +20,6 @@ const TeamPostComponent = () => {
             try {
                 const pageParam = { page: 1, size: 4 };
                 const posts = await getLatestTeam(pageParam);
-                console.log('Success:', posts);
                 setLatestPosts(posts);
             } catch (error) {
                 console.error('Error :', error);

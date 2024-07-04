@@ -16,19 +16,15 @@ const refreshJWT = async (accessToken, refreshToken) => {
     header
   );
 
-  console.log(res.data); // 새로 만들어진 Access Token과 Refresh Token 출력
-
   return res.data;
 };
 
 //before request
 const beforeReq = (config) => {
-  console.log('before request.............');
 
   const userInfo = getCookie('user');
 
   if (!userInfo) {
-    console.log('User NOT FOUND');
     return Promise.reject({ response: { data: { error: 'REQUIRE_LOGIN' } } });
   }
 
@@ -36,7 +32,6 @@ const beforeReq = (config) => {
 
   // Authorization 헤더처리
   // Access Token을 API 서버 호출 전에 Authorization 헤더를 추가하도록 구성
-  console.log('-------------' + accessToken);
   config.headers.Authorization = `Bearer ${accessToken}`;
 
   return config;
@@ -44,14 +39,11 @@ const beforeReq = (config) => {
 
 //fail request
 const requestFail = (err) => {
-  console.log('request error............');
   return Promise.reject(err);
 };
 
 //before return response
 const beforeRes = async (res) => {
-  console.log('before return response...........');
-
   // Access Token, Refresh Token을 이용해서 '/api/user/refresh'를 호출
   const data = res.data;
 
@@ -62,7 +54,6 @@ const beforeRes = async (res) => {
       userCookieValue.accessToken,
       userCookieValue.refreshToken
     );
-    console.log('refreshJWT RESULT(결과값) : ' + result);
 
     // 갱신된 토큰의 저장과 재호출
     // 새로운 accessToken과 refreshToken
@@ -83,7 +74,6 @@ const beforeRes = async (res) => {
 
 //fail response
 const responseFail = (err) => {
-  console.log('response fail error.............');
   return Promise.reject(err);
 };
 

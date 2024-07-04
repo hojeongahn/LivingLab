@@ -45,7 +45,6 @@ const ReadComponent = ({commNo}) => {
 
     useEffect(() => {
         getOneReview(commNo).then(data => {
-            console.log(data)
             setReview(data)
         })
     }, [commNo, info])

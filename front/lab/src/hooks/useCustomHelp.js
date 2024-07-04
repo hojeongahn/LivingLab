@@ -31,12 +31,10 @@ import { createSearchParams, useNavigate, useSearchParams } from "react-router-d
     };
   
     const moveToModify = (num) => {
-      console.log(queryDefault);
       navigate({ pathname: `../help/modify/${num}`, search: queryDefault }); // 수정시에 기존의 쿼리문자열을 유지하기 위해
     };
   
     const moveToRead = (num) => {
-      console.log(queryDefault);
       navigate({ pathname: `../help/read/${num}`, search: queryDefault });
     };
   

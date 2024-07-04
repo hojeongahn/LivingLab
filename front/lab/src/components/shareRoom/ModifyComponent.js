@@ -30,8 +30,6 @@ const ModifyComponent = ({ roomNo }) => {
 
     useEffect(() => {
         getOne(roomNo).then(data => {
-            console.log(data)
-            console.log(roomNo)
             setShareRoom(data)
         })
     }, [roomNo])
@@ -126,7 +124,6 @@ const ModifyComponent = ({ roomNo }) => {
         formData.append("days", daysBetween);
         formData.append("uploadFileNames", shareRoom.uploadFileNames);
 
-        console.log(formData);
         modify(roomNo, formData);
         setResult("게시글이 수정되었습니다");
     }

@@ -20,8 +20,6 @@ const KakaoRedirectPage = (props) => {
   useEffect(() => {
     getAccessToken(authCode).then((accessToken) => {
       getUserWithAccessToken(accessToken).then((userInfo) => {
-        console.log('----------------------------');
-        console.log(userInfo);
         dispatch(login(userInfo));
 
         // 로그인 후 회원이 소셜로그인으로 들어온 경우, 회원 정보 수정 페이지로 이동(향후에 수정해야됨)

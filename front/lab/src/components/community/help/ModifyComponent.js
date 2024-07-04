@@ -27,7 +27,6 @@ const ModifyComponent = ({commNo}) => {
 
     useEffect(() => {
         getOneHelp(commNo).then(data => {
-            console.log(data)
             setHelp(data)
         })
     }, [commNo])

@@ -28,7 +28,6 @@ const ListComponent = () => {
   const [sort, setSort] = useState('');
   useEffect(() => {
     getListQna({ page, size }, search, sort).then(data => {
-      console.log(data);
       setServerData(data);
     })
   }, [page, size, search, sort]);
