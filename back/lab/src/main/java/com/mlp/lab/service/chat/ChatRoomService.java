@@ -1,6 +1,8 @@
 package com.mlp.lab.service.chat;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -46,12 +48,23 @@ public class ChatRoomService {
                 .collect(Collectors.toList());
     }
 
+    public List<User> getList(Long roomId){
+        List<User> user = new ArrayList<>();
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findById(roomId);
+        user.add(chatRoom.get().getWriter());
+        for(int i=0; i<chatRoom.get().getReader().size(); i++){
+            user.add(chatRoom.get().getReader().get(i));
+        }
+        return user;
+    }
+
     public ChatRoomDataResponseDto.Info findRoomByRoomId(Long roomId) {
         ChatRoom chatRoom = chatRoomRepository.findByChatroomId(roomId);
         return ChatRoomDataResponseDto.Info.of(chatRoom);
     }
 
     public ChatRoomDataResponseDto.Info createRoom(Long userId, String title, String type, ChatRoomDataRequestDto.create createRequest) {
+
         if(createRequest.getBuyNo()!=null){ //공동구매
             Buy buy = buyRepository.findByBuyNo(createRequest.getBuyNo());
             User user = buy.getUser();   //글 작성자(채팅방 생성 후 자동으로 입장)
@@ -62,8 +75,7 @@ public class ChatRoomService {
                 .type(type)
                 .build();
             chatRoomRepository.save(chatRoom);
-        }
-        if(createRequest.getTeamNo()!=null){ //동네모임
+        } else if(createRequest.getTeamNo()!=null){ //동네모임
             Team team = teamRepository.findByTeamNo(createRequest.getTeamNo());
             User user = team.getUser();
             chatRoom = ChatRoom.builder()
@@ -73,29 +85,35 @@ public class ChatRoomService {
                 .type(type)
                 .build();
             chatRoomRepository.save(chatRoom);
-        }
-        if(createRequest.getMarketNo()!=null){ //동네모임
-            Market market = marketRepository.findByMarketNo(createRequest.getMarketNo());
-            User user = market.getUser();
+        } else if(createRequest.getMarketNo()!=null){ //동네장터는 문의자가 참여하기 클릭 시 채팅방 생성(1대1)
+            Market market = marketRepository.findMarketByMarketNo(createRequest.getMarketNo());
+            User writer = userRepository.findByUserId(market.getId());
+            User reader = userRepository.findByUserId(userId);
+            List<User> readers = new ArrayList<>();
+            readers.add(reader);
             chatRoom = ChatRoom.builder()
-                .writer(user)
+                .writer(writer)
                 .market(market)
                 .title(title)
                 .type(type)
+                .reader(readers)
                 .build();
             chatRoomRepository.save(chatRoom);
-        }
-        if(createRequest.getRoomNo()!=null){ //자취방쉐어
-            ShareRoom shareRoom = shareRoomRepository.findByRoomNo(createRequest.getRoomNo());
-            User user = shareRoom.getUser();
+        } else if(createRequest.getRoomNo()!=null){ //자취방쉐어
+            ShareRoom shareRoom = shareRoomRepository.findShareRoomByRoomNo(createRequest.getRoomNo());
+            User writer = userRepository.findByUserId(shareRoom.getId());
+            User reader = userRepository.findByUserId(userId);
+            List<User> readers = new ArrayList<>();
+            readers.add(reader);
             chatRoom = ChatRoom.builder()
-                .writer(user)
+                .writer(writer)
                 .shareRoom(shareRoom)
                 .title(title)
                 .type(type)
+                .reader(readers)
                 .build();
             chatRoomRepository.save(chatRoom);
-        }
+        } 
 
         return ChatRoomDataResponseDto.Info.of(chatRoom);
     }
@@ -154,40 +172,28 @@ public class ChatRoomService {
         chatRoomRepository.save(chatRoom);
         return ChatRoomDataResponseDto.Info.of(chatRoom);
     }
+    
+    public List<ChatRoom> findRoomByMarketNo(Long marketNo) {
+        List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
+        for(int i=0; i<chatRoom.size(); i++){
+            ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
+        }
+        return chatRoom;
+    }
+    
+    // public ChatRoomDataResponseDto.Info exitRoomMarket(Long userId, Long marketNo) {
+    //     User user = userRepository.findByUserId(userId);  
+    //     ChatRoom chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
+    //     chatRoom.removeReader(user);
+    //     chatRoomRepository.save(chatRoom);
+    //     return ChatRoomDataResponseDto.Info.of(chatRoom);
+    // }
 
-    public ChatRoomDataResponseDto.Info findRoomByMarketNo(Long marketNo) {
-        ChatRoom chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
-        return ChatRoomDataResponseDto.Info.of(chatRoom);
-    }
-    
-    public ChatRoomDataResponseDto.Info enterRoomMarket(Long userId, Long marketNo) {
-        User user = userRepository.findByUserId(userId);  // 글을 읽고 참여하기를 누른 유저
-        ChatRoom chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
-        List<User> readers = chatRoom.getReader();
-        readers.add(user);
-        chatRoomRepository.save(chatRoom);
-        return ChatRoomDataResponseDto.Info.of(chatRoom);
-    }
-    
-    public ChatRoomDataResponseDto.Info exitRoomMarket(Long userId, Long marketNo) {
-        User user = userRepository.findByUserId(userId);  // 참여x를 누른 유저
-        ChatRoom chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
-        chatRoom.removeReader(user);
-        chatRoomRepository.save(chatRoom);
-        return ChatRoomDataResponseDto.Info.of(chatRoom);
-    }
-
-    public ChatRoomDataResponseDto.Info findRoomByRoomNo(Long roomNo) {
-        ChatRoom chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
-        return ChatRoomDataResponseDto.Info.of(chatRoom);
-    }
-    
-    public ChatRoomDataResponseDto.Info enterRoomShare(Long userId, Long roomNo) {
-        User user = userRepository.findByUserId(userId);  // 글을 읽고 문의하기를 누른 유저
-        ChatRoom chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
-        List<User> readers = chatRoom.getReader();
-        readers.add(user);
-        chatRoomRepository.save(chatRoom);
-        return ChatRoomDataResponseDto.Info.of(chatRoom);
+    public List<ChatRoom> findRoomByRoomNo(Long roomNo) {
+        List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
+        for(int i=0; i<chatRoom.size(); i++){
+            ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
+        }
+        return chatRoom;
     }
 }

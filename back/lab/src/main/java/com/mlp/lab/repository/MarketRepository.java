@@ -174,9 +174,9 @@ public interface MarketRepository extends JpaRepository<Market, Integer> {
                         Pageable pageable);
 
         // 마이페이지 내가 작성한 글
-        @Query("SELECT m FROM Market m WHERE m.user.id = :id ORDER BY m.marketNo DESC")
+        @Query("SELECT m FROM Market m WHERE m.id = :id ORDER BY m.marketNo DESC")
         Page<Market> findByUser(@Param(value = "id") Long id, Pageable pageable);
 
-        @Query("select m, mi from Market m left join m.imageList mi where m.user.id = :id and (mi.ord = 0 or mi.ord IS NULL) order by m.marketNo desc")
+        @Query("select m, mi from Market m left join m.imageList mi where m.id = :id and (mi.ord = 0 or mi.ord IS NULL) order by m.marketNo desc")
         Page<Object[]> findAllByUser(@Param(value = "id") Long id, Pageable pageable);
 }

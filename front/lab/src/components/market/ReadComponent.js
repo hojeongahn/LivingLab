@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/marketApi';
 import { useSelector } from 'react-redux';
+import { postCreateRoom, chatUserInfoMarket } from '../../api/chatApi';
 import Slider from 'react-slick';
 import useCustomMove from '../../hooks/useCustomMove';
 import ModalComponent from '../common/ModalComponent';
@@ -12,6 +13,7 @@ import fullheart from '../../resources/images/heart_full.png';
 import ResultModal from '../common/ResultModal';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import InfoModal from '../common/InfoModal';
+import BasicModal from '../common/BasicModal';
 
 const initState = {
   marketNo: 0,
@@ -37,6 +39,7 @@ const host = API_SERVER_HOST;
 
 const ReadComponent = ({ marketNo }) => {
   const [result, setResult] = useState(null); //삭제 전용 모달창
+  const [addResultModal, setAddResultModal] = useState(null);
   const [market, setMarket] = useState(initState);
   const { moveToList, moveToModify } = useCustomMove();
   const loginInfo = useSelector((state) => state.loginSlice);
@@ -46,6 +49,7 @@ const ReadComponent = ({ marketNo }) => {
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [roomData, setRoomData] = useState(null);
 
   // 이미지 슬라이더
   const settings = {
@@ -64,11 +68,11 @@ const ReadComponent = ({ marketNo }) => {
       console.log(data);
       setMarket(data);
     });
-  }, [marketNo, info]);
+  }, [marketNo, info, addResultModal]);
 
   useEffect(() => {
     if (email) {
-      likeInfo('market',marketNo, ino).then((data) => {
+      likeInfo('market', marketNo, ino).then((data) => {
         setLike(data);
         if (data) {
           setIsLiked(true);
@@ -79,8 +83,54 @@ const ReadComponent = ({ marketNo }) => {
     }
   }, [marketNo, ino, email, info]);
 
-  const handleOpenModal = () => {
-    setShowModal(true);
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      try {
+        const response = await chatUserInfoMarket(marketNo);
+        console.log('응답 데이터:', response);
+
+        if (response.result) {
+          setRoomData(response.data);
+        } else {
+          console.error('특정 채팅방 조회 실패:', response.message);
+        }
+      } catch (error) {
+        console.error('API 요청 중 오류 발생:', error);
+      }
+    };
+
+    fetchRoomData();
+  }, [marketNo]);
+
+  const handleClickAdd = async () => {  //동네장터는 참여하기 클릭 시 채팅방 생성(1대1 채팅방)
+    if(!email){
+      setAddResultModal('로그인 후 참여할 수 있습니다');
+      return;
+    }
+    if (roomData) {
+      try {
+        const formData = new FormData();
+        formData.append('id', ino); 
+        formData.append('title', market.title);
+        const createRequest = { marketNo };
+
+        // 각 채팅방 정보에 접근하여 reader 배열에서 id가 ino인 사용자가 포함되어 있는지 확인
+        const isAlreadyJoined = roomData.some(room => room.reader.some(reader => reader.id === ino));
+
+        if (isAlreadyJoined) {
+          setAddResultModal('이미 참여 중입니다.');
+        } else {
+          // 채팅방 생성 요청
+          await postCreateRoom(formData.get('id'), formData.get('title'), '동네장터', createRequest);
+          setAddResultModal('참여가 완료되었습니다.');
+        }
+      } catch (error) {
+        console.error('API 요청 중 오류 발생:', error);
+        setAddResultModal('API 요청 중 오류가 발생했습니다.');
+      }
+    } else {
+      console.warn('채팅방 데이터가 로드되지 않았습니다.');
+    }
   };
 
   const handleCloseModal = () => {
@@ -99,6 +149,10 @@ const ReadComponent = ({ marketNo }) => {
 
   const closeInfoModal = () => {
     setInfo(null);
+  };
+
+  const closeBasicModal = () => {
+    setAddResultModal(null);
   };
 
   const handleLikeClick = () => {
@@ -179,14 +233,13 @@ const ReadComponent = ({ marketNo }) => {
         </div>
         <div className="col-start-2 col-span-6 text-slate-700 text-2xl my-5">{market.title}</div>
         <div className="col-start-2 col-span-8 text-base">
-
           <>{market.marketCategory !== '3' && market.marketCategory !== '4' && (
             <span>{market.price}원 / </span>)}
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{market.location}
           </>
-
         </div>
+        <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {market.createdDate}</div>
         <div className="col-start-2 col-span-8"></div>
         <div className="col-start-8 col-span-2 text-right text-base">{market.nickname}</div>
         <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{market.content}</div>
@@ -209,7 +262,7 @@ const ReadComponent = ({ marketNo }) => {
               </>
             ) : (
               <>
-                <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={handleOpenModal}>
+                <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={handleClickAdd}>
                   참여하기
                 </button>
                 <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={() => moveToList()}>
@@ -219,9 +272,9 @@ const ReadComponent = ({ marketNo }) => {
             )}
           </div>
         </div>
-        <ModalComponent show={showModal} onClose={handleCloseModal} />
-        {/* 삭제 알림 모달창 */}
         {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
+        {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
+        <ModalComponent show={showModal} onClose={handleCloseModal} />
         {/* 좋아요 기능 알림 모달 */}
         {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
       </div>

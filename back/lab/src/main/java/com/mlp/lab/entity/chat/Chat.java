@@ -47,4 +47,8 @@ public class Chat {
         return this.sender.getNickname();
     }
 
+    public String getSenderProfileImage(){
+        return this.sender.getProfileImage();
+    }
+
 }

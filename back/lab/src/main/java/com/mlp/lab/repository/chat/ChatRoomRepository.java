@@ -24,9 +24,9 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
        ChatRoom findByTeam_TeamNo(Long teamNo);
 
-       ChatRoom findByMarket_MarketNo(Long marketNo);
+       List<ChatRoom> findByMarket_MarketNo(Long marketNo);
 
-       ChatRoom findByShareRoom_RoomNo(Long roomNo);
+       List<ChatRoom> findByShareRoom_RoomNo(Long roomNo);
 
        @Modifying
        @Transactional
@@ -37,4 +37,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
        @Transactional
        @Query("UPDATE ChatRoom c SET c.team = NULL WHERE c.team.teamNo = :teamNo")
        int updateTeamRoom(@Param("teamNo") Long teamNo);
+
+       
 }

@@ -25,7 +25,7 @@ public class CommunityDto {
     private String content;
     private Integer commHit;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime regDate;
+    private LocalDateTime createdDate;
     private Character commCategory; //0:기타, 1:부동산, 2:인테리어, 3:할인정보
     private String nickname;
     private boolean flag; //해당 글에 사진 데이터 여부 확인

@@ -168,6 +168,7 @@ public class TeamService {
         team.setLongitude(teamDto.getLongitude());
         team.setTeamCategory(teamDto.getTeamCategory());
         team.setDeadline(teamDto.getDeadline());
+        team.setMax(teamDto.getMax());
 
         // 파일들 삭제
         team.clearList();

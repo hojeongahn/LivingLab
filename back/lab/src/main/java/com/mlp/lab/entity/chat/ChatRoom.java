@@ -68,7 +68,7 @@ public class ChatRoom {
         joinColumns = @JoinColumn(name = "chatroom_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> reader = new ArrayList<>();
+    private List<User> reader = new ArrayList<>();  //채팅방에 입장할 인원들
 
     @Builder
     public ChatRoom(Long chatroomId, String title, String type, Buy buy, Team team, Market market, ShareRoom shareRoom, User writer, List<User> reader) {

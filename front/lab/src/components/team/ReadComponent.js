@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/teamApi';
+import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike, updateTeamFlag } from '../../api/teamApi';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
-import { enterChatRoomTeam } from '../../api/chatApi';
+import { enterChatRoomTeam, chatUserInfoTeam } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
 import useCustomMove from '../../hooks/useCustomMove';
@@ -92,6 +92,10 @@ const ReadComponent = ({ teamNo }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleClickAdd = async () => {
+    if(!email){
+      setAddResultModal('로그인 후 참여할 수 있습니다');
+      return;
+    }
     const formData = new FormData();
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('teamNo', teamNo); // buyNo 값을 formData에 추가
@@ -99,10 +103,17 @@ const ReadComponent = ({ teamNo }) => {
       setAddResultModal('더이상 참여할수 없습니다.');
     } else {
       try {
-        await enterChatRoomTeam(formData); // FormData를 인자로 전달하여 호출
-        setAddResultModal('참여가 완료되었습니다.');
+        const data = await chatUserInfoTeam(teamNo);
+        const readerIds = data.data.readerId;
+
+        if(readerIds.includes(ino)){
+          setAddResultModal('이미 참여 중입니다.');
+        } else {
+          await enterChatRoomTeam(formData); // FormData를 인자로 전달하여 호출
+          setAddResultModal('참여가 완료되었습니다.');
+        }
       } catch (error) {
-        setAddResultModal('이미 참여 중입니다.', error);
+        setAddResultModal('참여 중 오류가 발생했습니다.');
       }
     }
   };
@@ -121,13 +132,22 @@ const ReadComponent = ({ teamNo }) => {
     setResult('삭제되었습니다');
   };
 
+  const handleClickEnd = () => {
+    updateTeamFlag(teamNo, true)
+    setResult('모집 종료하였습니다');
+  };
+
+  const handleClickStart = () => {
+    updateTeamFlag(teamNo, false)
+    setResult('다시 모집합니다');
+  };
+
   const closeInfoModal = () => {
     setInfo(null);
   };
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -220,6 +240,7 @@ const ReadComponent = ({ teamNo }) => {
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{team.location}
           </div>
+          <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {team.createdDate}</div>
           <div className="col-start-2 col-span-8"></div>
           <div className="col-start-8 col-span-2 text-right text-base">{team.nickname}</div>
           <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{team.content}</div>
@@ -230,7 +251,7 @@ const ReadComponent = ({ teamNo }) => {
             <div className="flex justify-between space-x-4"> */}
           {ino === team.id ? (
             <>
-              <div className="col-start-2 col-span-8 my-6">
+              <div className="col-start-4 col-span-6 my-6">
                 <div className="flex justify-between space-x-4">
                   {/* <div className="flex"> */}
                   {/* <div className="flex mr-auto"> */}
@@ -242,9 +263,9 @@ const ReadComponent = ({ teamNo }) => {
                   </button>
                   {/* </div> */}
 
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500">마감하기</button>
-                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
-                    목록
+                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 mr-2 hover:bg-slate-500" onClick={handleClickEnd}>마감하기</button>
+                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 hover:bg-blue-500" onClick={handleClickStart}>
+                    모집하기
                   </button>
                   {/* </div> */}
                 </div>
@@ -254,18 +275,34 @@ const ReadComponent = ({ teamNo }) => {
             <>
               <div className="col-start-6 col-span-4 my-6">
                 <div className="flex justify-between space-x-4">
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={handleClickAdd}>
-                    참여하기
-                  </button>
-                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={() => moveToList()}>
-                    목록
-                  </button>
+                  {team.flag === false ? (
+                    <>
+                      <button
+                        className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500"
+                        onClick={handleClickAdd}
+                      >
+                        참여하기
+                      </button>
+                      <button
+                        className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500"
+                        onClick={moveToList}
+                      >
+                        목록
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500 ml-48"
+                      onClick={moveToList}
+                    >
+                      목록
+                    </button>
+                  )}
                 </div>
               </div>
             </>
           )}
-          {/* </div>
-          </div> */}
+
           {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
           {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
           <ModalComponent show={showModal} onClose={handleCloseModal} />
@@ -274,7 +311,7 @@ const ReadComponent = ({ teamNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent teamNo={teamNo} />
+      <PartComponent key={addResultModal} teamNo={teamNo} />
     </>
   );
 };

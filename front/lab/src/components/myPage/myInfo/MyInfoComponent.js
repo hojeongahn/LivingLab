@@ -33,17 +33,14 @@ const MyInfoComponent = () => {
   }, [ino]);
 
   return (
-    <div>
-      <div className="flex justify-center">
-        <div className="w-full p-3 my-3 text-left font-bold text-2xl text-emerald-400">회원정보 조회</div>
-
+    <div className="font-Jua">
+      <div className="flex justify-end">
         <Link to={'/myPage/info/modify'}>
-          <button type="button" className="rounded p-1 mt-8 text-m w-32 text-white bg-blue-500">
+          <button type="button" className="rounded p-1 my-4 text-base w-32 text-white bg-blue-400 hover:bg-blue-500">
             수정하기
           </button>
         </Link>
       </div>
-
       <div className="p-4 bg-gray-50">
         <div className="flex justify-center">
           <div className="w-1/3 p-3 text-left font-bold">프로필 사진</div>
@@ -51,105 +48,49 @@ const MyInfoComponent = () => {
             <img src={`${host}/api/user/display/${user.profileImage}`} alt="프로필이미지" className="rounded-full size-40 mx-auto" />
           </div>
         </div>
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">아이디</div>
-          <div className="relative mb-4 flex w-full items-stretch">
-            <input className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md" name="email" type={'text'} value={user.email} readOnly></input>
-          </div>
-        </div>
 
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">이름</div>
-          <div className="relative mb-4 flex w-full items-stretch">
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="name"
-              type={'text'}
-              value={user.name}
-              placeholder="이름"
-              readOnly
-            ></input>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">휴대폰 번호</div>
-          <div className="relative mb-4 flex w-full items-stretch">
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="phone"
-              type={'text'}
-              value={user.phone}
-              placeholder="전화번호"
-              readOnly
-            ></input>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">닉네임</div>
-          <div className="relative mb-4 flex w-full items-stretch">
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="nickname"
-              type={'text'}
-              value={user.nickname}
-              placeholder="닉네임"
-              readOnly
-            ></input>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">비밀번호</div>
-          <div className="relative mb-4 flex w-full items-stretch">
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="pwd"
-              type={'password'}
-              value={user.pwd}
-              placeholder="비밀번호를 입력하세요"
-              readOnly
-            ></input>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">비밀번호 확인</div>
-          <div className="relative mb-4 flex w-full items-stretch">
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="pwd"
-              type={'password'}
-              value={user.pwd}
-              placeholder="비밀번호 확인"
-              readOnly
-            ></input>
-          </div>
-        </div>
-
-        <div className="flex justify-center">
-          <div className="w-1/3 p-3 text-left font-bold">주소</div>
-          <div className="relative mb-4 flex flex-wrap w-full items-stretch">
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="addr"
-              type={'text'}
-              placeholder="주소"
-              value={user.addr}
-              readOnly
-            ></input>
-
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-              name="detailAddr"
-              type={'text'}
-              placeholder="상세주소"
-              value={user.detailAddr}
-              readOnly
-            ></input>
-          </div>
-        </div>
+        <table className="w-full">
+          <tr>
+            <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
+            아이디
+            </th>
+            <td className="w-3/4 text-left pl-6">
+            {user.email}
+            </td>
+          </tr>
+          <tr>
+            <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
+            이름
+            </th>
+            <td className="w-3/4 text-left pl-6">
+            {user.name}
+            </td>
+          </tr>
+          <tr>
+            <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
+            휴대폰 번호
+            </th>
+            <td className="w-3/4 text-left pl-6">
+            {user.phone}
+            </td>
+          </tr>
+          <tr>
+            <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
+            닉네임
+            </th>
+            <td className="w-3/4 text-left pl-6">
+            {user.nickname}
+            </td>
+          </tr>
+          <tr>
+            <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
+            주소
+            </th>
+            <td className="w-3/4 text-left pl-6">
+            {user.addr} {user.detailAddr}
+            </td>
+          </tr>
+        </table>
       </div>
     </div>
   );

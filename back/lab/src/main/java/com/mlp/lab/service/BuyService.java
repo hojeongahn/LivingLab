@@ -168,6 +168,7 @@ public class BuyService {
         buy.setLongitude(buyDto.getLongitude());
         buy.setBuyCategory(buyDto.getBuyCategory());
         buy.setDeadline(buyDto.getDeadline());
+        buy.setMax(buyDto.getMax());
 
         // 파일들 삭제
         buy.clearList();

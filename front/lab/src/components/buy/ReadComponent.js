@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/buyApi';
+import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike, updateBuyFlag } from '../../api/buyApi';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
-import { enterChatRoomBuy } from '../../api/chatApi';
+import { enterChatRoomBuy, chatUserInfoBuy } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
 import Slider from 'react-slick';
 import useCustomMove from '../../hooks/useCustomMove';
@@ -51,8 +51,8 @@ const ReadComponent = ({ buyNo }) => {
   const [isLiked, setIsLiked] = useState({}); // true/false에 따라 하트 이미지 변경
   const [like, setLike] = useState(initState2);
   const [info, setInfo] = useState(null);
-  const [ current, setCurrent ] = useState(0);
-  const [ max, setMax ] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [max, setMax] = useState(0);
 
   // 이미지 슬라이더
   const settings = {
@@ -68,6 +68,7 @@ const ReadComponent = ({ buyNo }) => {
 
   useEffect(() => {
     getOne(buyNo).then((data) => {
+      console.log("data값은:", data);
       setBuy(data);
       setCurrent(data.current);
       setMax(data.max);
@@ -76,7 +77,7 @@ const ReadComponent = ({ buyNo }) => {
 
   useEffect(() => {
     if (email) { // 로그인시에만 실행
-      likeInfo('buy',buyNo, ino).then((data) => {
+      likeInfo('buy', buyNo, ino).then((data) => {
         setLike(data);
         if (data) { //data가 있으면 이미 좋아요 누른 글
           setIsLiked(true);
@@ -90,17 +91,28 @@ const ReadComponent = ({ buyNo }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleClickAdd = async () => {
+    if(!email){
+      setAddResultModal('로그인 후 참여할 수 있습니다');
+      return;
+    }
     const formData = new FormData();
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('buyNo', buyNo); // buyNo 값을 formData에 추가
-    if(current === max){
+    if (current === max) {
       setAddResultModal('더이상 참여할수 없습니다.');
-    } else{
+    } else {
       try {
-        await enterChatRoomBuy(formData); // FormData를 인자로 전달하여 호출
-        setAddResultModal('참여가 완료되었습니다.');
+        const data = await chatUserInfoBuy(buyNo);
+        const readerIds = data.data.readerId;
+
+        if (readerIds.includes(ino)) { 
+          setAddResultModal('이미 참여 중입니다.');
+        } else {
+          await enterChatRoomBuy(formData); // FormData를 인자로 전달하여 호출
+          setAddResultModal('참여가 완료되었습니다.');
+        }
       } catch (error) {
-        setAddResultModal('이미 참여 중입니다.', error);
+        setAddResultModal('참여 중 오류가 발생했습니다.');
       }
     }
   };
@@ -114,6 +126,17 @@ const ReadComponent = ({ buyNo }) => {
     setResult('삭제되었습니다');
   };
 
+  const handleClickEnd = () => {
+    updateBuyFlag(buyNo, true)
+    setResult('모집 종료하였습니다');
+  };
+
+  const handleClickStart = () => {
+    updateBuyFlag(buyNo, false)
+    setResult('다시 모집합니다');
+  };
+
+
   const closeDeleteModal = () => {
     setResult(null);
     moveToList();
@@ -125,7 +148,6 @@ const ReadComponent = ({ buyNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
@@ -178,7 +200,7 @@ const ReadComponent = ({ buyNo }) => {
             {buy.flag ? '모집 종료' : '모집 중'}
             <img src={iconNext} alt="..." className="w-7 inline" />
           </span>
-          <span className="text-right text-base">{formatDeadline(buy.deadline)}</span>
+          <span className="text-right text-lg">{formatDeadline(buy.deadline)}</span>
         </div>
         <div className="grid grid-cols-10 w-full mx-auto mt-4 mb-1 text-xl bg-white">
           <div className="col-start-9 col-span-2 ml-5 mt-4 text-right flex justify-center">
@@ -214,6 +236,7 @@ const ReadComponent = ({ buyNo }) => {
             <img src={mapIcon} alt="..." className="w-5 inline" />
             &ensp;{buy.location}
           </div>
+          <div className="col-start-2 col-span-6 text-slate-700 text-sm my-5">작성일 : {buy.createdDate}</div>
           <div className="col-start-2 col-span-8"></div>
           <div className="col-start-8 col-span-2 text-right text-base">{buy.nickname}</div>
           <div className="col-start-2 col-span-8 my-5 border-t-4 py-4 whitespace-pre-wrap">{buy.content}</div>
@@ -224,7 +247,7 @@ const ReadComponent = ({ buyNo }) => {
             <div className="flex justify-between space-x-4"> */}
           {ino === buy.id ? (
             <>
-              <div className="col-start-2 col-span-8 my-6">
+              <div className="col-start-4 col-span-6 my-6">
                 <div className="flex justify-between space-x-4">
                   {/* <div className="flex"> */}
                   {/* <div className="flex mr-auto"> */}
@@ -236,11 +259,11 @@ const ReadComponent = ({ buyNo }) => {
                   </button>
                   {/* </div> */}
                   {/* 글쓴이는 자동 참여해서 참여하기 필요 X */}
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500" >
-                    마감하기 
+                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500" onClick={handleClickEnd} >
+                    마감하기
                   </button>
-                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
-                    목록
+                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={handleClickStart}>
+                    모집하기
                   </button>
                   {/* </div> */}
                 </div>
@@ -248,20 +271,36 @@ const ReadComponent = ({ buyNo }) => {
             </>
           ) : (
             <>
-              <div className="col-start-6 col-span-4 my-6">
-                <div className="flex justify-between space-x-4">
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={handleClickAdd}>
-                    참여하기
-                  </button>
-                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={() => moveToList()}>
+            <div className="col-start-6 col-span-4 my-6">
+              <div className="flex justify-between space-x-4">
+                {buy.flag === false ? (
+                  <>
+                    <button
+                      className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500"
+                      onClick={handleClickAdd}
+                    >
+                      참여하기
+                    </button>
+                    <button
+                      className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500"
+                      onClick={moveToList}
+                    >
+                      목록
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500 ml-48"
+                    onClick={moveToList}
+                  >
                     목록
                   </button>
-                </div>
+                )}
               </div>
-            </>
+            </div>
+          </>
           )}
-          {/* </div>
-          </div> */}
+   
           {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
           {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
           <ModalComponent show={showModal} onClose={handleCloseModal} />
@@ -270,7 +309,7 @@ const ReadComponent = ({ buyNo }) => {
         </div>
       </div>
       {/* 참여인원 목록 컴포넌트 */}
-      <PartComponent buyNo={buyNo} />
+      <PartComponent key={addResultModal} buyNo={buyNo} />
     </>
   );
 };

@@ -102,7 +102,6 @@ public class ShareRoomService {
 
     public ShareRoom add(ShareRoomDto shareRoomDto) { // 룸쉐어 등록(이미지 포함)
         ShareRoom shareRoom = ShareRoom.DtoToEntity(shareRoomDto);
-        shareRoom.setUser(userRepository.findByUserId(shareRoomDto.getId()));
         shareRoomRepository.save(shareRoom);
         return shareRoom;
     }

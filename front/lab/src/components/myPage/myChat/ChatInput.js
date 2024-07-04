@@ -13,21 +13,6 @@ const ChatInput = ({ onSend }) => {
     onSend(message); // 부모 컴포넌트로부터 전달받은 onSend 함수 호출
     setMessage(''); // 메시지 입력창 초기화
   };
-
-  // const handleSend = (e) => {
-  //   e.preventDefault();
-  //   if (message.trim()) {
-  //     onSend(message);
-  //     setMessage('');
-  //   }
-  // };
-
-  // const onKeyDown = (e) => {
-  //   if (e.key === 'Enter') {
-  //     handleSend(e);
-  //   }
-  // }
-
     return (
       <form onSubmit={handleSubmit} className="flex p-4 bg-white border-t rounded-b">
         <input

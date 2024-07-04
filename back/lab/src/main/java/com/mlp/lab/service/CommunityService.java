@@ -218,7 +218,7 @@ public class CommunityService {
         Optional<Community> result = communityRepository.findById(commNo);
         Community community = result.orElseThrow();
         CommunityDto communityDto = Community.entityToDto(community);
-        communityDto.setRegDate(community.getCreatedDate());
+        communityDto.setCreatedDate(community.getCreatedDate());
         communityDto.setId(community.getUser().getId());
         return communityDto;
     }
