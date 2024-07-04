@@ -91,6 +91,10 @@ const ReadComponent = ({ buyNo }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleClickAdd = async () => {
+    if(!email){
+      setAddResultModal('로그인 후 참여할 수 있습니다');
+      return;
+    }
     const formData = new FormData();
     formData.append('userId', ino); // ino 값을 formData에 추가
     formData.append('buyNo', buyNo); // buyNo 값을 formData에 추가
@@ -243,7 +247,7 @@ const ReadComponent = ({ buyNo }) => {
             <div className="flex justify-between space-x-4"> */}
           {ino === buy.id ? (
             <>
-              <div className="col-start-2 col-span-8 my-6">
+              <div className="col-start-4 col-span-6 my-6">
                 <div className="flex justify-between space-x-4">
                   {/* <div className="flex"> */}
                   {/* <div className="flex mr-auto"> */}

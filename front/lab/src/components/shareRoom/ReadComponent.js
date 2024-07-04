@@ -88,7 +88,11 @@ const ReadComponent = ({ roomNo }) => {
     fetchRoomData();
   }, [roomNo]);
 
-  const handleClickAdd = async () => {  //동네장터는 참여하기 클릭 시 채팅방 생성(1대1 채팅방)
+  const handleClickAdd = async () => {  //자취방쉐어는 참여하기 클릭 시 채팅방 생성(1대1 채팅방)
+    if (!email) {
+      setAddResultModal('로그인 후 이용 가능합니다');
+      return;
+    };
     if (roomData) {
       try {
         const formData = new FormData();
@@ -98,7 +102,6 @@ const ReadComponent = ({ roomNo }) => {
 
         // 각 채팅방 정보에 접근하여 reader 배열에서 id가 ino인 사용자가 포함되어 있는지 확인
         const isAlreadyJoined = roomData.some(room => room.reader.some(reader => reader.id === ino));
-
         if (isAlreadyJoined) {
           setAddResultModal('이미 문의한 글입니다.');
         } else {
@@ -172,12 +175,12 @@ const ReadComponent = ({ roomNo }) => {
               <React.Fragment key={index}>
                 {index === 0 ? (
                   <div id={`child-first-${index}`} className="row-span-2 relative overflow-hidden">
-                    <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full"></img>
+                    <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full" alt="..."/>
                   </div>
                 ) : index >= 1 && index <= 4 ? (
                   <>
                     <div id={`child-${index}`} className="relative overflow-hidden">
-                      <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full"></img>
+                      <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full" alt="..."/>
                     </div>
                   </>
                 ) : null}
@@ -299,12 +302,14 @@ const ReadComponent = ({ roomNo }) => {
                   {shareRoom.content}
                 </p>
                 <div id="buttons" className="flex items-center w-full mt-8">
-                  <div>
-                    <button className="inline-flex items-center justify-center w-[211px] px-4 text-white bg-blue-600 h-[56px] text-sm leading-6 font-bold rounded-sm cursor-pointer transition-all duration-150 ease-out">
-                      <span className="" onClick={handleClickAdd}>문의하기</span>
-                    </button>
-                  </div>
-                  <div className="w-[85px] ml-4 border">
+                  { loginState.id !== shareRoom.id && (
+                    <div>
+                      <button className="inline-flex items-center justify-center w-[211px] mr-4 px-4 text-white bg-blue-600 h-[56px] text-sm leading-6 font-bold rounded-sm cursor-pointer transition-all duration-150 ease-out">
+                        <span className="" onClick={handleClickAdd}>문의하기</span>
+                      </button>
+                    </div>
+                  )}
+                  <div className="w-[85px] border">
                     <button className="ml-2 h-[56px]">
                       <img src={loginState.id && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-7 mr-3 inline" />
                       {shareRoom.roomHit}
@@ -315,7 +320,7 @@ const ReadComponent = ({ roomNo }) => {
             </div>
           </aside>
           <div className="mt-[350px]">
-            {loginState.id === shareRoom.userId && (
+            {loginState.id === shareRoom.id && (
               <>
                 <button type="button" className="ml-5 float-right inline-block rounded bg-blue-400 px-6 pb-2 pt-2.5 text-base font-medium leading-normal text-white shadow-md transition duration-150 ease-in-out hover:bg-blue-500 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-teal-600 motion-reduce:transition-none" onClick={handleClickDelete}>
                   삭제하기
