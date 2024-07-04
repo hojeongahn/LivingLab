@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import imgLogo2 from '../../resources/images/logo2.png';
 import PostComponent from '../common/PostComponent';
-import { joinUser } from '../../api/userApi';
+import { joinUser, CheckEmail, CheckNickname } from '../../api/userApi';
 import { useNavigate } from 'react-router-dom'; // useNavigate 추가
 
 const initState = {
@@ -71,7 +71,7 @@ const JoinComponent = () => {
         validEmail: result,
       });
     }
-  }, [user.email]);
+  }, [user.email, emailRegex, user]);
 
   useEffect(() => {
     if(user.pwd !== ''){
@@ -82,7 +82,7 @@ const JoinComponent = () => {
         validPwd: result,
       });
     }
-  }, [user.pwd]);
+  }, [user.pwd, pwRegex, user]);
 
   useEffect(() => {
     if(user.confirmPwd !== ''){
@@ -93,7 +93,7 @@ const JoinComponent = () => {
         validConfirmPwd: result,
       });
     }
-  }, [user.confirmPwd, user.pwd]);
+  }, [user.confirmPwd, user.pwd, user]);
 
   useEffect(() => {
     if(user.name !== ''){
@@ -104,7 +104,7 @@ const JoinComponent = () => {
         validName: result,
       });
     }
-  }, [user.name]);
+  }, [user.name, nameRegex, user]);
 
 
   useEffect(() => {
@@ -127,7 +127,7 @@ const JoinComponent = () => {
         validNickname: result,
       });
     }
-  }, [user.nickname]);
+  }, [user.nickname, nicknameRegexv, user]);
 
   useEffect(() => {
     const result = user.addr && user.detailAddr;
@@ -136,7 +136,7 @@ const JoinComponent = () => {
         errorAddr : result? '주소가 입력되었습니다' : '주소를 입력해주세요',
         validAddr: result,
       });
-  }, [user.addr, user.detailAddr]);
+  }, [user.addr, user.detailAddr, user]);
 
   useEffect(() => {
     const result = user.file !== null;
@@ -145,7 +145,7 @@ const JoinComponent = () => {
         errorFile : result? '프로필 이미지가 등록되었습니다' : '프로필 이미지를 등록해주세요',
         validFile: result,
       });
-  }, [user.file]);
+  }, [user.file, user]);
 
 
   // addr(팝업 검색주소)만 따로 상태변경
@@ -192,6 +192,32 @@ const JoinComponent = () => {
     }
   };
 
+  // 이메일 중복 체크
+  const handleCheckEmail = () => {
+    CheckEmail(user.email)
+    .then((res)=> {
+      if(res === false) {
+        alert('사용 가능한 이메일입니다.');
+      }
+      else {
+        alert('이미 회원가입된 이메일입니다.')
+      }
+    })
+  }
+
+   // 닉네임 중복 체크
+  const handleCheckNickname = () => {
+    CheckNickname(user.nickname)
+    .then((res)=> {
+      if(res === false) {
+        alert('사용 가능한 닉네임입니다.');
+      }
+      else {
+        alert('이미 회원가입된 닉네임입니다.')
+      }
+    })
+  }
+
   return (
     <div className="max-h-400">
       <div className="flex justify-center">
@@ -203,17 +229,19 @@ const JoinComponent = () => {
         <div className="flex justify-center">
           <div className="relative mb-4 flex w-full flex-wrap items-stretch">
             <div className="w-full p-3 text-left font-bold">이메일</div>
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-500 shadow-md"
-              name="email"
-              type={'text'}
-              placeholder="아이디는 이메일 형식으로 입력해주세요."
-              value={user.email}
-              onChange={handleChange}
-            ></input>
-            {/* <button className="rounded p-2 w-1/4 bg-gray-500 text-xm text-white" onClick={handleClickJoin}>
-              중복확인
-            </button> */}
+              <div className="flex w-full space-x-2">
+                <input
+                  className="w-4/5 p-3 rounded-r border border-solid border-neutral-500 shadow-md"
+                  name="email"
+                  type="text"
+                  placeholder="아이디는 이메일 형식으로 입력해주세요."
+                  value={user.email}
+                  onChange={handleChange}
+                />
+                <button className="w-1/5 rounded p-2 bg-gray-500 text-xm text-white" onClick={handleCheckEmail}>
+                  중복확인
+                </button>
+              </div>
             {user.validEmail ? (<p className="text-sm text-blue-600">{user.errorEmail}</p>):(<p className="text-sm text-red-600">{user.errorEmail}</p>)}
           </div>
         </div>
@@ -280,14 +308,19 @@ const JoinComponent = () => {
         <div className="flex justify-center">
           <div className="relative mb-4 flex w-full flex-wrap items-stretch">
             <div className="w-full p-3 text-left font-bold">닉네임</div>
-            <input
-              className="w-full p-3 rounded-r border border-solid border-neutral-500 shadow-md"
-              name="nickname"
-              type={'text'}
-              placeholder="닉네임"
-              value={user.nickname}
-              onChange={handleChange}
-            ></input>
+              <div className="flex w-full space-x-2">
+                <input
+                  className="w-4/5 p-3 rounded-r border border-solid border-neutral-500 shadow-md"
+                  name="nickname"
+                  type="text"
+                  placeholder="닉네임"
+                  value={user.nickname}
+                  onChange={handleChange}
+                />
+                <button className="w-1/5 rounded p-2 bg-gray-500 text-xm text-white" onClick={handleCheckNickname}>
+                  중복확인
+                </button>
+              </div>
             {user.validNickname ? (<p className="text-sm text-blue-600">{user.errorNickName}</p>):(<p className="text-sm text-red-600">{user.errorNickName}</p>)}
           </div>
         </div>
