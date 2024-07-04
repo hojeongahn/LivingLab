@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
@@ -9,8 +9,9 @@ import Logo from '../../resources/images/logo1_vector.png';
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const loginState = useSelector((state) => state.loginSlice);
-  const { doLogout, moveToPath } = useCustomLogin();
+  const { doLogout } = useCustomLogin();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,8 +26,7 @@ const Header = () => {
 
   const handleClickLogout = () => {
     doLogout();
-    alert('로그아웃되었습니다.');
-    moveToPath('/');
+    navigate('/', { state: { showModal: true } });
   };
 
   const getLinkClass = (path) => {

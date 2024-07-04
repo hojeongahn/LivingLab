@@ -6,11 +6,48 @@ import BuyPostComponent from '../components/main/BuyPostComponent';
 import ShareRoomPostComponent from '../components/main/shareRoomPostComponent';
 import WeatherComponent from '../components/main/WeatherComponent';
 import MainSliderComponent from '../components/main/MainSliderComponent';
-import { Link } from 'react-router-dom';
-import React from "react";
+import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
 import TypingComponent from '../components/main/TypingComponent';
 
 const MainPage = () => {
+  const location = useLocation();
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isFadingOut, setFadingOut] = useState(false);
+  const [isModalVisible2, setModalVisible2] = useState(false);
+  const [isFadingOut2, setFadingOut2] = useState(false); 
+
+  useEffect(() => {
+    if (location.state && location.state.showModal) {
+      showModal();
+    }
+    if (location.state && location.state.showModalLogin) {
+      showModalLogin();
+    }
+  }, [location]);
+
+  const showModal = () => {
+    setFadingOut(false);
+    setModalVisible(true);
+    setTimeout(() => {
+      setFadingOut(true);
+      setTimeout(() => {
+        setModalVisible(false);
+      }, 500); // 애니메이션 지속 시간
+    }, 2000); // 2초 후 모달 사라짐
+  };
+
+  const showModalLogin = () => {
+    setFadingOut2(false);
+    setModalVisible2(true);
+    setTimeout(() => {
+      setFadingOut2(true);
+      setTimeout(() => {
+        setModalVisible2(false);
+      }, 500); // 애니메이션 지속 시간
+    }, 2000); // 2초 후 모달 사라짐
+  };
+
   return (
     <div className="bg-color">
       <hr className="vertical-line" />
@@ -126,6 +163,28 @@ const MainPage = () => {
             </div>
           </div>
         </div>
+        {isModalVisible && (
+          <div className="fixed inset-0 flex items-start justify-center z-50 mt-3">
+            <div
+              className={`bg-white py-6 px-14 rounded shadow-lg transition-opacity duration-500 ease-in-out ${
+                isFadingOut ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              <p className="text-gray-800 text-xl">로그아웃 되었습니다</p>
+            </div>
+          </div>
+        )}
+        {isModalVisible2 && (
+          <div className="fixed inset-0 flex items-start justify-center z-50 mt-3">
+            <div
+              className={`bg-white py-6 px-14 rounded shadow-lg transition-opacity duration-500 ease-in-out ${
+                isFadingOut2 ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              <p className="text-gray-800 text-xl">로그인 되었습니다</p>
+            </div>
+          </div>
+        )}
       </BasicLayout>
     </div>
   );
