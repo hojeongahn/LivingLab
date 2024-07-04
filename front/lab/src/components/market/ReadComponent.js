@@ -68,7 +68,7 @@ const ReadComponent = ({ marketNo }) => {
       console.log(data);
       setMarket(data);
     });
-  }, [marketNo, info]);
+  }, [marketNo, info, addResultModal]);
 
   useEffect(() => {
     if (email) {
@@ -103,6 +103,10 @@ const ReadComponent = ({ marketNo }) => {
   }, [marketNo]);
 
   const handleClickAdd = async () => {  //동네장터는 참여하기 클릭 시 채팅방 생성(1대1 채팅방)
+    if(!email){
+      setAddResultModal('로그인 후 참여할 수 있습니다');
+      return;
+    }
     if (roomData) {
       try {
         const formData = new FormData();
@@ -149,7 +153,6 @@ const ReadComponent = ({ marketNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
-    window.location.reload();
   };
 
   const handleLikeClick = () => {
