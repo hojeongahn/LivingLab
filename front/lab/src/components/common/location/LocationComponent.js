@@ -4,21 +4,6 @@ import { useSelector } from 'react-redux';
 import { modifyUser, getUser } from '../../../api/userApi';
 import ResultModal from '../ResultModal';
 
-const initState = {
-  id: '',
-  email: '',
-  name: '',
-  phone: '',
-  nickname: '',
-  pwd: '',
-  pwdCheck: '',
-  addr: '',
-  detailAddr: '',
-  profileImage: '',
-  location: '',
-  latitude: 0,
-  longitude: 0,
-};
 
 const LocationComponent = () => {
   const { kakao } = window;
@@ -26,8 +11,10 @@ const LocationComponent = () => {
   const [location, setLocation] = useState(''); // 현재 위치를 저장할 상태
   const [isOpen, setIsOpen] = useState(false); // 현재 위치 지도창 열기,닫기
   const [addResultModal, setAddResultModal] = useState(null);
+  const [ info, setInfo ] = useState(false);
+  const [ isFadingOut, setFadingOut ] = useState(false);
 
-  const [user, setUser] = useState(initState);
+
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo?.id;
 
@@ -72,18 +59,15 @@ const LocationComponent = () => {
 
   const handleLocation = (user) => {
     getAddress(user); // 실시간 위치 주소 받아옴
-
-    if (isOpen === false) setIsOpen(true);
-    else setIsOpen(false);
+    setIsOpen(true);
   };
 
   const handleClickLocation = (e) => {
     if (!ino) {
       setAddResultModal('로그인 후 이용할 수 있습니다');
     } else {
-      alert('현재 위치가 실시간 반영되었습니다.');
+      showModal();
       getUser(ino).then((user) => {
-        setUser(user);
         handleLocation(user);
       });
     }
@@ -92,6 +76,17 @@ const LocationComponent = () => {
   const handleModalClose = () => {
     setIsOpen(false); // 모달 닫기
     setAddResultModal(null);
+  };
+
+  const showModal = () => {
+    setFadingOut(false);
+    setInfo(true);
+    setTimeout(() => {
+      setFadingOut(true);
+      setTimeout(() => {
+        setInfo(false);
+      }, 400); // 애니메이션 지속 시간 0.4초
+    }, 1000); // 1초 후 모달 사라짐
   };
 
   return (
@@ -131,6 +126,19 @@ const LocationComponent = () => {
           />
         )}
       </div>
+      {info && (
+        <>
+          <div className="fixed inset-0 flex items-center justify-center z-[2000]">
+            <div
+              className={`bg-mainColor px-5 py-3 rounded-full shadow-lg transition-opacity duration-400 ease-in-out ${
+                isFadingOut ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              <p className="text-white font-semibold">현재 위치가 설정되었습니다</p>
+            </div>
+          </div>
+        </>
+      )}
       {addResultModal && <ResultModal title={'알림'} content={addResultModal} callbackFn={handleModalClose} />}
     </div>
   );
