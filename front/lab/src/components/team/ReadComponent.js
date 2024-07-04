@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike } from '../../api/teamApi';
+import { API_SERVER_HOST, deleteOne, getOne, increaseLike, decreaseLike, updateTeamFlag } from '../../api/teamApi';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import { enterChatRoomTeam, chatUserInfoTeam } from '../../api/chatApi';
 import { useSelector } from 'react-redux';
@@ -128,6 +128,16 @@ const ReadComponent = ({ teamNo }) => {
     setResult('삭제되었습니다');
   };
 
+  const handleClickEnd = () => {
+    updateTeamFlag(teamNo, true)
+    setResult('모집 종료하였습니다');
+  };
+
+  const handleClickStart = () => {
+    updateTeamFlag(teamNo, false)
+    setResult('다시 모집합니다');
+  };
+
   const closeInfoModal = () => {
     setInfo(null);
   };
@@ -249,9 +259,9 @@ const ReadComponent = ({ teamNo }) => {
                   </button>
                   {/* </div> */}
 
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 mr-2 hover:bg-blue-500">마감하기</button>
-                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 hover:bg-slate-500" onClick={() => moveToList()}>
-                    목록
+                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/4 mr-2 hover:bg-slate-500" onClick={handleClickEnd}>마감하기</button>
+                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/4 hover:bg-blue-500" onClick={handleClickStart}>
+                    모집하기
                   </button>
                   {/* </div> */}
                 </div>
@@ -261,18 +271,34 @@ const ReadComponent = ({ teamNo }) => {
             <>
               <div className="col-start-6 col-span-4 my-6">
                 <div className="flex justify-between space-x-4">
-                  <button className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500" onClick={handleClickAdd}>
-                    참여하기
-                  </button>
-                  <button className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500" onClick={() => moveToList()}>
-                    목록
-                  </button>
+                  {team.flag === false ? (
+                    <>
+                      <button
+                        className="text-base text-white bg-blue-400 p-2 rounded-md w-1/2 mr-2 hover:bg-blue-500"
+                        onClick={handleClickAdd}
+                      >
+                        참여하기
+                      </button>
+                      <button
+                        className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500"
+                        onClick={moveToList}
+                      >
+                        목록
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="text-base text-white bg-slate-400 p-2 rounded-md w-1/2 hover:bg-slate-500 ml-48"
+                      onClick={moveToList}
+                    >
+                      목록
+                    </button>
+                  )}
                 </div>
               </div>
             </>
           )}
-          {/* </div>
-          </div> */}
+
           {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
           {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
           <ModalComponent show={showModal} onClose={handleCloseModal} />
