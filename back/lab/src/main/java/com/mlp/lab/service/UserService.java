@@ -58,6 +58,18 @@ public class UserService {
     return result;
   }
 
+  // 중복 이메일 체크
+  @Transactional
+  public boolean checkEmailDuplicate(String email) {
+    return userRepository.existsByEmail(email);
+  }
+
+  // 중복 닉네임 체크
+  @Transactional
+  public boolean checkNicknameDuplicate(String nickname) {
+    return userRepository.existsByNickname(nickname);
+  }
+
   // 회원정보 수정
   public void modifyUserInfo(UserDto userDto) {
     // 1. 조회
