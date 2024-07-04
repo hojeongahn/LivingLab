@@ -93,9 +93,27 @@
 .text-center {
   text-align: center;
   align-items: center;
-
 }
 
+.sign-btn {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem; 
+  color: #000; 
+}
+
+.sign-btn-group {
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  height: 40px; 
+  transition: background-color 0.3s, border-radius 0.3s;
+}
+
+.sign-btn-group:hover {
+  background-color: rgba(248, 248, 248, 0.95); 
+  border-radius: 36px;
+}
 
 /* 홈 화면 상단 */
 .main-container-top {
@@ -108,7 +126,7 @@
   position: relative;
   margin: 0 auto;
   width: 100%;
-  height: 880px;
+  height: 980px;
   overflow:hidden;
   object-fit:cover;
 
@@ -125,7 +143,7 @@
 .main-image-text {
   position: absolute;
   color: #ffffff;
-  font-size: 47px;
+  font-size: 50px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -133,8 +151,9 @@
 
 .weather-container {
   position: absolute;
-  top: 1%;
-  right:1%;
+  top: 40%;
+  /* right:1%; */
+  left:50%;
   color:#ffffff;
 }
 
@@ -152,23 +171,23 @@
   position: absolute;
   width:40px;
   height:40px;
-  left:-90px;
+  right:140px;
   top:-2px;
 }
 
 .weather-temp {
   position: absolute;
   font-size: 24px;
-  left: -50px;
+  right: 100px;
   top: -1px;
   font-family: "Noto Sans KR", sans-serif;
 
 }
 
 .weather-marker {
-  margin-top: 5px;
-  width:28px;
-  height:28px;
+  margin-top: 3.5px;
+  width:30px;
+  height:30px;
 }
 
 .KakaoSmall {
@@ -292,15 +311,47 @@
   margin: 25px auto;
 }
 
+.main-container-space {
+  margin: 80px 0;
+}
+
 .vertical-line {
   position: absolute;
   height: 1450px;
   width: 2px;
   border-left: 1px dashed #bbb;
   border-right: 1px dashed #fff;
-  top: 1170px;
+  top: 1200px;
   left: 50%;
   z-index: 49;
+}
+
+.header-space {
+  margin-top:86.88px;
+}
+
+.menu-width {
+  width:100px;
+  text-align: center;
+  margin:0 3px;
+}
+
+.menu-home {
+  width:60px;
+  text-align: center;
+  margin:0 3px;
+}
+
+.menu-login {
+  width:90px;
+  text-align: center;
+  margin:0 3px;
+}
+
+.menu-mypage {
+  width:110px;
+  text-align: center;
+  margin:0 3px;
 }
 
 .main-headline {

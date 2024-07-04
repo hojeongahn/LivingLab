@@ -77,7 +77,7 @@ const IndexPage = () => {
   }, [ino,email,navigate]);
 
   return (
-    <div>
+    <div className=' header-space'>
       <BasicLayout>
         <div className="text-xl flex-grow bg-gray-300 bg-opacity-30">
           <div className="min-h-screen flex flex-row w-4/5 mx-auto my-10">

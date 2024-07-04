@@ -25,7 +25,7 @@ const IndexPage = () => {
   }, [navigate]);
 
   return (
-    <div>
+    <div className=' header-space'>
       <BasicLayout>
         <div className="text-xl flex-grow bg-slate-100 py-8">
           <div className="min-h-screen flex flex-row bg-white w-2/3 mx-auto">

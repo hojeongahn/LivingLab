@@ -68,7 +68,7 @@ public interface MarketRepository extends JpaRepository<Market, Integer> {
                         "* FUNCTION('cos', FUNCTION('radians', m.latitude)) " +
                         "* FUNCTION('cos', FUNCTION('radians', m.longitude) - FUNCTION('radians', :longitude)) " +
                         "+ FUNCTION('sin', FUNCTION('radians', :latitude)) " +
-                        "* FUNCTION('sin', FUNCTION('radians', m.latitude)))) < 2 " +
+                        "* FUNCTION('sin', FUNCTION('radians', m.latitude)))) < 5 " +
                         "ORDER BY distance ASC")
         Page<Object[]> searchDistanceList(
                         @Param(value = "title") String title,

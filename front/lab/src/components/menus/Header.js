@@ -1,21 +1,27 @@
-import React from 'react';
-import axios from 'axios';
-import { getUser, fetchUserProfileImage } from '../../api/userApi';
-import Profile_Img from '../../resources/images/profile_img.png';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import Logo from '../../resources/images/logo1_vector.png';
-import { logout } from '../../slices/loginSlice';
-import { useDispatch } from 'react-redux';
-import { useState, useCallback, useEffect } from 'react';
-import useCustomLogin from '../../hooks/useCustomLogin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faHeart, faComments, faMessage, faHouse, faFilePen, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faRightToBracket, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import useCustomLogin from '../../hooks/useCustomLogin';
+import Logo from '../../resources/images/logo1_vector.png';
 
 const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
   const loginState = useSelector((state) => state.loginSlice);
-
   const { doLogout, moveToPath } = useCustomLogin();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleClickLogout = () => {
     doLogout();
@@ -23,50 +29,55 @@ const Header = () => {
     moveToPath('/');
   };
 
-  const location = useLocation();
-
   const getLinkClass = (path) => {
     if (path === '/') {
-      return location.pathname === path ? 'header-active' : 'menu-hover color-wood';
+      return location.pathname === path ? 'header-active' : 'sign-btn-group  color-wood';
     }
-    return location.pathname.startsWith(path) && location.pathname !== '/' ? 'header-active' : 'menu-hover color-wood';
+    return location.pathname.startsWith(path) && location.pathname !== '/' ? 'header-active' : 'sign-btn-group  color-wood';
   };
 
   return (
-    <nav id="navbar" className="z-50 flex-wrap sticky top-0 relative flex w-full py-2.5 shadow" style={{ backgroundColor: 'rgba(255, 255, 255, 0.97)' }}>
-      <div className="flex w-full flex-wrap items-center justify-between px-3 ">
+    <nav
+      id="navbar"
+      className={`fixed top-0 left-0 right-0 z-50 flex-wrap flex w-full py-2.5 transition-colors duration-300 ${
+        isScrolled ? 'bg-white bg-opacity-95 backdrop-filter backdrop-blur-lg shadow' : 'bg-transparent'
+      }`}
+    >
+      <div className="flex w-full flex-wrap items-center justify-between px-3">
         <Link to={'/'}>
-
-          <img src={Logo} alt="LOGO" className="w-60 m-2" />
+          <img
+            src={Logo}
+            alt="LOGO"
+            className="w-60 m-2 transition-opacity duration-300"
+          />
         </Link>
-
         <ul className="flex flex-row p-3 list-none header-fontsize items-center">
-          <li className="px-5 pl-5">
+          <li className="menu-home">
             <Link to={'/'} className={getLinkClass('/')}>
               홈
             </Link>
           </li>
-          <li className="px-5">
+          <li className="menu-width">
             <Link to={'/buy'} className={getLinkClass('/buy')}>
               공동구매
             </Link>
           </li>
-          <li className="px-5">
+          <li className="menu-width">
             <Link to={'/team'} className={getLinkClass('/team')}>
               동네모임
             </Link>
           </li>
-          <li className="px-5">
+          <li className="menu-width">
             <Link to={'/market'} className={getLinkClass('/market')}>
               동네장터
             </Link>
           </li>
-          <li className="px-5">
+          <li className="menu-width">
             <Link to={'/shareRoom'} className={getLinkClass('/shareRoom')}>
               자취방쉐어
             </Link>
           </li>
-          <li className="px-5">
+          <li className="menu-width">
             <Link to={'/community'} className={getLinkClass('/community')}>
               커뮤니티
             </Link>
@@ -74,17 +85,15 @@ const Header = () => {
         </ul>
         <div className="relative flex items-center">
           {!loginState.email ? (
-            <div>
+            <div className='relative flex items-center'>
               <button
                 type="button"
-                className="border border-gray-700 bg-gray-700 text-white 
-                        rounded-lg px-2 mx-1 transition duration-100 ease select-none hover:bg-gray-950 
-                        focus:outline-none focus:shadow-outline"
+                className="sign-btn"
               >
                 <Link to={'/user/join'}>
-                  <div className="flex items-center p-2 text-white rounded-lg">
+                  <div className="sign-btn-group menu-width">
                     <svg
-                      className="flex-shrink-0 w-5 h-5 mr-2 text-white transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      className="flex-shrink-0 w-5 h-5 mr-2 transition duration-75"
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="currentColor"
@@ -100,17 +109,15 @@ const Header = () => {
               </button>
               <button
                 type="button"
-                className="border border-gray-700 bg-gray-700 text-white 
-                        rounded-lg px-2 mx-1 transition duration-300 ease select-none hover:bg-gray-950 
-                        focus:outline-none focus:shadow-outline"
+                className="sign-btn "
               >
                 <Link to={'/user/login'}>
-                  <div className="flex items-center p-2 text-white rounded-lg">
+                  <div className="sign-btn-group menu-login">
                     <FontAwesomeIcon
                       icon={faRightToBracket}
-                      className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      className="flex-shrink-0 w-5 h-5 transition duration-75"
                     />
-                    <span className="flex-1 ms-3 whitespace-nowrap">로그인</span>
+                    <span className="ms-2">로그인</span>
                   </div>
                 </Link>
               </button>
@@ -119,15 +126,13 @@ const Header = () => {
             <div className="relative flex items-center">
               <button
                 type="button"
-                className="border border-gray-700 bg-gray-700 text-white 
-                        rounded-lg px-2 mx-1 transition duration-100 ease select-none hover:bg-gray-950 
-                        focus:outline-none focus:shadow-outline"
+                className="sign-btn"
               >
                 <Link to={'/myPage/activity'}>
-                  <div className="flex items-center p-2 text-white rounded-sm">
+                  <div className="sign-btn-group  menu-mypage ">
                     <FontAwesomeIcon
                       icon={faUser}
-                      className="flex-shrink-0 w-5 h-5 mr-2 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      className="flex-shrink-0 w-5 h-5 mr-1 transition duration-75"
                     />
                     마이페이지
                   </div>
@@ -135,17 +140,17 @@ const Header = () => {
               </button>
               <button
                 type="button"
-                className="border border-gray-700 bg-gray-700 text-white 
-                        rounded-lg px-2 mx-1 transition duration-300 ease select-none hover:bg-gray-950 
-                        focus:outline-none focus:shadow-outline"
+                className="sign-btn"
                 onClick={handleClickLogout}
               >
-                <div className="flex items-center p-2 text-white rounded-lg">
+                <div className="sign-btn-group  menu-width">
                   <FontAwesomeIcon
                     icon={faRightFromBracket}
-                    className="flex-shrink-0 w-5 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    className="flex-shrink-0 w-5 h-5 transition duration-75"
                   />
-                  <span className="flex-1 ms-3 whitespace-nowrap">로그아웃</span>
+                  <span className="ms-2">
+                    로그아웃
+                  </span>
                 </div>
               </button>
             </div>
