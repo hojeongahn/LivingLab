@@ -1,24 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { useSelector } from 'react-redux';
-import { modifyUser, getUser } from '../../../api/userApi';
+import { modifyUserLocation } from '../../../api/userApi';
 import ResultModal from '../ResultModal';
 
-const initState = {
-  id: '',
-  email: '',
-  name: '',
-  phone: '',
-  nickname: '',
-  pwd: '',
-  pwdCheck: '',
-  addr: '',
-  detailAddr: '',
-  profileImage: '',
-  location: '',
-  latitude: 0,
-  longitude: 0,
-};
 
 const LocationComponent = () => {
   const { kakao } = window;
@@ -26,8 +11,9 @@ const LocationComponent = () => {
   const [location, setLocation] = useState(''); // 현재 위치를 저장할 상태
   const [isOpen, setIsOpen] = useState(false); // 현재 위치 지도창 열기,닫기
   const [addResultModal, setAddResultModal] = useState(null);
+  const [ info, setInfo ] = useState(false);
+  const [ isFadingOut, setFadingOut ] = useState(false);
 
-  const [user, setUser] = useState(initState);
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo?.id;
 
@@ -45,7 +31,7 @@ const LocationComponent = () => {
     console.log(error);
   };
 
-  const getAddress = (user) => {
+  const getAddress = () => {
     const geocoder = new kakao.maps.services.Geocoder(); // 좌표 -> 주소로 변환해주는 객체
     const coord = new kakao.maps.LatLng(location.latitude, location.longitude); // 주소로 변환할 좌표 입력
     const callback = function (result, status) {
@@ -53,11 +39,10 @@ const LocationComponent = () => {
         setAddress(result[0].address);
       }
 
-      const modifiedUser = user;
-      modifiedUser.location = result[0].address.address_name;
-      modifiedUser.latitude = location.latitude; // 위도(가로)
-      modifiedUser.longitude = location.longitude; // 경도 (세로)
-      modifyUser(ino, modifiedUser); // 상태값 변경된 거 DB에 반영
+      const nowAddr = result[0].address.address_name;
+      const latitude = location.latitude; // 위도(가로)
+      const longitude = location.longitude; // 경도 (세로)
+      modifyUserLocation(ino, latitude, longitude, nowAddr); // 상태값 변경된 거 DB에 반영
     };
 
     geocoder.coord2Address(coord.getLng(), coord.getLat(), callback); // 좌표로 법정동 상세 주소 정보를 요청합니다
@@ -70,28 +55,34 @@ const LocationComponent = () => {
     // console.log(center);
   };
 
-  const handleLocation = (user) => {
-    getAddress(user); // 실시간 위치 주소 받아옴
-
-    if (isOpen === false) setIsOpen(true);
-    else setIsOpen(false);
+  const handleLocation = () => {
+    getAddress(); // 실시간 위치 주소 받아옴
+    setIsOpen(true);
   };
 
-  const handleClickLocation = (e) => {
+  const handleClickLocation = () => {
     if (!ino) {
       setAddResultModal('로그인 후 이용할 수 있습니다');
     } else {
-      alert('현재 위치가 실시간 반영되었습니다.');
-      getUser(ino).then((user) => {
-        setUser(user);
-        handleLocation(user);
-      });
+      showModal();
+      handleLocation();
     }
   };
 
   const handleModalClose = () => {
     setIsOpen(false); // 모달 닫기
     setAddResultModal(null);
+  };
+
+  const showModal = () => {
+    setFadingOut(false);
+    setInfo(true);
+    setTimeout(() => {
+      setFadingOut(true);
+      setTimeout(() => {
+        setInfo(false);
+      }, 400); // 애니메이션 지속 시간 0.4초
+    }, 1500); // 1.5초 후 모달 사라짐
   };
 
   return (
@@ -119,7 +110,7 @@ const LocationComponent = () => {
             title={'위치 설정'}
             content={
               <div className="flex flex-col items-center">
-                <Map center={{ lat: location.latitude, lng: location.longitude }} style={{ width: '500px', height: '300px' }} level={3} onClick={getAddress}>
+                <Map center={{ lat: location.latitude, lng: location.longitude }} style={{ width: '100%', height: '300px' }} level={3} onClick={getAddress}>
                   <MapMarker position={{ lat: location.latitude, lng: location.longitude }} />
                 </Map>
                 <p>현재 위치 : {address.address_name}</p>
@@ -131,6 +122,19 @@ const LocationComponent = () => {
           />
         )}
       </div>
+      {info && (
+        <>
+          <div className="fixed inset-0 flex items-center justify-center z-[2000]">
+            <div
+              className={`bg-white px-44 py-3 rounded-full shadow border transition-opacity duration-400 ease-in-out ${
+                isFadingOut ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              <p className="text-black font-semibold">현재 위치가 설정되었습니다</p>
+            </div>
+          </div>
+        </>
+      )}
       {addResultModal && <ResultModal title={'알림'} content={addResultModal} callbackFn={handleModalClose} />}
     </div>
   );

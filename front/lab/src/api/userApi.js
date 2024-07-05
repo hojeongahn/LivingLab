@@ -30,6 +30,13 @@ export const modifyUser = async (id, user) => {
   return res.data;
 };
 
+export const modifyUserLocation = async (id, latitude, longitude, location) => {
+  const res = await axios.put(`${host}/modifyLocation`, {
+    id, latitude, longitude, location
+  });
+  return res.data;
+};
+
 // 회원정보 조회
 export const getUser = async (id) => {
   const res = await axios.get(`${host}/${id}`);
@@ -49,4 +56,17 @@ export const findPwd = async ( email ) => {
   const res = await axios.post(`${host}/findPwd`, { email } , header );
   return res.data;
 }
+
+// 중복 이메일 체크
+export const CheckEmail = async (email) => {
+  const res = await axios.get(`${host}/join/checkEmail/${email}`);
+  return res.data;
+}
+
+// 중복 닉네임 체크
+export const CheckNickname = async (nickname) => {
+  const res = await axios.get(`${host}/join/checkNickname/${nickname}`);
+  return res.data;
+}
+
 

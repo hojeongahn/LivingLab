@@ -1,31 +1,29 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
-const MovementEffect = () => {
-  const text1Ref = useRef(null);
-  const text2Ref = useRef(null);
+const LetterAnimation = () => {
+  const textRef = useRef(null);
 
   useEffect(() => {
-    const tl = gsap.timeline();
+    const text = textRef.current;
+    const letters = text.innerText.split("");
+    text.innerHTML = letters.map(letter => `<span class="letter">${letter}</span>`).join("");
 
-    // Animation for the first text
-    tl.from(text1Ref.current, { x: -100, opacity: 0, duration: 1.5, ease: "power4.out", delay: 0.5 });
-
-    // Animation for the second text
-    tl.from(text2Ref.current, { x: 100, opacity: 0, duration: 1.5, ease: "power4.out" }, "-=1"); // "-=1" makes sure it starts 1 second after the previous animation starts
+    gsap.set(".letter", { display: "inline-block" });
+    gsap.fromTo(".letter", { y: 50, opacity: 0 }, { y: 0, opacity: 1, delay: 0.5, stagger: 0.1, ease: "back.out(1.7)" });
   }, []);
 
   return (
     <div>
-      <div ref={text1Ref} className="movement-text text-4xl	mb-2">
+      <div className="movement-text text-4xl mb-2">
         내 자취생활의 길라잡이
       </div>
-      <hr/>
-      <div ref={text2Ref} className="movement-text text-center font-bold text-7xl mt-2">
+      <hr />
+      <div ref={textRef} className="text-center font-bold text-7xl mt-2">
         자취연구소
       </div>
     </div>
   );
 };
 
-export default MovementEffect;
+export default LetterAnimation;
