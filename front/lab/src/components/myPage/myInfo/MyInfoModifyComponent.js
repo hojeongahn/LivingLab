@@ -26,10 +26,8 @@ const MyInfoModifyComponent = () => {
   const [user, setUser] = useState(initState);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
-  const inputRef = useRef(null);// 사진 업로드
-  const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
-
-  //주소 찾기 팝업 추가
+  const [isModified, setIsModified] = useState(false); // 수정 여부 상태 추가
+  const loginInfo = useSelector((state) => state.loginSlice);
   const [address, setAddress] = useState('');
   const ino = loginInfo.id;
 
@@ -41,27 +39,30 @@ const MyInfoModifyComponent = () => {
     });
   }, [ino]);
 
-  // 상태변경 (입력값에 따라 상태값 변경)
   const handleChange = (e) => {
-    user[e.target.name] = e.target.value;
-    setUser({ ...user });
+    setUser({
+      ...user,
+      [e.target.name]: e.target.value
+    });
+    setIsModified(true); // 입력값이 변경될 때마다 수정 여부를 true로 설정
   };
 
-  // addr(팝업 검색주소)만 따로 상태변경
   const handleAddrChange = (newAddr) => {
     setAddress(newAddr);
     setUser({
       ...user,
       addr: newAddr,
     });
+    setIsModified(true); // 주소가 변경될 때마다 수정 여부를 true로 설정
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setProfileImageFile(file);
-      const imageUrl = URL.createObjectURL(file); // 선택한 파일의 URL 생성
-      setPreviewImageUrl(imageUrl); // 미리보기 이미지 URL 설정
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewImageUrl(imageUrl);
+      setIsModified(true); // 이미지 파일이 변경될 때마다 수정 여부를 true로 설정
     }
   };
 
@@ -69,10 +70,17 @@ const MyInfoModifyComponent = () => {
     inputRef.current.click();
   };
 
-  // 수정완료 버튼
-  const handleClickModify = async() => {
+  const handleFileDelete = () => {
+    setProfileImageFile(null);
+    setPreviewImageUrl(null);
+    setIsModified(true); // 파일 삭제 시 수정 여부를 true로 설정
+  };
+
+  const handleClickModify = async () => {
     const formData = new FormData();
-    formData.append('file', profileImageFile || user.file); // 이미지 파일을 FormData에 추가
+    if (profileImageFile) {
+      formData.append('file', profileImageFile);
+    } 
     formData.append('id', user.id);
     formData.append('email', user.email);
     formData.append('name', user.name);
@@ -87,7 +95,7 @@ const MyInfoModifyComponent = () => {
     formData.append('longitude', user.longitude);
 
     try {
-      await modifyUser(user.id, formData); // 이미지 파일을 포함한 FormData를 백엔드로 전송
+      await modifyUser(user.id, formData);
       alert('회원정보 수정 완료되었습니다');
       window.location.reload();
     } catch (error) {
@@ -95,6 +103,7 @@ const MyInfoModifyComponent = () => {
     }
   };
 
+  const inputRef = useRef(null);
 
   return (
     <div>
@@ -106,25 +115,23 @@ const MyInfoModifyComponent = () => {
             </button>
           </Link>
         </div>
-        <div className="border-2 border-sky-200 p-4  bg-gray-50">
+        <div className="border-2 border-sky-200 p-4 bg-gray-50">
           <div className="flex justify-center">
             <div className="w-1/3 p-3 text-left font-bold">프로필 사진</div>
             <div className="relative mb-4 flex w-full items-stretch">
               <div className="mt-2">
                 <img src={previewImageUrl ? previewImageUrl : `${host}/api/user/display/${user.profileImage}`} alt="프로필이미지" className="rounded-full size-40 mx-auto" />
-                <div class="flex">
+                <div className="flex mt-2 text-center">
                   <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: 'none' }} ref={inputRef} />
                   <button
-                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4
-                                file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-200 file:text-slate-700 hover:file:bg-violet-100"
+                    className="block w-full text-sm text-white bg-blue-400 rounded-md px-4 py-2 mr-2 hover:bg-blue-500"
                     onClick={handleFileClick}
                   >
-                    이미지 변경
+                   변경
                   </button>
                   <button
-                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4
-                                file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-200 file:text-slate-700 hover:file:bg-violet-100"
-                    // onClick={handleFileDelete}
+                    className="block w-full text-sm text-white bg-red-400 rounded-md px-4 py-2  hover:bg-red-500"
+                    onClick={handleFileDelete} // 파일 삭제 버튼 클릭 시 처리 함수 연결
                   >
                     삭제
                   </button>
@@ -135,7 +142,7 @@ const MyInfoModifyComponent = () => {
           <div className="flex justify-center">
             <div className="w-1/3 p-3 text-left font-bold">아이디</div>
             <div className="relative mb-4 flex w-full items-stretch">
-              <input className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md" name="email" type={'text'} value={user.email} readOnly></input>
+              <input className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md" name="email" type="text" value={user.email} readOnly />
             </div>
           </div>
 
@@ -145,11 +152,11 @@ const MyInfoModifyComponent = () => {
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
                 name="name"
-                type={'text'}
+                type="text"
                 value={user.name}
                 placeholder="이름"
                 onChange={handleChange}
-              ></input>
+              />
             </div>
           </div>
 
@@ -159,11 +166,11 @@ const MyInfoModifyComponent = () => {
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
                 name="phone"
-                type={'text'}
+                type="text"
                 value={user.phone}
                 placeholder="전화번호"
                 onChange={handleChange}
-              ></input>
+              />
             </div>
           </div>
 
@@ -173,11 +180,11 @@ const MyInfoModifyComponent = () => {
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
                 name="nickname"
-                type={'text'}
+                type="text"
                 value={user.nickname}
                 placeholder="닉네임"
                 onChange={handleChange}
-              ></input>
+              />
             </div>
           </div>
 
@@ -187,11 +194,11 @@ const MyInfoModifyComponent = () => {
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
                 name="pwd"
-                type={'password'}
+                type="password"
                 value={user.pwd}
                 placeholder="비밀번호를 입력하세요"
                 onChange={handleChange}
-              ></input>
+              />
             </div>
           </div>
 
@@ -200,12 +207,12 @@ const MyInfoModifyComponent = () => {
             <div className="relative mb-4 flex w-full items-stretch">
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
-                name="pwd"
-                type={'password'}
-                value={user.pwd}
+                name="pwdCheck"
+                type="password"
+                value={user.pwdCheck}
                 placeholder="비밀번호 확인"
                 onChange={handleChange}
-              ></input>
+              />
             </div>
           </div>
 
@@ -218,27 +225,30 @@ const MyInfoModifyComponent = () => {
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
                 name="addr"
-                type={'text'}
+                type="text"
                 placeholder="주소(우편번호 및 도로명 검색)"
                 value={address}
-                readOnly // 추가
+                readOnly // 수정
               />
-              {/* 오류수정 : // onChange={handleChange} */}
-
               <input
                 className="w-full p-3 rounded-r border border-solid border-neutral-300 shadow-md"
                 name="detailAddr"
-                type={'text'}
+                type="text"
                 placeholder="상세주소"
                 value={user.detailAddr}
                 onChange={handleChange}
-              ></input>
+              />
             </div>
           </div>
 
           <div className="flex justify-center">
             <div className="relative mb-1 flex w-full flex-wrap justify-end">
-              <button type="button" className="rounded p-1 w-32 text-white bg-blue-500 hover:bg-blue-600" onClick={handleClickModify}>
+              <button
+                type="button"
+                className={`rounded p-1 w-32 text-white ${isModified ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                onClick={isModified ? handleClickModify : null}
+                disabled={!isModified} // 수정된 정보가 없으면 버튼 비활성화
+              >
                 수정완료
               </button>
             </div>
@@ -248,4 +258,5 @@ const MyInfoModifyComponent = () => {
     </div>
   );
 };
+
 export default MyInfoModifyComponent;
