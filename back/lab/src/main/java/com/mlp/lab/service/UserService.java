@@ -253,4 +253,14 @@ public class UserService {
 
     return gender;
   }
+
+  //회원의 위도,경도 정보 수정
+  public void modifyLocation(Long id, double latitude, double longitude,String location) {
+    Optional<User> result = userRepository.findById(id); // 아이디로 조회
+    User user = result.orElseThrow();
+    user.setLatitude(latitude); // 위도
+    user.setLongitude(longitude); // 경도
+    user.setLocation(location);
+    userRepository.save(user);
+  }
 }
