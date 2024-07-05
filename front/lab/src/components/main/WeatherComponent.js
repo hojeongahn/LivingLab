@@ -22,12 +22,12 @@ const WeatherComponent = () => {
         }
     };
 
-    const todayData = () => {
-        let now = new Date();
-        let todayMonth = (now.getMonth() + 1) > 9 ? (now.getMonth() + 1) : '0' + (now.getMonth() + 1);
-        let todayDate = now.getDate() > 9 ? now.getDate() : '0' + now.getDate();
-        return todayMonth + '/' + todayDate;
-    };
+    // const todayData = () => {
+    //     let now = new Date();
+    //     let todayMonth = (now.getMonth() + 1) > 9 ? (now.getMonth() + 1) : '0' + (now.getMonth() + 1);
+    //     let todayDate = now.getDate() > 9 ? now.getDate() : '0' + now.getDate();
+    //     return todayMonth + '/' + todayDate;
+    // };
 
     useEffect(() => {
         getCurrentLocation();
@@ -44,8 +44,8 @@ const WeatherComponent = () => {
 
             {weather ? (
                 <div>
-                    <div className='flex'>
-                        <div>
+                    <div className='flex '>
+                        <div className='flex '>
                             {/* <div className='text-3xl flex justify-end weather-font mr-1'>
                                 {todayData()}
                             </div> */}
@@ -58,9 +58,8 @@ const WeatherComponent = () => {
                                 <div className='weather-temp'>
                                     {Math.round(weather.main.temp)}°
                                 </div>
-
                             </div>
-                            <div className='flex'>
+                            <div className='flex ml-10'>
                                 <img className='weather-marker'
                                     src={Marker}
                                     alt="marker" />
