@@ -24,21 +24,6 @@ const ConfirmationModal = ({ show, message, onConfirm, onCancel }) => {
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-        // <div className="modal-overlay" onClick={stopPropagation}>
-        //     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        //         <p>{message}</p>
-        //         <div className="modal-buttons">
-        //             <button onClick={onConfirm}>예</button>
-        //             <button onClick={onCancel}>아니오</button>
-        //         </div>
-        //     </div>
-        // </div>
     );
 };
 
