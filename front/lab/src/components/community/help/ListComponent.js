@@ -68,7 +68,7 @@ const ListComponent = () => {
                     <img src={flagIcon} alt="Flag Icon" className="inline-block ml-2 w-5 h-5" />
                   )}
               </td>
-              <td className="whitespace-nowrap py-4">{help.regDate}</td>
+              <td className="whitespace-nowrap py-4">{help.createdDate}</td>
               <td className="whitespace-nowrap py-4">{help.nickname}</td>
             </tr>
         ))
