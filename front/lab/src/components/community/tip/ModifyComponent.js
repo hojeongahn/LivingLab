@@ -27,7 +27,6 @@ const ModifyComponent = ({commNo}) => {
 
     useEffect(() => {
         getOneTip(commNo).then(data => {
-            console.log(data)
             setTip(data)
         })
     }, [commNo])

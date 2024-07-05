@@ -26,7 +26,6 @@ const ListComponent = () => {
   const [search, setSearch] = useState('');
   useEffect(()=>{
     getListHelp({page,size}, search).then(data=>{
-          console.log(data);
           setServerData(data);
       })
   }, [page,size, search]);

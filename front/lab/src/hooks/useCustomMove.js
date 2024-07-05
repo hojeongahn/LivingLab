@@ -34,17 +34,14 @@ const useCustomMove = () => {
   };
 
   const moveToModify = (num) => {
-    console.log(queryDefault);
     navigate({ pathname: `../modify/${num}`, search: queryDefault }); // 수정시에 기존의 쿼리문자열을 유지하기 위해
   };
 
   const moveToRead = (num) => {
-    console.log(queryDefault);
     navigate({ pathname: `../read/${num}`, search: queryDefault });
   };
 
   const moveToAdd = () => {
-    console.log(queryDefault);
     navigate({ pathname: `../add`, search: queryDefault });
   }
 

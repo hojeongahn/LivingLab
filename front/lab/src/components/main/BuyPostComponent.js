@@ -19,7 +19,6 @@ const BuyPostComponent = () => {
             try {
                 const pageParam = { page: 1, size: 9 };
                 const posts = await getLatestBuy(pageParam);
-                console.log('Success:', posts);
                 setLatestPosts(posts);
             } catch (error) {
                 console.error('Error :', error);

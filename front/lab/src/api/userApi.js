@@ -50,3 +50,16 @@ export const findPwd = async ( email ) => {
   return res.data;
 }
 
+// 중복 이메일 체크
+export const CheckEmail = async (email) => {
+  const res = await axios.get(`${host}/join/checkEmail/${email}`);
+  return res.data;
+}
+
+// 중복 닉네임 체크
+export const CheckNickname = async (nickname) => {
+  const res = await axios.get(`${host}/join/checkNickname/${nickname}`);
+  return res.data;
+}
+
+

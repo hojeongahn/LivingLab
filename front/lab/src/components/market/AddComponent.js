@@ -124,8 +124,6 @@ const AddComponent = () => {
       }
       const time = new Date();
       const timeElement = new Date(market.deadline);
-      console.log('time:', time);
-      console.log('timeElement:', timeElement);
       if (time > timeElement) {
         setAddResultModal('현재 시간보다 이전의 날짜는 설정할 수 없습니다');
         return;

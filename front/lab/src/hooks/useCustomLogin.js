@@ -43,8 +43,7 @@ const useCustomLogin = () => {
 
   // 토큰에 따른 예외 처리
   const exceptionHandle = (ex) => {
-    console.log('Exception-----------------');
-    console.log(ex);
+    console.log('Exception-----------------',ex);
 
     const errorMsg = ex.response.data.error;
     const errorStr = createSearchParams({ error: errorMsg }).toString();

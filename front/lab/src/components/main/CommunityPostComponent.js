@@ -10,7 +10,6 @@ const CommunityPostComponent = () => {
       try {
         const pageParam = { page: 1, size: 8 }; 
         const posts = await getLatestComm(pageParam);
-        console.log('Success:', posts);
         setLatestPosts(posts);
       } catch (error) {
         console.error('Error :', error);

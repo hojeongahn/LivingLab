@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 const { kakao } = window;
 
 const MapComponent = ({ location }) => {
-  console.log(location);
 
   useEffect(() => {
     const mapscript = document.getElementById('map');

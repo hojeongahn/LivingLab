@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { login  } from '../../slices/loginSlice';
 import imgLogo2 from '../../resources/images/logo2.png';
 import HorizonLine from '../../util/HorizontalLine';
@@ -32,6 +33,7 @@ function LoginComponent(props) {
   const [authNum, setAuthNum] = useState('');
   const [inputNum, setInputNum] = useState('');
   const [pwd, setPwd] = useState('');
+  const navigate = useNavigate();
   
 
   const handleChange = (e) => {
@@ -42,15 +44,12 @@ function LoginComponent(props) {
 
   const handleClickLogin = (e) => {
     loginPost(loginParam).then((userInfo) => {
-      console.log('----------------------------');
-      console.log(userInfo);
       dispatch(login(userInfo));
 
       // 로그인 후 메인으로
       if (userInfo.email != null) {
         //성공
-        alert('로그인 되었습니다.');
-        moveToPath('/');
+        navigate('/', { state: { showModalLogin: true } });
       } else {
         alert('이메일 혹은 비밀번호를 다시 한번 확인해주세요');
         moveToLogin(); // 실패
@@ -82,7 +81,6 @@ function LoginComponent(props) {
 
   const handleFindPwd = async () => { //비밀번호 찾기위한 이메일 인증받기
     const response = await mailSend({ email });
-    console.log("인증번호:"+authNum);
     setAuthNum(response.data)
     setStep((prevStep) => prevStep + 1);
   };
