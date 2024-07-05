@@ -73,11 +73,10 @@ public class UserService {
   // 회원정보 수정
   public void modifyUserInfo(UserDto userDto) {
     // 1. 조회
-    // Optional<User> result = userRepository.findByEmail(userDto.getEmail()); //이메일
-    Optional<User> result = userRepository.findById(userDto.getId()); // 아이디로 조회
-    User user = result.orElseThrow(); // throwException(예외처리)
+    Optional<User> result = userRepository.findById(userDto.getId());
+    User user = result.orElseThrow(); // 예외 처리 필요
 
-    // 2. 수정(Dto에 받은 값으로 Entity의 데이터 수정)
+    // 2. 수정
     user.setName(userDto.getName());
     user.setPhone(userDto.getPhone());
     user.setNickname(userDto.getNickname());
@@ -87,10 +86,14 @@ public class UserService {
     user.setLocation(userDto.getLocation());
     user.setLatitude(userDto.getLatitude()); // 위도
     user.setLongitude(userDto.getLongitude()); // 경도
-    user.setProfileImage(userDto.getUploadFileName());
+
+    // 이미지 파일이 업로드되었을 경우에만 수정
+    if (userDto.getUploadFileName() != null && !userDto.getUploadFileName().isEmpty()) {
+        user.setProfileImage(userDto.getUploadFileName());
+    }
 
     userRepository.save(user);
-  }
+}
 
   ////////////////////////////////////////////////////////////////////////////////
   // 카카오 연동해서 accessToken을 이용해서 카카오api에 등록된 사용자 정보 가져오는 함수
