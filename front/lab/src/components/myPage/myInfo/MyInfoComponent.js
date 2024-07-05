@@ -28,13 +28,12 @@ const MyInfoComponent = () => {
   const { kakao } = window;
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo.id;
-  let nowAddr = null;
 
   useEffect(() => {
     getUser(ino).then((data) => {
       setUser(data);
     });
-  }, [ino, nowAddr]);
+  }, [ino, isFadingOut]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(successHandler, errorHandler); // 성공시 successHandler, 실패시 errorHandler 함수가 실행된다.
@@ -53,7 +52,7 @@ const MyInfoComponent = () => {
     const geocoder = new kakao.maps.services.Geocoder(); // 좌표 -> 주소로 변환해주는 객체
     const coord = new kakao.maps.LatLng(location.latitude, location.longitude); // 주소로 변환할 좌표 입력
     const callback = function (result) {
-      nowAddr = result[0].address.address_name;
+      const nowAddr = result[0].address.address_name;
       const latitude = location.latitude; // 위도(가로)
       const longitude = location.longitude; // 경도 (세로)
       modifyUserLocation(ino, latitude, longitude, nowAddr); // 상태값 변경된 거 DB에 반영
