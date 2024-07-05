@@ -86,7 +86,7 @@ const LocationComponent = () => {
       setTimeout(() => {
         setInfo(false);
       }, 400); // 애니메이션 지속 시간 0.4초
-    }, 1000); // 1초 후 모달 사라짐
+    }, 1500); // 1.5초 후 모달 사라짐
   };
 
   return (
@@ -114,7 +114,7 @@ const LocationComponent = () => {
             title={'위치 설정'}
             content={
               <div className="flex flex-col items-center">
-                <Map center={{ lat: location.latitude, lng: location.longitude }} style={{ width: '500px', height: '300px' }} level={3} onClick={getAddress}>
+                <Map center={{ lat: location.latitude, lng: location.longitude }} style={{ width: '100%', height: '300px' }} level={3} onClick={getAddress}>
                   <MapMarker position={{ lat: location.latitude, lng: location.longitude }} />
                 </Map>
                 <p>현재 위치 : {address.address_name}</p>
@@ -130,11 +130,11 @@ const LocationComponent = () => {
         <>
           <div className="fixed inset-0 flex items-center justify-center z-[2000]">
             <div
-              className={`bg-mainColor px-5 py-3 rounded-full shadow-lg transition-opacity duration-400 ease-in-out ${
+              className={`bg-white px-44 py-3 rounded-full shadow border transition-opacity duration-400 ease-in-out ${
                 isFadingOut ? 'opacity-0' : 'opacity-100'
               }`}
             >
-              <p className="text-white font-semibold">현재 위치가 설정되었습니다</p>
+              <p className="text-black font-semibold">현재 위치가 설정되었습니다</p>
             </div>
           </div>
         </>
