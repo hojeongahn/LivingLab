@@ -14,7 +14,10 @@ const initState = {
   pwdCheck: '',
   addr: '',
   detailAddr: '',
-  file: null
+  file: null,
+  location: '',
+  latitude: 0.0,
+  longitude: 0.0,
 };
 
 const host = API_SERVER_HOST;
@@ -23,6 +26,7 @@ const MyInfoModifyComponent = () => {
   const [user, setUser] = useState(initState);
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
+  const inputRef = useRef(null);// 사진 업로드
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
 
   //주소 찾기 팝업 추가
@@ -33,7 +37,7 @@ const MyInfoModifyComponent = () => {
     getUser(ino).then((data) => {
       setUser(data);
       setAddress(data.addr);
-      
+      console.log(data);
     });
   }, [ino]);
 
@@ -78,6 +82,9 @@ const MyInfoModifyComponent = () => {
     formData.append('pwdCheck', user.pwdCheck);
     formData.append('addr', user.addr);
     formData.append('detailAddr', user.detailAddr);
+    formData.append('location', user.location);
+    formData.append('latitude', user.latitude);
+    formData.append('longitude', user.longitude);
 
     try {
       await modifyUser(user.id, formData); // 이미지 파일을 포함한 FormData를 백엔드로 전송
@@ -88,8 +95,6 @@ const MyInfoModifyComponent = () => {
     }
   };
 
-  // 사진 업로드
-  const inputRef = useRef(null);
 
   return (
     <div>
@@ -205,7 +210,7 @@ const MyInfoModifyComponent = () => {
           </div>
 
           <div className="flex justify-center">
-            <div className="w-1/3 p-3 text-left font-bold">주소</div>
+            <div className="w-1/3 p-3 text-left font-bold">기본 주소지</div>
             <div className="relative mb-4 w-full items-stretch">
               <div className="w-44">
                 <PostComponent setAddress={handleAddrChange}></PostComponent>
