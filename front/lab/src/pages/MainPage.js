@@ -3,7 +3,7 @@ import CommunityPostComponent from '../components/main/CommunityPostComponent';
 import TeamPostComponent from '../components/main/TeamPostComponent';
 import MarketPostComponent from '../components/main/MarketPostComponent';
 import BuyPostComponent from '../components/main/BuyPostComponent';
-import ShareRoomPostComponent from '../components/main/shareRoomPostComponent';
+import ShareRoomPostComponent from '../components/main/ShareRoomPostComponent';
 import WeatherComponent from '../components/main/WeatherComponent';
 import MainSliderComponent from '../components/main/MainSliderComponent';
 import { Link, useLocation } from 'react-router-dom';

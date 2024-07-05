@@ -4,7 +4,7 @@ import { API_SERVER_HOST, getLatestShareRoom } from '../../api/shareRoomApi';
 
 const host = API_SERVER_HOST;
 
-const ShareComponent = () => {
+const ShareRoomPostComponent = () => {
     const [latestPosts, setLatestPosts] = useState([]);
 
 
@@ -65,4 +65,4 @@ const ShareComponent = () => {
     )
 }
 
-export default ShareComponent
+export default ShareRoomPostComponent
