@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { useSelector } from 'react-redux';
-import { modifyUser, getUser } from '../../../api/userApi';
+import { modifyUserLocation } from '../../../api/userApi';
 import ResultModal from '../ResultModal';
 
 
@@ -13,7 +13,6 @@ const LocationComponent = () => {
   const [addResultModal, setAddResultModal] = useState(null);
   const [ info, setInfo ] = useState(false);
   const [ isFadingOut, setFadingOut ] = useState(false);
-
 
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo?.id;
@@ -32,7 +31,7 @@ const LocationComponent = () => {
     console.log(error);
   };
 
-  const getAddress = (user) => {
+  const getAddress = () => {
     const geocoder = new kakao.maps.services.Geocoder(); // 좌표 -> 주소로 변환해주는 객체
     const coord = new kakao.maps.LatLng(location.latitude, location.longitude); // 주소로 변환할 좌표 입력
     const callback = function (result, status) {
@@ -40,11 +39,10 @@ const LocationComponent = () => {
         setAddress(result[0].address);
       }
 
-      const modifiedUser = user;
-      modifiedUser.location = result[0].address.address_name;
-      modifiedUser.latitude = location.latitude; // 위도(가로)
-      modifiedUser.longitude = location.longitude; // 경도 (세로)
-      modifyUser(ino, modifiedUser); // 상태값 변경된 거 DB에 반영
+      const nowAddr = result[0].address.address_name;
+      const latitude = location.latitude; // 위도(가로)
+      const longitude = location.longitude; // 경도 (세로)
+      modifyUserLocation(ino, latitude, longitude, nowAddr); // 상태값 변경된 거 DB에 반영
     };
 
     geocoder.coord2Address(coord.getLng(), coord.getLat(), callback); // 좌표로 법정동 상세 주소 정보를 요청합니다
@@ -57,19 +55,17 @@ const LocationComponent = () => {
     // console.log(center);
   };
 
-  const handleLocation = (user) => {
-    getAddress(user); // 실시간 위치 주소 받아옴
+  const handleLocation = () => {
+    getAddress(); // 실시간 위치 주소 받아옴
     setIsOpen(true);
   };
 
-  const handleClickLocation = (e) => {
+  const handleClickLocation = () => {
     if (!ino) {
       setAddResultModal('로그인 후 이용할 수 있습니다');
     } else {
       showModal();
-      getUser(ino).then((user) => {
-        handleLocation(user);
-      });
+      handleLocation();
     }
   };
 

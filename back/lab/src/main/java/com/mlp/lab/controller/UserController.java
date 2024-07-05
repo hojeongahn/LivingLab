@@ -76,7 +76,7 @@ public class UserController {
         userDto.setId(id);
         Optional<User> result = userService.get(id);
         User user = result.get();
-        UserDto oldDto = user.entityToDto(user);
+        UserDto oldDto = User.entityToDto(user);
 
         String oldFileName = oldDto.getUploadFileName();
         MultipartFile file = userDto.getFile();
@@ -91,6 +91,11 @@ public class UserController {
         }
 
         userService.modifyUserInfo(userDto);
+    }
+
+    @PutMapping("/modifyLocation")
+    public void modifyLocation(@RequestBody UserDto userDto) {
+        userService.modifyLocation(userDto.getId(), userDto.getLatitude(), userDto.getLongitude(), userDto.getLocation());
     }
 
     // 회원정보 조회

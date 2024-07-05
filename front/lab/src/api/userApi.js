@@ -30,6 +30,13 @@ export const modifyUser = async (id, user) => {
   return res.data;
 };
 
+export const modifyUserLocation = async (id, latitude, longitude, location) => {
+  const res = await axios.put(`${host}/modifyLocation`, {
+    id, latitude, longitude, location
+  });
+  return res.data;
+};
+
 // 회원정보 조회
 export const getUser = async (id) => {
   const res = await axios.get(`${host}/${id}`);
