@@ -22,7 +22,7 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
         Page<Object[]> selectSearchList(@Param(value = "title") String title, Pageable pageable);
 
         // 최신순
-        @Query("select t, ti from Team t left join t.imageList ti where (ti.ord = 0 or ti.ord IS NULL) order by t.teamNo")
+        @Query("select t, ti from Team t left join t.imageList ti where (ti.ord = 0 or ti.ord IS NULL) order by t.teamNo desc")
         Page<Object[]> newList(Pageable pageable);
 
         // 마감임박순

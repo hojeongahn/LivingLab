@@ -72,7 +72,7 @@ const TeamPostComponent = () => {
 
                                             <div class="flex flex-col w-full gap-2 py-2 mr-3">
 
-                                                <p class="text-xl font-bold text-center">
+                                                <p class="text-xl font-bold">
                                                     <Link to={`/team/read/${team.teamNo}`}>
                                                         {team.title}
                                                     </Link>
