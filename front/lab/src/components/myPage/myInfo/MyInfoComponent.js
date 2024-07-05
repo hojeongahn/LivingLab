@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { API_SERVER_HOST, getUser, modifyUserLocation } from '../../../api/userApi';
 
+
 const initState = {
   id: 0,
   email: '',
@@ -23,8 +24,8 @@ const host = API_SERVER_HOST;
 const MyInfoComponent = () => {
   const [user, setUser] = useState(initState);
   const [location, setLocation] = useState('');
-  const [ info, setInfo ] = useState(false);
-  const [ isFadingOut, setFadingOut ] = useState(false);
+  const [info, setInfo] = useState(false);
+  const [isFadingOut, setFadingOut] = useState(false);
   const { kakao } = window;
   const loginInfo = useSelector((state) => state.loginSlice); // 전역상태에서 loginSlice는 로그인 사용자의 상태정보
   const ino = loginInfo.id;
@@ -97,53 +98,66 @@ const MyInfoComponent = () => {
         <table className="w-full">
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
-            아이디
+              아이디
             </th>
             <td className="w-3/4 text-left pl-6">
-            {user.email}
+              {user.email}
             </td>
           </tr>
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
-            이름
+              이름
             </th>
             <td className="w-3/4 text-left pl-6">
-            {user.name}
+              {user.name ? (
+                user.name
+              ) : (
+                <span className="text-gray-400">이름을 설정해주세요.</span>
+              )}
             </td>
           </tr>
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
-            휴대폰 번호
+              휴대폰 번호
             </th>
             <td className="w-3/4 text-left pl-6">
-            {user.phone}
+              {user.phone ? (
+                user.phone
+              ) : (
+                <span className="text-gray-400">휴대폰 번호를 설정해주세요.</span>
+              )}
             </td>
           </tr>
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
-            닉네임
+              닉네임
             </th>
             <td className="w-3/4 text-left pl-6">
-            {user.nickname}
+              {user.nickname}
             </td>
           </tr>
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
-            기본 주소지
+              기본 주소지
             </th>
             <td className="w-3/4 text-left pl-6">
-            {user.addr} {user.detailAddr}
+              {user.addr && user.detailAddr ? (
+                `${user.addr} ${user.detailAddr}`
+              ) : (
+                <span className="text-gray-400">주소를 설정해주세요.</span>
+              )}
             </td>
+
           </tr>
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
-            현재 위치
+              현재 위치
             </th>
             <td className="w-3/4 text-left pl-6">
-            {user.location}
-            <button onClick={changeLocation} className="bg-mainColor text-white font-semibold text-sm rounded-full ml-2 px-2 py-1 hover:bg-teal-600">
-              기본 주소지로 변경
-            </button>
+              {user.location}
+              <button onClick={changeLocation} className="bg-mainColor text-white font-semibold text-sm rounded-full ml-2 px-2 py-1 hover:bg-teal-600">
+                기본 주소지로 변경
+              </button>
             </td>
           </tr>
         </table>
@@ -152,9 +166,8 @@ const MyInfoComponent = () => {
         <>
           <div className="fixed inset-0 flex items-center justify-center z-[2000]">
             <div
-              className={`bg-white px-44 py-3 rounded-full shadow border transition-opacity duration-400 ease-in-out ${
-                isFadingOut ? 'opacity-0' : 'opacity-100'
-              }`}
+              className={`bg-white px-44 py-3 rounded-full shadow border transition-opacity duration-400 ease-in-out ${isFadingOut ? 'opacity-0' : 'opacity-100'
+                }`}
             >
               <p className="text-black font-semibold">현재 위치가 설정되었습니다</p>
             </div>

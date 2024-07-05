@@ -28,7 +28,7 @@ const MyInfoModifyComponent = () => {
   const [profileImageFile, setProfileImageFile] = useState(null);
   const [isModified, setIsModified] = useState(false); // 수정 여부 상태 추가
   const loginInfo = useSelector((state) => state.loginSlice);
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState();
   const ino = loginInfo.id;
 
   useEffect(() => {
