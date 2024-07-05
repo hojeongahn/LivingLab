@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.mlp.lab.dto.chat.ChatRoomDataRequestDto;
 import com.mlp.lab.dto.chat.ChatRoomDataResponseDto;
-import com.mlp.lab.dto.chat.ChatRoomDataResponseDto.Info;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.Market;
 import com.mlp.lab.entity.ShareRoom;
@@ -193,17 +192,14 @@ public class ChatRoomService {
         return chatRoom;
     }
     
-    public ChatRoomDataResponseDto.Info exitRoomMarket(Long userId, Long marketNo) {
-        User user = userRepository.findByUserId(userId);
+    public void exitRoomMarket(Long userId, Long marketNo) {
+        User user = userRepository.findByUserId(userId);    //reader찾기
         List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
         for(int i=0; i<chatRoom.size(); i++){
-            if(chatRoom.get(i).getReader().contains(user)){
-                chatRoom.get(i).removeReader(user);
+            if(chatRoom.get(i).getReader().get(0).equals(user)){
+                chatRoomRepository.delete(chatRoom.get(i));
             }
-            chatRoomRepository.save(chatRoom.get(i));
-            return ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
         }
-        return null;
     }
 
     public List<ChatRoom> findRoomByRoomNo(Long roomNo) {
@@ -214,16 +210,13 @@ public class ChatRoomService {
         return chatRoom;
     }
 
-    public ChatRoomDataResponseDto.Info exitRoomShare(Long userId, Long roomNo) {
+    public void exitRoomShare(Long userId, Long roomNo) {
         User user = userRepository.findByUserId(userId);
         List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
         for(int i=0; i<chatRoom.size(); i++){
-            if(chatRoom.get(i).getReader().contains(user)){
-                chatRoom.get(i).removeReader(user);
+            if(chatRoom.get(i).getReader().get(0).equals(user)){
+                chatRoomRepository.delete(chatRoom.get(i));
             }
-            chatRoomRepository.save(chatRoom.get(i));
-            return ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
         }
-        return null;
     }
 }

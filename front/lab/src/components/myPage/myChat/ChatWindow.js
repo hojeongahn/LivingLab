@@ -173,6 +173,7 @@ const ChatWindow = ({ room }) => {
 
   const handleConfirmDelete = async () => {
     try {
+      console.log("채팅방 번호: "+room.roomId);
       await deleteChatRoom(room.roomId);
       setInfo('채팅방과 게시글을 삭제했습니다.');
     } catch (error) {

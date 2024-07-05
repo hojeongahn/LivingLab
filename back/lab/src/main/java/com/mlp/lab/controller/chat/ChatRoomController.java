@@ -139,12 +139,13 @@ public class ChatRoomController {
         return ResponseDto.setSuccessData("특정 채팅방 조회", roomData);
     }
 
-    // 동네장터 특정 채팅방 퇴장
-    @PostMapping("/room/market/exit")
+    // 동네장터 특정 채팅방 퇴장(채팅방 삭제)
+    @DeleteMapping("/room/market/exit")
     @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> exitMarketRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="marketNo") Long marketNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomMarket(userId, marketNo);
-        return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
+    public ResponseDto<Object> exitMarketRoom(@RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "marketNo") Long marketNo) {
+        chatRoomService.exitRoomMarket(userId, marketNo);
+        return ResponseDto.setSuccess("채팅방 퇴장(삭제)");
     }
 
     // 동네장터 특정 채팅방 조회
@@ -163,11 +164,12 @@ public class ChatRoomController {
         return ResponseDto.setSuccessData("특정 채팅방 조회", roomData);
     }
 
-    // 자취방쉐어 특정 채팅방 퇴장
-    @PostMapping("/room/shareRoom/exit")
+    // 자취방쉐어 특정 채팅방 퇴장(채팅방 삭제)
+    @DeleteMapping("/room/shareRoom/exit")
     @ResponseBody
-    public ResponseDto<ChatRoomDataResponseDto.Info> exitShareRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="roomNo") Long roomNo) {
-        ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomShare(userId, roomNo);
-        return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
+    public ResponseDto<Object> exitShareRoom(@RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "roomNo") Long roomNo) {
+        chatRoomService.exitRoomShare(userId, roomNo);
+        return ResponseDto.setSuccess("채팅방 퇴장(삭제)");
     }
 }
