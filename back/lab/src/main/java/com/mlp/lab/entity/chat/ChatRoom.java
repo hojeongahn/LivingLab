@@ -9,6 +9,7 @@ import com.mlp.lab.entity.ShareRoom;
 import com.mlp.lab.entity.Team;
 import com.mlp.lab.entity.User;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,6 +20,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,11 +46,14 @@ public class ChatRoom {
     @Column(name = "type")
     private String type;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Chat> chats = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buy_no", referencedColumnName = "buy_no", nullable = true)
     private Buy buy;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_no", referencedColumnName = "team_no", nullable = true)
     private Team team;
 
@@ -69,6 +76,16 @@ public class ChatRoom {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> reader = new ArrayList<>();  //채팅방에 입장할 인원들
+
+    @PreRemove
+    private void preRemove() {
+        if (buy != null) {
+            buy.setChatRoom(null);
+        }
+        if (team != null) {
+            team.setChatRoom(null);
+        }
+    }
 
     @Builder
     public ChatRoom(Long chatroomId, String title, String type, Buy buy, Team team, Market market, ShareRoom shareRoom, User writer, List<User> reader) {

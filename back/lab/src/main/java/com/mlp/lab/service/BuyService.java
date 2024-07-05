@@ -150,8 +150,6 @@ public class BuyService {
 
     @Transactional // 삭제하기
     public void delete(Long buyNo) {
-        // chatroom 테이블에서 해당 buy_no 값을 참조하지 않도록 업데이트
-        chatRoomRepository.updateBuyRoom(buyNo);
         buyRepository.deleteById(buyNo);
     }
 

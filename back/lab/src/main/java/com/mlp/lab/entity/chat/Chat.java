@@ -32,7 +32,7 @@ public class Chat {
     @Column(name = "content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
@@ -50,5 +50,4 @@ public class Chat {
     public String getSenderProfileImage(){
         return this.sender.getProfileImage();
     }
-
 }

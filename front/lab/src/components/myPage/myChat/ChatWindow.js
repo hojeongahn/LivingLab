@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';  // Stomp.js의 브라우저 버전인 webstomp-client 사용
 import { useSelector } from 'react-redux';
-import { getChatHistory, getList } from '../../../api/chatApi';
+import { getChatHistory, getList, exitChatRoomBuy, exitChatRoomTeam, exitChatRoomMarket, exitChatRoomShare, deleteChatRoom } from '../../../api/chatApi';
+import InfoModal from '../../common/InfoModal';
+import ConfirmationModal from '../../common/ConfirmationModal'
 
 
 const ChatWindow = ({ room }) => {
@@ -15,14 +17,16 @@ const ChatWindow = ({ room }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const loginInfo = useSelector((state) => state.loginSlice);
   const nickname = loginInfo.nickname;
+  const ino = loginInfo.id;
   const [participants, setParticipants] = useState([]);
+  const [info, setInfo] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8282/ws'); // SockJS 연결 URL
     const stomp = Stomp.over(socket);
 
     stomp.connect({}, frame => {
-      //console.log('연결: ' + frame);
       setStompClient(stomp);
     }, error => {
       console.error('연결 에러: ', error);
@@ -36,7 +40,7 @@ const ChatWindow = ({ room }) => {
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
-        const res = await getChatHistory(room.roomId); // 수정된 API 호출
+        const res = await getChatHistory(room.roomId);
         setMessages(res.data.messageHistory);
 
       } catch (error) {
@@ -54,7 +58,6 @@ const ChatWindow = ({ room }) => {
     // 채팅방 topic을 구독하여 메시지 수신
     const subscription = stompClient.subscribe(`/topic/chat/room/${room.roomId}`, message => {
       const receivedMessage = JSON.parse(message.body);
-      //console.log('받은 메시지:', receivedMessage);
       setMessages(prevMessages => [...prevMessages, receivedMessage]);
     }, error => {
       console.error('구독 실패: ', error);
@@ -90,8 +93,6 @@ const ChatWindow = ({ room }) => {
       sender: nickname,
       userId: loginInfo.id
     };
-
-    //console.log('보낸 메세지: ', newMessage);
 
     // WebSocket을 통해 메시지 전송
     stompClient.send('/app/chat/message', JSON.stringify(newMessage), {});
@@ -130,6 +131,66 @@ const ChatWindow = ({ room }) => {
     }
   }
 
+  const handleExit = async () => {
+    // 현재 사용자가 채팅방 작성자인지 확인
+    const isWriter = room.writerId === ino;
+
+    if (isWriter) {
+      setShowModal(true);
+    } else {
+      try {
+        const formData = new FormData();
+        formData.append('userId', ino);
+
+        switch (room.type) {
+          case '공동구매':
+            formData.append('buyNo', room.buyNo);
+            await exitChatRoomBuy(formData);
+            break;
+          case '동네모임':
+            formData.append('teamNo', room.teamNo);
+            await exitChatRoomTeam(formData);
+            break;
+          case '동네장터':
+            formData.append('marketNo', room.marketNo);
+            await exitChatRoomMarket(formData);
+            break;
+          case '자취방쉐어':
+            formData.append('roomNo', room.roomNo);
+            await exitChatRoomShare(formData);
+            break;
+          default:
+            setInfo('알 수 없는 채팅방 타입입니다.');
+            return;
+        }
+        setInfo('채팅방을 나갔습니다.');
+      } catch (error) {
+        console.error('채팅방 나가기 실패: ', error);
+        setInfo('채팅방 나가기에 실패했습니다.');
+      }
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteChatRoom(room.roomId);
+      setInfo('채팅방과 게시글을 삭제했습니다.');
+    } catch (error) {
+      console.error('채팅방 삭제 실패: ', error);
+      setInfo('채팅방 삭제에 실패했습니다.');
+    }
+    setShowModal(false); // 모달 닫기
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); // 모달 닫기
+    window.location.reload();
+  };
+
+  const closeInfoModal = () => {
+    setInfo('');
+    window.location.reload();
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -152,7 +213,7 @@ const ChatWindow = ({ room }) => {
       {/* 메시지 목록 표시 영역 */}
       <div className="flex-1 overflow-y-auto p-2 bg-slate-100 relative overflow-x-hidden">
         {messages.map((message, index) => (
-          <ChatMessage key={index} message={message}/>
+          <ChatMessage key={index} message={message} />
         ))}
         {/* 참여자 목록 사이드바 */}
         <div
@@ -175,7 +236,7 @@ const ChatWindow = ({ room }) => {
             </ul>
           </div>
           <div className="p-4 border-t">
-            <button className="w-full py-2 px-4 text-base bg-red-400 text-white font-bold rounded hover:bg-red-500">
+            <button onClick={handleExit} className="w-full py-2 px-4 text-base bg-red-400 text-white font-bold rounded hover:bg-red-500">
               나가기
             </button>
           </div>
@@ -183,6 +244,13 @@ const ChatWindow = ({ room }) => {
       </div>
       {/* 메시지 입력창 */}
       <ChatInput onSend={handleSend} />
+      {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
+      <ConfirmationModal
+        show={showModal}
+        message={'채팅방을 나갈 시 해당 게시글도 삭제됩니다. 그래도 나가시겠습니까?'}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseModal}
+      />
     </div>
   );
 };

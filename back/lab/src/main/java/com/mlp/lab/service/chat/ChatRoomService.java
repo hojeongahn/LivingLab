@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.mlp.lab.dto.chat.ChatRoomDataRequestDto;
 import com.mlp.lab.dto.chat.ChatRoomDataResponseDto;
+import com.mlp.lab.dto.chat.ChatRoomDataResponseDto.Info;
 import com.mlp.lab.entity.Buy;
 import com.mlp.lab.entity.Market;
 import com.mlp.lab.entity.ShareRoom;
@@ -119,6 +120,17 @@ public class ChatRoomService {
     }
 
     public void deleteRoom(Long roomId) {
+        Optional<ChatRoom> ch = chatRoomRepository.findById(roomId);
+        ChatRoom chatRoom = ch.get();
+        if(chatRoom.getBuy()!=null){
+            buyRepository.delete(chatRoom.getBuy());
+        } else if(chatRoom.getTeam()!=null){
+            teamRepository.delete(chatRoom.getTeam());
+        } else if(chatRoom.getMarket()!=null){
+            marketRepository.delete(chatRoom.getMarket());
+        } else if(chatRoom.getShareRoom()!=null){
+            shareRoomRepository.delete(chatRoom.getShareRoom());
+        } 
         chatRoomRepository.deleteById(roomId);
     }
 
@@ -181,13 +193,18 @@ public class ChatRoomService {
         return chatRoom;
     }
     
-    // public ChatRoomDataResponseDto.Info exitRoomMarket(Long userId, Long marketNo) {
-    //     User user = userRepository.findByUserId(userId);  
-    //     ChatRoom chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
-    //     chatRoom.removeReader(user);
-    //     chatRoomRepository.save(chatRoom);
-    //     return ChatRoomDataResponseDto.Info.of(chatRoom);
-    // }
+    public ChatRoomDataResponseDto.Info exitRoomMarket(Long userId, Long marketNo) {
+        User user = userRepository.findByUserId(userId);
+        List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
+        for(int i=0; i<chatRoom.size(); i++){
+            if(chatRoom.get(i).getReader().contains(user)){
+                chatRoom.get(i).removeReader(user);
+            }
+            chatRoomRepository.save(chatRoom.get(i));
+            return ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
+        }
+        return null;
+    }
 
     public List<ChatRoom> findRoomByRoomNo(Long roomNo) {
         List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
@@ -195,5 +212,18 @@ public class ChatRoomService {
             ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
         }
         return chatRoom;
+    }
+
+    public ChatRoomDataResponseDto.Info exitRoomShare(Long userId, Long roomNo) {
+        User user = userRepository.findByUserId(userId);
+        List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
+        for(int i=0; i<chatRoom.size(); i++){
+            if(chatRoom.get(i).getReader().contains(user)){
+                chatRoom.get(i).removeReader(user);
+            }
+            chatRoomRepository.save(chatRoom.get(i));
+            return ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
+        }
+        return null;
     }
 }

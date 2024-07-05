@@ -151,6 +151,7 @@ const ReadComponent = ({ marketNo }) => {
 
   const closeBasicModal = () => {
     setAddResultModal(null);
+    window.location.reload();
   };
 
   const handleLikeClick = () => {

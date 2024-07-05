@@ -22,7 +22,6 @@ import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.repository.BuyRepository;
 import com.mlp.lab.repository.TeamRepository;
 import com.mlp.lab.service.BuyService;
-import com.mlp.lab.service.ShareRoomService;
 import com.mlp.lab.service.TeamService;
 import com.mlp.lab.service.chat.ChatRoomService;
 
@@ -30,13 +29,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/chat")
+@RequestMapping("api/chat")
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
     private final BuyService buyService;
     private final TeamService teamService;
-    private final ShareRoomService shareRoomService;
     private final BuyRepository buyRepository;
     private final TeamRepository teamRepository;
 
@@ -56,7 +54,6 @@ public class ChatRoomController {
         return user;
     }
     
-
     // 채팅방 생성(글 작성시 자동으로)
     @PostMapping("/room/create")
     @ResponseBody
@@ -143,13 +140,12 @@ public class ChatRoomController {
     }
 
     // 동네장터 특정 채팅방 퇴장
-    // @PostMapping("/room/market/exit")
-    // @ResponseBody
-    // public ResponseDto<ChatRoomDataResponseDto.Info> exitMarketRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="marketNo") Long marketNo) {
-    //     ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomMarket(userId, marketNo);
-    //     marketService.get(marketNo);
-    //     return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
-    // }
+    @PostMapping("/room/market/exit")
+    @ResponseBody
+    public ResponseDto<ChatRoomDataResponseDto.Info> exitMarketRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="marketNo") Long marketNo) {
+        ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomMarket(userId, marketNo);
+        return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
+    }
 
     // 동네장터 특정 채팅방 조회
     @GetMapping("/room/market/get")
@@ -165,5 +161,13 @@ public class ChatRoomController {
     public ResponseDto<List<ChatRoom>> chatUserInfoShare(@RequestParam(name="roomNo") Long roomNo) {
         List<ChatRoom> roomData = chatRoomService.findRoomByRoomNo(roomNo);
         return ResponseDto.setSuccessData("특정 채팅방 조회", roomData);
+    }
+
+    // 자취방쉐어 특정 채팅방 퇴장
+    @PostMapping("/room/shareRoom/exit")
+    @ResponseBody
+    public ResponseDto<ChatRoomDataResponseDto.Info> exitShareRoom(@RequestParam(name="userId") Long userId, @RequestParam(name="roomNo") Long roomNo) {
+        ChatRoomDataResponseDto.Info roomData = chatRoomService.exitRoomShare(userId, roomNo);
+        return ResponseDto.setSuccessData("채팅방 퇴장", roomData);
     }
 }

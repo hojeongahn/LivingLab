@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mlp.lab.dto.TeamDto;
+import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.entity.like.Likes;
 
 import jakarta.persistence.*;
@@ -76,6 +77,9 @@ public class Team extends BaseTimeEntity{
     @JsonManagedReference
     private List<Likes> likes;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "team", cascade = CascadeType.ALL)
+    private ChatRoom chatRoom;
+    
     @ElementCollection
     @Builder.Default
     private List<TeamImage> imageList = new ArrayList<>();
