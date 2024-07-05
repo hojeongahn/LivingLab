@@ -167,19 +167,33 @@ const JoinComponent = () => {
   const handleClickJoin = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('file', user.file);
-    formData.append('email', user.email);
-    formData.append('pwd', user.pwd);
-    formData.append('confirmPwd', user.confirmPwd);
-    formData.append('phone', user.phone);
-    formData.append('name', user.name);
-    formData.append('addr', user.addr);
-    formData.append('nickname', user.nickname);
-    formData.append('detailAddr', user.detailAddr);
-
     try {
-      const response = await joinUser(formData); // joinUser API 호출
+      // 이메일 중복 체크
+      const emailCheck = await CheckEmail(user.email);
+      if (emailCheck) {
+        alert('이미 회원가입된 이메일입니다.');
+        return;
+      }
+
+      // 닉네임 중복 체크
+      const nicknameCheck = await CheckNickname(user.nickname);
+      if (nicknameCheck) {
+        alert('이미 회원가입된 닉네임입니다.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', user.file);
+      formData.append('email', user.email);
+      formData.append('pwd', user.pwd);
+      formData.append('confirmPwd', user.confirmPwd);
+      formData.append('phone', user.phone);
+      formData.append('name', user.name);
+      formData.append('addr', user.addr);
+      formData.append('nickname', user.nickname);
+      formData.append('detailAddr', user.detailAddr);
+
+      const response = await joinUser(formData);
       if (response.result === true) {
         alert('회원가입이 완료되었습니다.');
         navigate('/');
@@ -194,6 +208,11 @@ const JoinComponent = () => {
 
   // 이메일 중복 체크
   const handleCheckEmail = () => {
+    if (!user.email) {
+      alert('이메일을 먼저 입력해주세요.');
+      return;
+    }
+  
     CheckEmail(user.email)
     .then((res)=> {
       if(res === false) {
@@ -203,10 +222,19 @@ const JoinComponent = () => {
         alert('이미 회원가입된 이메일입니다.')
       }
     })
+    .catch((error) => {
+      console.error('Error checking email:', error);
+      alert('이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
+    });
   }
 
    // 닉네임 중복 체크
   const handleCheckNickname = () => {
+    if (!user.nickname) {
+      alert('닉네임을 먼저 입력해주세요.');
+      return;
+    }
+  
     CheckNickname(user.nickname)
     .then((res)=> {
       if(res === false) {

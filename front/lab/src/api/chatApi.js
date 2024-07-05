@@ -1,7 +1,7 @@
 import axios from 'axios';
 export const API_SERVER_HOST = 'http://localhost:8282';
 
-const host = `${API_SERVER_HOST}/chat`;
+const host = `${API_SERVER_HOST}/api/chat`;
 
 // 작성자가 게시글 작성 시 자동으로 채팅방 생성, 입장
 export const postCreateRoom = async (userId, title, type, createRequest) => {
@@ -97,7 +97,7 @@ export const chatUserInfoShare = async (roomNo) => {
   return res.data;
 };
 
-// 자취방쉐어 채팅방 퇴장(참여x)
+// 자취방쉐어 채팅방 퇴장
 export const exitChatRoomShare = async (formData) => {
   const response = await axios.post(`${host}/room/shareRoom/exit`, formData);
       return response.data;
