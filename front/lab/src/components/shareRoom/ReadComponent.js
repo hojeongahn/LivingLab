@@ -90,6 +90,7 @@ const ReadComponent = ({ roomNo }) => {
       setAddResultModal('로그인 후 이용 가능합니다');
       return;
     };
+    
     if (roomData) {
       try {
         const formData = new FormData();
@@ -99,6 +100,7 @@ const ReadComponent = ({ roomNo }) => {
 
         // 각 채팅방 정보에 접근하여 reader 배열에서 id가 ino인 사용자가 포함되어 있는지 확인
         const isAlreadyJoined = roomData.some(room => room.reader.some(reader => reader.id === ino));
+        
         if (isAlreadyJoined) {
           setAddResultModal('이미 문의한 글입니다.');
         } else {
@@ -302,7 +304,7 @@ const ReadComponent = ({ roomNo }) => {
                   { loginState.id !== shareRoom.id && (
                     <div>
                       <button className="inline-flex items-center justify-center w-[211px] mr-4 px-4 text-white bg-blue-600 h-[56px] text-sm leading-6 font-bold rounded-sm cursor-pointer transition-all duration-150 ease-out">
-                        <span className="" onClick={handleClickAdd}>문의하기</span>
+                        <span onClick={handleClickAdd}>문의하기</span>
                       </button>
                     </div>
                   )}
