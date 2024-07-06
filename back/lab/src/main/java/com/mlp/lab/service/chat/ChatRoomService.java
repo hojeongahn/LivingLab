@@ -191,13 +191,29 @@ public class ChatRoomService {
         }
         return chatRoom;
     }
-    
-    public void exitRoomMarket(Long userId, Long marketNo) {
-        User user = userRepository.findByUserId(userId);    //reader찾기
+
+    public int getMarketRoomlength(Long marketNo) {
         List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
+        int result = chatRoom.size(); // size가 1이면 마지막 채팅방(게시글 삭제)
+        return result;
+    }
+    
+    public void exitRoomMarket(Long roomId, Long userId, Long marketNo) {
+        User user = userRepository.findByUserId(userId);    //나가기 버튼 누른 사람 찾기
+        List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
+        ChatRoom ch = chatRoomRepository.findByChatroomId(roomId);
         for(int i=0; i<chatRoom.size(); i++){
-            if(chatRoom.get(i).getReader().get(0).equals(user)){
+            if(chatRoom.get(i).getReader().get(0).equals(user)){    // reader중 한명일 때
                 chatRoomRepository.delete(chatRoom.get(i));
+            } else { // writer일 시
+                if(chatRoom.get(i).getWriter().getEmail().equals(user.getEmail())){ // writer가 맞으면
+                    if(chatRoom.size()==1){   //유일한 채팅방 일 시 게시글도 삭제
+                        marketRepository.delete(marketRepository.findMarketByMarketNo(marketNo));
+                        chatRoomRepository.delete(ch);   
+                    } else {
+                        chatRoomRepository.delete(ch);
+                    }
+                } 
             }
         }
     }
@@ -210,12 +226,29 @@ public class ChatRoomService {
         return chatRoom;
     }
 
-    public void exitRoomShare(Long userId, Long roomNo) {
+    public int getShareRoomlength(Long roomNo) {
+        List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
+        int result = chatRoom.size(); // size가 1이면 마지막 채팅방(게시글 삭제)
+        return result;
+    }
+
+    public void exitRoomShare(Long roomId, Long userId, Long roomNo) {
         User user = userRepository.findByUserId(userId);
         List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
+        ChatRoom ch = chatRoomRepository.findByChatroomId(roomId);
         for(int i=0; i<chatRoom.size(); i++){
-            if(chatRoom.get(i).getReader().get(0).equals(user)){
+            if(chatRoom.get(i).getReader().get(0).equals(user)){    // reader중 한명일 때
                 chatRoomRepository.delete(chatRoom.get(i));
+            } else { // writer일 시
+                if(chatRoom.get(i).getWriter().getEmail().equals(user.getEmail())){ // writer가 맞으면
+                    chatRoomRepository.delete(ch);   // 작성자의 해당 채팅방 삭제
+                    if(chatRoom.size()==1){   //유일한 채팅방 일 시 게시글도 삭제
+                        shareRoomRepository.delete(shareRoomRepository.findShareRoomByRoomNo(roomNo));
+                        chatRoomRepository.delete(ch);
+                    } else {
+                        chatRoomRepository.delete(ch);
+                    }
+                } 
             }
         }
     }

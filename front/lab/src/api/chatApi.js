@@ -19,7 +19,7 @@ export const getList = async (roomId) => {
 
 // 특정 채팅방 삭제
 export const deleteChatRoom = async (roomId) => {
-  const res = await axios.delete(`${host}/room/delete/${roomId}`);
+  const res = await axios.post(`${host}/room/delete/${roomId}`);
   return res.data;
 };
 
@@ -46,13 +46,13 @@ export const chatUserInfoBuy = async (buyNo) => {
 // 공동구매 채팅방 입장(참여)
 export const enterChatRoomBuy = async (formData) => {
   const response = await axios.post(`${host}/room/buy/enter`, formData);
-      return response.data;
+  return response.data;
 };
 
 // 공동구매 채팅방 퇴장(참여x)
 export const exitChatRoomBuy = async (formData) => {
   const response = await axios.post(`${host}/room/buy/exit`, formData);
-      return response.data;
+  return response.data;
 };
 
 // 동네모임 채팅방의 유저 조회(참여하기 표시)
@@ -66,16 +66,16 @@ export const chatUserInfoTeam = async (teamNo) => {
 // 동네모임 채팅방 입장(참여)
 export const enterChatRoomTeam = async (formData) => {
   const response = await axios.post(`${host}/room/team/enter`, formData);
-      return response.data;
+  return response.data;
 };
 
 // 동네모임 채팅방 퇴장(참여x)
 export const exitChatRoomTeam = async (formData) => {
   const response = await axios.post(`${host}/room/team/exit`, formData);
-      return response.data;
+  return response.data;
 };
 
-// 동네장터 채팅방의 유저 조회(참여하기 표시)
+// 동네장터 채팅방의 유저 조회
 export const chatUserInfoMarket = async (marketNo) => {
   const res = await axios.get(`${host}/room/market/get`, {
     params: { marketNo }
@@ -85,10 +85,20 @@ export const chatUserInfoMarket = async (marketNo) => {
 
 // 동네장터 채팅방 퇴장
 export const exitChatRoomMarket = async (formData) => {
-  const response = await axios.delete(`${host}/room/market/exit`, {
-    data: formData
+  const response = await axios.post(`${host}/room/market/exit`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return response.data;
+};
+
+// 동네장터 채팅방 갯수 조회
+export const marketChatRoomsize = async (marketNo) => {
+  const res = await axios.get(`${host}/room/market/length`, {
+    params: { marketNo }
+  });
+  return res.data;
 };
 
 // 자취방쉐어 채팅방의 유저 조회
@@ -101,10 +111,20 @@ export const chatUserInfoShare = async (roomNo) => {
 
 // 자취방쉐어 채팅방 퇴장
 export const exitChatRoomShare = async (formData) => {
-  const response = await axios.delete(`${host}/room/shareRoom/exit`, {
-    data: formData
+  const response = await axios.post(`${host}/room/shareRoom/exit`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
   });
-      return response.data;
+  return response.data;
+};
+
+// 자취방쉐어 채팅방 갯수 조회
+export const ShareRoomsize = async (roomNo) => {
+  const res = await axios.get(`${host}/room/shareRoom/length`, {
+    params: { roomNo }
+  });
+  return res.data;
 };
 
 

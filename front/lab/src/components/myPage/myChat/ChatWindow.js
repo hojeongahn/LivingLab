@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';  // Stomp.js의 브라우저 버전인 webstomp-client 사용
 import { useSelector } from 'react-redux';
-import { getChatHistory, getList, exitChatRoomBuy, exitChatRoomTeam, exitChatRoomMarket, exitChatRoomShare, deleteChatRoom } from '../../../api/chatApi';
+import { getChatHistory, getList, exitChatRoomBuy, exitChatRoomTeam, exitChatRoomMarket, exitChatRoomShare, deleteChatRoom, marketChatRoomsize, ShareRoomsize } from '../../../api/chatApi';
 import InfoModal from '../../common/InfoModal';
 import ConfirmationModal from '../../common/ConfirmationModal'
 
@@ -135,7 +135,7 @@ const ChatWindow = ({ room }) => {
     // 현재 사용자가 채팅방 작성자인지 확인
     const isWriter = room.writerId === ino;
 
-    if (isWriter) {
+    if (isWriter && (room.type === '공동구매' || room.type === '동네모임')) {
       setShowModal(true);
     } else {
       try {
@@ -146,24 +146,39 @@ const ChatWindow = ({ room }) => {
           case '공동구매':
             formData.append('buyNo', room.buyNo);
             await exitChatRoomBuy(formData);
+            setInfo('채팅방을 나갔습니다.');
             break;
           case '동네모임':
             formData.append('teamNo', room.teamNo);
             await exitChatRoomTeam(formData);
+            setInfo('채팅방을 나갔습니다.');
             break;
           case '동네장터':
-            formData.append('marketNo', room.marketNo);
-            await exitChatRoomMarket(formData);
+            const resultChat = await marketChatRoomsize(room.marketNo);
+            if (isWriter && resultChat == 1) {
+              setShowModal(true);
+            } else {
+              formData.append('marketNo', room.marketNo);
+              formData.append('roomId', room.roomId);
+              exitChatRoomMarket(formData);
+              setInfo('채팅방을 나갔습니다.');
+            }
             break;
           case '자취방쉐어':
-            formData.append('roomNo', room.roomNo);
-            await exitChatRoomShare(formData);
+            const resultShare = await ShareRoomsize(room.roomNo);
+            if (isWriter && resultShare == 1) {
+              setShowModal(true);
+            } else {
+              formData.append('roomNo', room.roomNo);
+              formData.append('roomId', room.roomId);
+              exitChatRoomShare(formData);
+              setInfo('채팅방을 나갔습니다.');
+            }
             break;
           default:
             setInfo('알 수 없는 채팅방 타입입니다.');
             return;
         }
-        setInfo('채팅방을 나갔습니다.');
       } catch (error) {
         console.error('채팅방 나가기 실패: ', error);
         setInfo('채팅방 나가기에 실패했습니다.');
@@ -172,9 +187,31 @@ const ChatWindow = ({ room }) => {
   };
 
   const handleConfirmDelete = async () => {
+    const formData = new FormData();
+    formData.append('userId', ino);
+  
     try {
-      console.log("채팅방 번호: "+room.roomId);
-      await deleteChatRoom(room.roomId);
+      switch (room.type) {
+        case '공동구매':
+          await deleteChatRoom(room.roomId);
+          break;
+        case '동네모임':
+          await deleteChatRoom(room.roomId);
+          break;
+        case '동네장터':
+          formData.append('marketNo', room.marketNo);
+          formData.append('roomId', room.roomId);
+          await exitChatRoomMarket(formData);
+          break;
+        case '자취방쉐어':
+          formData.append('roomNo', room.roomNo);
+          formData.append('roomId', room.roomId);
+          await exitChatRoomShare(formData);
+          break;
+        default:
+          setInfo('알 수 없는 채팅방 타입입니다.');
+          return;
+      }
       setInfo('채팅방과 게시글을 삭제했습니다.');
     } catch (error) {
       console.error('채팅방 삭제 실패: ', error);
