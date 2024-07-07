@@ -102,7 +102,6 @@ public class UserService {
     // 카카오 이메일, 닉네임
     String email = getEmailFromKakaoAccessToken(accessToken); // 이메일 정보
     String nickname = getNicknameFromKakaoAccessToken(accessToken); // 닉네임 정보
-    // String gender = getGenderFromKakaoAccessToken(accessToken); // 성별 정보 (필요시 사용)
 
     // 현재 DB에 카카오 이메일 계정이 있는지 확인
     Optional<User> result = userRepository.findByEmail(email);
@@ -217,44 +216,6 @@ public class UserService {
     String nickname = properties.get("nickname"); // 닉네임 정보
 
     return nickname;
-  }
-  // 여기까지만 사용
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // 성별 반환 함수
-  private String getGenderFromKakaoAccessToken(String accessToken) {
-
-    String kakaoGetUserURL = "https://kapi.kakao.com/v2/user/me";
-
-    RestTemplate restTemplate = new RestTemplate();
-
-    HttpHeaders headers = new org.springframework.http.HttpHeaders();
-    headers.add("Authorization", "Bearer " + accessToken);
-    headers.add("Content-type",
-        "application/x-www-form-urlencoded;charset=utf-8");
-
-    HttpEntity<String> entity = new HttpEntity<>(headers);
-
-    UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(kakaoGetUserURL).build();
-
-    ResponseEntity<LinkedHashMap> response = restTemplate.exchange(uriBuilder.toUri(), HttpMethod.GET, entity,
-        LinkedHashMap.class);
-
-    log.info(response);
-
-    LinkedHashMap<String, LinkedHashMap> bodyMap = response.getBody();
-
-    log.info("---------------------------");
-    log.info(bodyMap);
-
-    LinkedHashMap<String, String> kakaoAccount = bodyMap.get("kakao_account");
-    log.info("kakaoAccount: " + kakaoAccount);
-
-    String gender = kakaoAccount.get("gender"); // 성별 정보
-
-    log.info("카카오 계정 닉네임: " + gender);
-
-    return gender;
   }
 
   //회원의 위도,경도 정보 수정
