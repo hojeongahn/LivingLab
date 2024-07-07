@@ -33,7 +33,7 @@ const MyTeamComponent = ({id}) => {
             <ul className="divide-y divide-gray-200 h-full">
               {serverData.length > 0 ? (
                 serverData.map((team) => (
-                  <li className="py-4 hover:bg-slate-100 cursor-pointer" onClick={()=>moveToRead(team.no)}>
+                  <li  key={team.no} className="py-4 hover:bg-slate-100 cursor-pointer" onClick={()=>moveToRead(team.no)}>
                   <div className="grid grid-cols-4">
                     <div className="col-span-1 text-center">
                       <span className="text-sm text-white truncate bg-gray-500 rounded px-2 mr-2">
