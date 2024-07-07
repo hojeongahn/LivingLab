@@ -110,13 +110,13 @@ function LoginComponent(props) {
             <div className="w-full text-center text-sm pt-4 pb-4">
               <span>회원정보에 등록된 이름과 전화번호를 입력해주세요</span>
             </div>
-            <div class="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
-              <input type="text" placeholder="이름" class="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
+            <div className="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
+              <input type="text" placeholder="이름" className="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
               value={name}
               onChange={(e) => setName(e.target.value)}/>
             </div>
-            <div class="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
-              <input type="text" placeholder="전화번호" class="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
+            <div className="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
+              <input type="text" placeholder="전화번호" className="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}/>
             </div>
@@ -162,8 +162,8 @@ function LoginComponent(props) {
             <div className="w-full text-center text-sm pt-4 pb-4">
               <span>회원정보에 등록된 이메일 주소를 입력해주세요</span>
             </div>
-            <div class="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
-              <input type="email" placeholder="이메일 주소" class="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
+            <div className="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
+              <input type="email" placeholder="이메일 주소" className="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
               value={email}
               onChange={(e) => setEmail(e.target.value)}/>
             </div>
@@ -186,8 +186,8 @@ function LoginComponent(props) {
             <div className="w-full text-center text-sm pt-4 pb-4">
               <span>인증번호를 입력하세요</span>
             </div>
-            <div class="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
-              <input type="text" placeholder="인증번호" class="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
+            <div className="w-full my-2 transform border-b-2 bg-transparent text-base duration-300 focus-within:border-teal-700">
+              <input type="text" placeholder="인증번호" className="w-full p-1 border-none bg-transparent outline-none focus:outline-none"
               value={inputNum}
               onChange={(e) => setInputNum(e.target.value)}/>
             </div>

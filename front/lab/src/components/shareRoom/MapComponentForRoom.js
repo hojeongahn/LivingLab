@@ -134,15 +134,15 @@ const MapComponent = ({ location }) => {
   };
 
   const displayPlaceInfo = (place) => {
-    const content = `<div class="placeinfo">
-                        <a class="title" href="${place.place_url}" target="_blank" title="${place.place_name}">${place.place_name}</a>
+    const content = `<div className="placeinfo">
+                        <a className="title" href="${place.place_url}" target="_blank" title="${place.place_name}">${place.place_name}</a>
                         ${place.road_address_name ?
         `<span title="${place.road_address_name}">${place.road_address_name}</span>
-                        <span class="jibun" title="${place.address_name}">(지번 : ${place.address_name})</span>` :
+                        <span className="jibun" title="${place.address_name}">(지번 : ${place.address_name})</span>` :
         `<span title="${place.address_name}">${place.address_name}</span>`}
-                        <span class="tel">${place.phone}</span>
+                        <span className="tel">${place.phone}</span>
                     </div>
-                    <div class="after"></div>`;
+                    <div className="after"></div>`;
 
     placeOverlay.setContent(content);
     placeOverlay.setPosition(new kakao.maps.LatLng(place.y, place.x));

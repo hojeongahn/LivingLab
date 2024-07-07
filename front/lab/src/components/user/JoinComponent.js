@@ -287,7 +287,7 @@ const JoinComponent = () => {
     <div className="max-h-400">
       <div className="flex justify-center">
         <div className="text-4xl m-1 p-1 font-extrabold text-blue-500">
-          <img src={imgLogo2} alt="imgLogo2" class="object-contain h-48 w-96 ..." />
+          <img src={imgLogo2} alt="imgLogo2" className="object-contain h-48 w-96 ..." />
         </div>
       </div>
       <div className="border-2 border-sky-200 p-4">
