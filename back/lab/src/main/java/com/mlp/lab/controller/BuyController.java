@@ -16,23 +16,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mlp.lab.dto.PageRequestDto;
-import com.mlp.lab.dto.PageResponseDto;
-import com.mlp.lab.entity.Buy;
 import com.mlp.lab.dto.BuyDto;
 import com.mlp.lab.dto.MyActivityDto;
+import com.mlp.lab.dto.PageRequestDto;
+import com.mlp.lab.dto.PageResponseDto;
+import com.mlp.lab.dto.chat.ChatRoomDataResponseDto.Info;
+import com.mlp.lab.entity.Buy;
+import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.service.BuyService;
-import com.mlp.lab.service.chat.ChatService;
+import com.mlp.lab.service.chat.ChatRoomService;
 import com.mlp.lab.util.CustomFileUtilBuy;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @RestController
 @RequestMapping("/api/buy")
 @RequiredArgsConstructor
 public class BuyController {
     private final BuyService buyService;
-    private final ChatService chatService;
     private final CustomFileUtilBuy fileUtil;
 
     @GetMapping("/list") // 목록조회(검색기능 포함)
@@ -73,40 +75,42 @@ public class BuyController {
         return buyService.add(buyDto);
     }
 
+    
     @PutMapping("/modify/{buyNo}") // 수정
-    public void modify(@PathVariable(name = "buyNo") Long buyNo, BuyDto buyDto) {
+    public ResponseEntity<Boolean> modify(@PathVariable(name = "buyNo") Long buyNo, BuyDto buyDto) {
         buyDto.setBuyNo(buyNo);
         BuyDto oldDto = buyService.read(buyNo);
-        // ChatRoom chatRoom = chatService.
-        // if(oldDto.getCurrent()){
 
-        // }
+        if (buyDto.getMax() < oldDto.getCurrent()) { // 새로 입력받은 모집 인원수가 현재 채팅방 인원수보다 작을 시 수정불가
+            return ResponseEntity.ok(false);
+        } else {
+            // 기존 파일들(데이터베이스에 저장된 파일 이름)
+            List<String> oldFileNames = oldDto.getUploadFileNames();
 
-        // 기존 파일들(데이터베이스에 저장된 파일 이름)
-        List<String> oldFileNames = oldDto.getUploadFileNames();
+            // 새로 업로드해야 하는 파일들
+            List<MultipartFile> files = buyDto.getFiles();
 
-        // 새로 업로드해야 하는 파일들
-        List<MultipartFile> files = buyDto.getFiles();
+            // 새로 업로드된 파일 이름들
+            List<String> newUploadFileNames = fileUtil.saveFiles(files);
 
-        // 새로 업로드된 파일 이름들
-        List<String> newUploadFileNames = fileUtil.saveFiles(files);
+            // 변화가 없이 유지되는 파일들
+            List<String> uploadedFileNames = buyDto.getUploadFileNames();
 
-        // 변화가 없이 유지되는 파일들
-        List<String> uploadedFileNames = buyDto.getUploadFileNames();
+            // 유지되는 파일들 + 새로 업로드된 파일 이름들이 저장해야하는 파일 목록
+            if (newUploadFileNames != null && newUploadFileNames.size() > 0) {
+                uploadedFileNames.addAll(newUploadFileNames);
+            }
 
-        // 유지되는 파일들 + 새로 업로드된 파일 이름들이 저장해야하는 파일 목록
-        if (newUploadFileNames != null && newUploadFileNames.size() > 0) {
-            uploadedFileNames.addAll(newUploadFileNames);
-        }
+            buyService.modify(buyDto);
 
-        buyService.modify(buyDto);
-
-        if (oldFileNames != null && oldFileNames.size() > 0) {
-            List<String> removeFiles = oldFileNames
-                    .stream()
-                    .filter(fileName -> uploadedFileNames.indexOf(fileName) == -1).collect(Collectors.toList());
-            // 파일 삭제
-            fileUtil.deleteFiles(removeFiles);
+            if (oldFileNames != null && oldFileNames.size() > 0) {
+                List<String> removeFiles = oldFileNames
+                        .stream()
+                        .filter(fileName -> uploadedFileNames.indexOf(fileName) == -1).collect(Collectors.toList());
+                // 파일 삭제
+                fileUtil.deleteFiles(removeFiles);
+            }
+            return ResponseEntity.ok(true);
         }
     }
 
@@ -138,7 +142,8 @@ public class BuyController {
     }
 
     @GetMapping("/mylistall") // 작성한 게시물 조회 (전체)
-    public PageResponseDto<BuyDto> mylistall(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
+    public PageResponseDto<BuyDto> mylistall(PageRequestDto pageRequestDto,
+            @RequestParam(required = false, value = "id") Long id) {
         return buyService.mylistall(pageRequestDto, id);
     }
 

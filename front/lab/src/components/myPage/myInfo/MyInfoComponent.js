@@ -96,6 +96,7 @@ const MyInfoComponent = () => {
         </div>
 
         <table className="w-full">
+        <tbody>
           <tr>
             <th className="w-1/4 text-left pl-4 py-6 border-r-2 border-gray-300">
               아이디
@@ -171,6 +172,7 @@ const MyInfoComponent = () => {
                 </td>
               )}
           </tr>
+          </tbody>
         </table>
       </div>
       {info && (
