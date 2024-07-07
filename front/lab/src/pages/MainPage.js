@@ -9,13 +9,16 @@ import MainSliderComponent from '../components/main/MainSliderComponent';
 import { Link, useLocation } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import TypingComponent from '../components/main/TypingComponent';
+import SimpleAlert from '../components/common/SimpleAlert';
 
 const MainPage = () => {
   const location = useLocation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [isFadingOut, setFadingOut] = useState(false);
   const [isModalVisible2, setModalVisible2] = useState(false);
-  const [isFadingOut2, setFadingOut2] = useState(false); 
+  const [isFadingOut2, setFadingOut2] = useState(false);
+  const [isModalVisible3, setModalVisible3] = useState(false);
+  const [isFadingOut3, setFadingOut3] = useState(false);
 
   useEffect(() => {
     if (location.state && location.state.showModal) {
@@ -23,6 +26,9 @@ const MainPage = () => {
     }
     if (location.state && location.state.showModalLogin) {
       showModalLogin();
+    }
+    if (location.state && location.state.showModalJoin){
+      showModalJoin();
     }
   }, [location]);
 
@@ -44,6 +50,17 @@ const MainPage = () => {
       setFadingOut2(true);
       setTimeout(() => {
         setModalVisible2(false);
+      }, 500); // 애니메이션 지속 시간
+    }, 2000); // 2초 후 모달 사라짐
+  };
+
+  const showModalJoin = () => {
+    setFadingOut3(false);
+    setModalVisible3(true);
+    setTimeout(() => {
+      setFadingOut3(true);
+      setTimeout(() => {
+        setModalVisible3(false);
       }, 500); // 애니메이션 지속 시간
     }, 2000); // 2초 후 모달 사라짐
   };
@@ -163,28 +180,9 @@ const MainPage = () => {
             </div>
           </div>
         </div>
-        {isModalVisible && (
-          <div className="fixed inset-0 flex items-start justify-center z-50 mt-3">
-            <div
-              className={`bg-white py-6 px-14 rounded shadow-lg transition-opacity duration-500 ease-in-out ${
-                isFadingOut ? 'opacity-0' : 'opacity-100'
-              }`}
-            >
-              <p className="text-gray-800 text-xl">로그아웃 되었습니다</p>
-            </div>
-          </div>
-        )}
-        {isModalVisible2 && (
-          <div className="fixed inset-0 flex items-start justify-center z-50 mt-3">
-            <div
-              className={`bg-white py-6 px-14 rounded shadow-lg transition-opacity duration-500 ease-in-out ${
-                isFadingOut2 ? 'opacity-0' : 'opacity-100'
-              }`}
-            >
-              <p className="text-gray-800 text-xl">로그인 되었습니다</p>
-            </div>
-          </div>
-        )}
+        <SimpleAlert message="로그아웃 되었습니다" isVisible={isModalVisible} isFadingOut={isFadingOut}/>
+        <SimpleAlert message="로그인 되었습니다" isVisible={isModalVisible2} isFadingOut={isFadingOut2}/>
+        <SimpleAlert message="회원가입이 완료되었습니다" isVisible={isModalVisible3} isFadingOut={isFadingOut3}/>
       </BasicLayout>
     </div>
   );

@@ -43,7 +43,7 @@ const ListPage = () => {
 
   return (
     <>
-      <div className="m-auto w-2/5 pb-2 text-3xl font-Jua">자취방쉐어</div>
+      <div className="m-auto w-2/5 mb-2 pl-2 text-3xl font-Jua border-l-4 border-mainColor">자취방쉐어</div>
        {/* <div className="m-auto w-2/5 items-center">
         <LocationComponent />
       </div> */}
