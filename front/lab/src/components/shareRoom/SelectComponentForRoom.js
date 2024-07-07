@@ -18,7 +18,7 @@ function SelectComponent({ onSort }) {
     <div className="flex w-full">
       <select onChange={handleSelect} value={selected} className="text-base w-[110px] float-right border ml-12">
         {selectList.map((item) => (
-          <option value={item.name}>{item.name}</option>
+          <option value={item.name} key={item.id} >{item.name}</option>
         ))}
       </select>
     </div>

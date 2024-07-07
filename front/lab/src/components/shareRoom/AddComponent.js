@@ -375,6 +375,7 @@ const AddComponent = () => {
                                   type="text"
                                   placeholder="주소(우편번호 및 도로명 검색)"
                                   value={shareRoom.location}
+                                  onChange={handleChangeShareRoom}
                                 />
                               </div>
                               <div className="w-1/5 text-base">
