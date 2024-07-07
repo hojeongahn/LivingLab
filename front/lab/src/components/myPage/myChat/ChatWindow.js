@@ -160,7 +160,7 @@ const ChatWindow = ({ room }) => {
             } else {
               formData.append('marketNo', room.marketNo);
               formData.append('roomId', room.roomId);
-              exitChatRoomMarket(formData);
+              await exitChatRoomMarket(formData);
               setInfo('채팅방을 나갔습니다.');
             }
             break;
@@ -171,7 +171,7 @@ const ChatWindow = ({ room }) => {
             } else {
               formData.append('roomNo', room.roomNo);
               formData.append('roomId', room.roomId);
-              exitChatRoomShare(formData);
+              await exitChatRoomShare(formData);
               setInfo('채팅방을 나갔습니다.');
             }
             break;
