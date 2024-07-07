@@ -107,8 +107,12 @@ const ModifyComponent = ({teamNo}) => {
           formData.append("uploadFileNames", team.uploadFileNames);
 
 
-          await modify(teamNo,formData);
-          setResult("게시글이 수정되었습니다");
+          const result = await modify(teamNo,formData);
+          if (result) {
+            setResult('게시글이 수정되었습니다.');
+          } else {
+            setAddResultModal('모집인원은 현재 인원수보다 적게 수정할 수 없습니다.');
+          }
         } catch (error) {
           console.error('Error Modifying post:', error);
         }

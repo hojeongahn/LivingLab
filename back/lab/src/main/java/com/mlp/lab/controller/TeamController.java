@@ -25,7 +25,9 @@ import com.mlp.lab.service.TeamService;
 import com.mlp.lab.util.CustomFileUtilTeam;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RestController
 @RequestMapping("/api/team")
 @RequiredArgsConstructor
@@ -72,36 +74,45 @@ public class TeamController {
     }
 
     @PutMapping("/modify/{teamNo}") // 수정
-    public void modify(@PathVariable(name = "teamNo") Long teamNo, TeamDto teamDto) {
+    public ResponseEntity<Boolean> modify(@PathVariable(name = "teamNo") Long teamNo, TeamDto teamDto) {
         teamDto.setTeamNo(teamNo);
         TeamDto oldDto = teamService.read(teamNo.intValue());
 
-        // 기존 파일들(데이터베이스에 저장된 파일 이름)
-        List<String> oldFileNames = oldDto.getUploadFileNames();
+        log.info("buyDto max: {}, current: {}", teamDto.getMax(), teamDto.getCurrent());
+        log.info("oldDto max: {}, current: {}", oldDto.getMax(), oldDto.getCurrent());
 
-        // 새로 업로드해야 하는 파일들
-        List<MultipartFile> files = teamDto.getFiles();
+        if (teamDto.getMax() < oldDto.getCurrent()) { // 새로 입력받은 모집 인원수가 현재 채팅방 인원수보다 작을 시 수정불가
+            return ResponseEntity.ok(false);
+        } else {
+            // 기존 파일들(데이터베이스에 저장된 파일 이름)
+            List<String> oldFileNames = oldDto.getUploadFileNames();
 
-        // 새로 업로드된 파일 이름들
-        List<String> newUploadFileNames = fileUtil.saveFiles(files);
+            // 새로 업로드해야 하는 파일들
+            List<MultipartFile> files = teamDto.getFiles();
 
-        // 변화가 없이 유지되는 파일들
-        List<String> uploadedFileNames = teamDto.getUploadFileNames();
+            // 새로 업로드된 파일 이름들
+            List<String> newUploadFileNames = fileUtil.saveFiles(files);
 
-        // 유지되는 파일들 + 새로 업로드된 파일 이름들이 저장해야하는 파일 목록
-        if (newUploadFileNames != null && newUploadFileNames.size() > 0) {
-            uploadedFileNames.addAll(newUploadFileNames);
+            // 변화가 없이 유지되는 파일들
+            List<String> uploadedFileNames = teamDto.getUploadFileNames();
+
+            // 유지되는 파일들 + 새로 업로드된 파일 이름들이 저장해야하는 파일 목록
+            if (newUploadFileNames != null && newUploadFileNames.size() > 0) {
+                uploadedFileNames.addAll(newUploadFileNames);
+            }
+
+            teamService.modify(teamDto);
+
+            if (oldFileNames != null && oldFileNames.size() > 0) {
+                List<String> removeFiles = oldFileNames
+                        .stream()
+                        .filter(fileName -> uploadedFileNames.indexOf(fileName) == -1).collect(Collectors.toList());
+                // 파일 삭제
+                fileUtil.deleteFiles(removeFiles);
+            }
+            return ResponseEntity.ok(true);
         }
 
-        teamService.modify(teamDto);
-
-        if (oldFileNames != null && oldFileNames.size() > 0) {
-            List<String> removeFiles = oldFileNames
-                    .stream()
-                    .filter(fileName -> uploadedFileNames.indexOf(fileName) == -1).collect(Collectors.toList());
-            // 파일 삭제
-            fileUtil.deleteFiles(removeFiles);
-        }
     }
 
     @GetMapping("/latest")
@@ -125,7 +136,8 @@ public class TeamController {
     }
 
     @GetMapping("/mylistall") // 작성한 게시물 조회 (전체)
-    public PageResponseDto<TeamDto> mylistall(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
+    public PageResponseDto<TeamDto> mylistall(PageRequestDto pageRequestDto,
+            @RequestParam(required = false, value = "id") Long id) {
         return teamService.mylistall(pageRequestDto, id);
     }
 
