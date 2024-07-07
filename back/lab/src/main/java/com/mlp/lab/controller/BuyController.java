@@ -22,6 +22,7 @@ import com.mlp.lab.entity.Buy;
 import com.mlp.lab.dto.BuyDto;
 import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.service.BuyService;
+import com.mlp.lab.service.chat.ChatService;
 import com.mlp.lab.util.CustomFileUtilBuy;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BuyController {
     private final BuyService buyService;
+    private final ChatService chatService;
     private final CustomFileUtilBuy fileUtil;
 
     @GetMapping("/list") // 목록조회(검색기능 포함)
@@ -75,6 +77,10 @@ public class BuyController {
     public void modify(@PathVariable(name = "buyNo") Long buyNo, BuyDto buyDto) {
         buyDto.setBuyNo(buyNo);
         BuyDto oldDto = buyService.read(buyNo);
+        // ChatRoom chatRoom = chatService.
+        // if(oldDto.getCurrent()){
+
+        // }
 
         // 기존 파일들(데이터베이스에 저장된 파일 이름)
         List<String> oldFileNames = oldDto.getUploadFileNames();

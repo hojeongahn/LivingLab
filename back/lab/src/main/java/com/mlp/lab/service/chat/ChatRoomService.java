@@ -24,6 +24,7 @@ import com.mlp.lab.repository.UserRepository;
 import com.mlp.lab.repository.chat.ChatRepository;
 import com.mlp.lab.repository.chat.ChatRoomRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -198,12 +199,13 @@ public class ChatRoomService {
         return result;
     }
     
+    @Transactional
     public void exitRoomMarket(Long roomId, Long userId, Long marketNo) {
         User user = userRepository.findByUserId(userId);    //나가기 버튼 누른 사람 찾기
         List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
         ChatRoom ch = chatRoomRepository.findByChatroomId(roomId);
         for(int i=0; i<chatRoom.size(); i++){
-            if(chatRoom.get(i).getReader().get(0).equals(user)){    // reader중 한명일 때
+            if(chatRoom.get(i).getReader().get(i).getEmail().equals(user.getEmail())){    // reader중 한명일 때
                 chatRoomRepository.delete(chatRoom.get(i));
             } else { // writer일 시
                 if(chatRoom.get(i).getWriter().getEmail().equals(user.getEmail())){ // writer가 맞으면
@@ -213,6 +215,7 @@ public class ChatRoomService {
                     } else {
                         chatRoomRepository.delete(ch);
                     }
+                    break;
                 } 
             }
         }
@@ -232,22 +235,23 @@ public class ChatRoomService {
         return result;
     }
 
+    @Transactional
     public void exitRoomShare(Long roomId, Long userId, Long roomNo) {
         User user = userRepository.findByUserId(userId);
         List<ChatRoom> chatRoom = chatRoomRepository.findByShareRoom_RoomNo(roomNo);
         ChatRoom ch = chatRoomRepository.findByChatroomId(roomId);
         for(int i=0; i<chatRoom.size(); i++){
-            if(chatRoom.get(i).getReader().get(0).equals(user)){    // reader중 한명일 때
+            if(chatRoom.get(i).getReader().get(i).getEmail().equals(user.getEmail())){    // reader중 한명일 때
                 chatRoomRepository.delete(chatRoom.get(i));
             } else { // writer일 시
                 if(chatRoom.get(i).getWriter().getEmail().equals(user.getEmail())){ // writer가 맞으면
-                    chatRoomRepository.delete(ch);   // 작성자의 해당 채팅방 삭제
                     if(chatRoom.size()==1){   //유일한 채팅방 일 시 게시글도 삭제
                         shareRoomRepository.delete(shareRoomRepository.findShareRoomByRoomNo(roomNo));
-                        chatRoomRepository.delete(ch);
+                        chatRoomRepository.delete(ch);   
                     } else {
                         chatRoomRepository.delete(ch);
                     }
+                    break;
                 } 
             }
         }
