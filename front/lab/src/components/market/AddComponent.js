@@ -274,6 +274,7 @@ const AddComponent = () => {
                 type="text"
                 placeholder="주소(우편번호 및 도로명 검색)"
                 value={market.location}
+                onChange={handleChangeMarket}
               />
             </div>
           </div>

@@ -146,10 +146,10 @@ const ReadComponent = ({commNo}) => {
                         <h1 className="text-gray-900 font-bold text-3xl">{qna.title}</h1>
                         <div className="py-5 text-sm font-regular text-gray-900 flex">
                             <p className="mr-3 flex flex-row items-center">
-                                <p className="ml-1">{qna.nickname}</p>
+                                {qna.nickname}
                             </p>
                             <p className="mr-3 flex flex-row items-center">
-                                <p className="ml-1">{qna.createdDate}</p>
+                                {qna.createdDate}
                             </p>
                             <p className="ml-auto mr-2 flex flex-row">
                                 <img src={email && isLiked ? fullheart : emptyheart} onClick={handleLikeClick} alt="..." className="w-5 mr-3 inline" /><span className="mx-1">{qna.commHit}</span>
@@ -167,9 +167,9 @@ const ReadComponent = ({commNo}) => {
                         )}
 
                         <p className="text-base leading-8 my-5">
-                            {qna.content.split('\n').map((line) => {
+                            {qna.content.split('\n').map((line,i) => {
                                 return (
-                                    <span>{line}<br /></span>
+                                    <span key={i}>{line}<br /></span>
                                 );
                             })}
                         </p>
