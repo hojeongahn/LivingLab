@@ -51,7 +51,7 @@ const ListComponent = () => {
         <thead className="text-sm border-b-2 border-neutral-500 font-semibold">
           <tr>
             <th scope="col" className="w-2/12 py-4">카테고리</th>
-            <th scope="col" className="w-1/12 py-4"><img src={fullheart} className="w-4 mx-auto"/></th>
+            <th scope="col" className="w-1/12 py-4"><img src={fullheart} className="w-4 mx-auto" alt="heart"/></th>
             <th scope="col" className="w-6/12 py-4">제목</th>
             <th scope="col" className="w-1/12 py-4">날짜</th>
             <th scope="col" className="w-2/12 py-4">작성자</th>
@@ -62,7 +62,7 @@ const ListComponent = () => {
             serverData.dtoList.map(review =>
               <tr
                 className="text-base border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 hover:cursor-pointer"
-                onClick={() => moveToRead(review.commNo)}>
+                onClick={() => moveToRead(review.commNo)} key={review.commNo}>
                 <td className="whitespace-nowrap py-4">
                   {review.commCategory === '1' && '부동산'}
                   {review.commCategory === '2' && '인테리어'}

@@ -61,7 +61,7 @@ const ListComponent = () => {
             serverData.dtoList.map(tip =>
               <tr
                 className="text-base border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 hover:cursor-pointer"
-                onClick={() => moveToRead(tip.commNo)}>
+                onClick={() => moveToRead(tip.commNo)} key={tip.commNo}>
                 <td className="whitespace-nowrap py-4">
                   {tip.commCategory === '1' && '부동산'}
                   {tip.commCategory === '2' && '인테리어'}

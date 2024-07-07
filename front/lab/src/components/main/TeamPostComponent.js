@@ -9,12 +9,6 @@ const host = API_SERVER_HOST;
 const TeamPostComponent = () => {
     const [latestPosts, setLatestPosts] = useState([]);
 
-    const checkDeadline = (deadline) => {
-        const currentDate = new Date();
-        const deadlineDate = new Date(deadline);
-        return currentDate > deadlineDate ? '모집 종료' : '모집 중';
-    };
-
     useEffect(() => {
         const fetchLatestPosts = async () => {
             try {
@@ -67,7 +61,7 @@ const TeamPostComponent = () => {
                                         <div class="flex gap-3 bg-white rounded overflow-hidden items-center justify-start">
 
                                             <div class="relative w-32 h-32 flex-shrink-0">
-                                                <img class="absolute left-0 top-0 w-full h-full object-cover object-center transition duration-50" loading="lazy" src={`${host}/api/team/display/${team.uploadFileNames[0]}`} />
+                                                <img class="absolute left-0 top-0 w-full h-full object-cover object-center transition duration-50" alt="..." loading="lazy" src={`${host}/api/team/display/${team.uploadFileNames[0]}`} />
                                             </div>
 
                                             <div class="flex flex-col w-full gap-2 py-2 mr-3">
@@ -87,7 +81,7 @@ const TeamPostComponent = () => {
                                                         {formatDeadline(team.deadline)}
                                                     </span>
                                                     <span class="flex items-center justify-start text-gray-500 ml-auto mr-6">
-                                                        <img className="main-person-num" src={PersonImg} /> {team.current}/{team.max}
+                                                        <img className="main-person-num" src={PersonImg} alt="..."/> {team.current}/{team.max}
                                                     </span>
                                                 </div>
                                             </div>

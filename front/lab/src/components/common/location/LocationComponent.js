@@ -113,9 +113,7 @@ const LocationComponent = () => {
                 <Map center={{ lat: location.latitude, lng: location.longitude }} style={{ width: '100%', height: '300px' }} level={3} onClick={getAddress}>
                   <MapMarker position={{ lat: location.latitude, lng: location.longitude }} />
                 </Map>
-                <p>현재 위치 : {address.address_name}</p>
-                <p>현재 위도 : {location.latitude}</p>
-                <p>현재 경도 : {location.longitude}</p>
+                <p className="mt-4">현재 위치 : {address.address_name}</p>
               </div>
             }
             callbackFn={handleModalClose}

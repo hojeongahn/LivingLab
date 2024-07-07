@@ -42,9 +42,6 @@ const JoinComponent = () => {
   const [user, setUser] = useState({ ...initState });
   const [info, setInfo] = useState(null);
 
-  //주소 찾기 팝업 추가
-  const [address, setAddress] = React.useState('');
-
   const imgRef = useRef();
   const navigate = useNavigate(); // useNavigate 사용
 
@@ -182,7 +179,6 @@ const JoinComponent = () => {
 
   // addr(팝업 검색주소)만 따로 상태변경
   const handleAddrChange = (newAddr) => {
-    setAddress(newAddr);
     setUser({
       ...user,
       addr: newAddr,
@@ -229,7 +225,7 @@ const JoinComponent = () => {
       if (response.result === true) {
         navigate('/', { state: { showModalJoin: true } });
       } else {
-        alert(response.message);
+        setInfo(response.message);
       }
     } catch (error) {
       console.error(error);

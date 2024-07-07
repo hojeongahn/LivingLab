@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import ListComponent from '../../components/shareRoom/ListComponent';
-import LocationComponent from '../../components/common/location/LocationComponent';
 import SelectComponentForRoom from '../../components/shareRoom/SelectComponentForRoom';
 import SearchComponentForRoom from '../../components/shareRoom/SearchComponentForRoom';
 import useCustomMove from './../../hooks/useRoomCustomMove';
