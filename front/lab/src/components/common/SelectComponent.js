@@ -20,6 +20,7 @@ function SelectComponent({ onSort, email }){
             <select onChange={handleSelect} value={selected} className="text-base w-24 float-right">
                 {selectList.map((item) => (
                     <option
+                        key={item.id}
                         value={item.name}
                         disabled={!email && item.id === 3}
                         title={!email && item.id === 3 ? "현재 위치 설정 후 이용할 수 있어요!" : ""}

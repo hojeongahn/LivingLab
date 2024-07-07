@@ -6,6 +6,7 @@ import { login  } from '../../slices/loginSlice';
 import imgLogo2 from '../../resources/images/logo2.png';
 import HorizonLine from '../../util/HorizontalLine';
 import KakaoLoginComponent from './KakaoLoginComponent';
+import InfoModal from '../common/InfoModal';
 import useCustomLogin from '../../hooks/useCustomLogin';
 import { loginPost } from '../../api/userApi';
 import FindIdModal from './FindIdModal';
@@ -21,7 +22,7 @@ const initState = {
 
 function LoginComponent(props) {
   const [loginParam, setLoginParam] = useState({ ...initState });
-  const { moveToLogin, moveToPath, moveToJoin } = useCustomLogin();
+  const { moveToLogin, moveToJoin } = useCustomLogin();
   const [findIdModal, setFindIdModal] = useState(false);
   const [findPwdModal, setFindPwdModal] = useState(false);
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function LoginComponent(props) {
   const [authNum, setAuthNum] = useState('');
   const [inputNum, setInputNum] = useState('');
   const [pwd, setPwd] = useState('');
+  const [info, setInfo] = useState(null);
   const navigate = useNavigate();
   
 
@@ -51,10 +53,14 @@ function LoginComponent(props) {
         //성공
         navigate('/', { state: { showModalLogin: true } });
       } else {
-        alert('이메일 혹은 비밀번호를 다시 한번 확인해주세요');
-        moveToLogin(); // 실패
+        setInfo('이메일 혹은 비밀번호를 다시 한번 확인해주세요');
       }
     });
+  };
+
+  const closeInfoModal = () => {
+    setInfo(null);
+    moveToLogin();
   };
 
   const handleModalClose = () => {
@@ -338,6 +344,7 @@ function LoginComponent(props) {
         {renderContentPwd()}
       </FindPwdModal>
       </div>
+      {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
     </div>
   );
 }

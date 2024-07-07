@@ -8,7 +8,6 @@ import SearchComponent from '../../components/common/SearchComponent';
 import SelectComponent from '../../components/common/SelectComponent';
 import useCustomMove from './../../hooks/useCustomMove';
 import ResultModal from '../../components/common/ResultModal';
-import LandingComponent from '../../components/common/mapSearch/LandingComponent';
 
 const ListPage = () => {
   const [sort, setSort] = useState('');

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { API_SERVER_HOST, modifyUser, getUser } from '../../../api/userApi';
 import { Link } from 'react-router-dom';
 import PostComponent from '../../common/PostComponent';
+import InfoModal from '../../common/InfoModal';
 
 const initState = {
   id: '',
@@ -27,6 +28,7 @@ const MyInfoModifyComponent = () => {
   const [previewImageUrl, setPreviewImageUrl] = useState(null);
   const [profileImageFile, setProfileImageFile] = useState(null);
   const [isModified, setIsModified] = useState(false); // 수정 여부 상태 추가
+  const [info, setInfo] = useState(null);
   const loginInfo = useSelector((state) => state.loginSlice);
   const [address, setAddress] = useState();
   const ino = loginInfo.id;
@@ -37,7 +39,8 @@ const MyInfoModifyComponent = () => {
       setAddress(data.addr);
       console.log(data);
     });
-  }, [ino]);
+    setIsModified(false);
+  }, [ino, info]);
 
   const handleChange = (e) => {
     setUser({
@@ -76,6 +79,10 @@ const MyInfoModifyComponent = () => {
     setIsModified(true); // 파일 삭제 시 수정 여부를 true로 설정
   };
 
+  const closeInfoModal = () => {
+    setInfo(null);
+  };
+
   const handleClickModify = async () => {
     const formData = new FormData();
     if (profileImageFile) {
@@ -96,8 +103,7 @@ const MyInfoModifyComponent = () => {
 
     try {
       await modifyUser(user.id, formData);
-      alert('회원정보 수정 완료되었습니다');
-      window.location.reload();
+      setInfo('회원정보 수정 완료되었습니다');
     } catch (error) {
       console.error('사용자 정보 수정 에러:', error);
     }
@@ -255,6 +261,7 @@ const MyInfoModifyComponent = () => {
           </div>
         </div>
       </div>
+      {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
     </div>
   );
 };

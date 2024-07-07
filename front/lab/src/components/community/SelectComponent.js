@@ -19,7 +19,7 @@ function SelectComponent({ onSort }){
         <div className="flex items-center mr-2">
             <select onChange={handleSelect} value={selected} className="w-24 border border-gray-300 rounded-lg bg-gray-50 text-sm py-2">
                 {selectList.map((item) => (
-                    <option value={item.name}>{item.name}</option>
+                    <option value={item.name} key={item.id}>{item.name}</option>
                 ))}
             </select>
         </div>

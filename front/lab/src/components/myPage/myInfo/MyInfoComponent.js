@@ -157,7 +157,7 @@ const MyInfoComponent = () => {
               <td className="w-3/4 text-left pl-6">
                 {user.location}
                 <button onClick={changeLocation} className="bg-mainColor text-white font-semibold text-sm rounded-full ml-2 px-2 py-1 hover:bg-teal-600">
-                  기본 주소지로 변경
+                현재 위치 설정
                 </button>
               </td>
             )
