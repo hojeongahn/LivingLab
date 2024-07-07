@@ -19,7 +19,7 @@ const ModalComponent = ({ isOpen, images, closeModal }) => {
         <div className="flex justify-between items-center">
           {/* Left Arrow Button */}
           <button onClick={prevImage} className="w-16 h-16 p-0 border-0 rounded-sm bg-[rgba(34,34,34,0.7)] absolute top-1/2 -translate-y-1/2 z-10 cursor-pointer left-10">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" viewBox="0 0 33 32" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto" viewBox="0 0 33 32" fill="none">
               <path fill="#FFF" d="M20.132 7.646c.195-.195.512-.195.707 0 .173.174.193.443.058.638l-.058.07-8.133 8.131 8.133 8.132c.173.174.193.443.058.638l-.058.07c-.174.173-.443.192-.638.057l-.07-.058-8.838-8.839 8.839-8.839z" />
             </svg>
           </button>
@@ -30,7 +30,7 @@ const ModalComponent = ({ isOpen, images, closeModal }) => {
           />
           {/* Right Arrow Button */}
           <button onClick={nextImage} className="w-16 h-16 p-0 border-0 rounded-sm bg-[rgba(34,34,34,0.7)] absolute top-1/2 -translate-y-1/2 z-10 cursor-pointer right-10">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mx-auto" viewBox="0 0 33 33" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto" viewBox="0 0 33 33" fill="none">
               <path fill="#FFF" d="M11.646 7.646c.174-.173.443-.192.638-.057l.07.057 8.838 8.84-8.838 8.838c-.196.195-.512.195-.708 0-.173-.173-.192-.443-.057-.638l.057-.069 8.132-8.132-8.132-8.131c-.173-.174-.192-.443-.057-.638l.057-.07z" />
             </svg>
           </button>

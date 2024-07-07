@@ -73,7 +73,7 @@ const PartComponent = ({ teamNo }) => {
           <h2>참여 인원</h2>
         </div>
         <hr />
-        <div className>
+        <div>
           <div>
             {displayUsers.map((user) => (
               <div className="flex p-5" key={user.id}>

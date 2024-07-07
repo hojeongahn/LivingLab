@@ -9,7 +9,6 @@ import penIcon1 from '../../resources/images/pen_black.png';
 import penIcon2 from '../../resources/images/pen_maincolor.png';
 import userIcon1 from '../../resources/images/user_black.png';
 import userIcon2 from '../../resources/images/user_maincolor.png';
-import bgImg from '../../resources/images/background2.jpg';
 
 const initState = {
   id: 0,
