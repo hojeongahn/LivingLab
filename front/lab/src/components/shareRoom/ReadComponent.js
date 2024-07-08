@@ -11,6 +11,7 @@ import emptyheart from '../../resources/images/heart_empty.png';
 import fullheart from '../../resources/images/heart_full.png';
 import InfoModal from '../common/InfoModal';
 import BasicModal from '../common/BasicModal';
+import ConfirmationModal from '../common/ConfirmationModal';
 
 
 const host = API_SERVER_HOST;
@@ -46,6 +47,7 @@ const ReadComponent = ({ roomNo }) => {
   const email = loginState?.email;
   const ino = loginState.id;
   const [roomData, setRoomData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     getOne(roomNo).then((data) => {
@@ -56,7 +58,7 @@ const ReadComponent = ({ roomNo }) => {
   useEffect(() => {
     if (email) {
       //로그인시에만 실행
-      likeInfo('shareroom',roomNo, ino).then((data) => {
+      likeInfo('shareroom', roomNo, ino).then((data) => {
         setLike(data);
         if (data) {
           //data가 있으면 이미 좋아요 누른글
@@ -90,17 +92,17 @@ const ReadComponent = ({ roomNo }) => {
       setAddResultModal('로그인 후 이용 가능합니다');
       return;
     };
-    
+
     if (roomData) {
       try {
         const formData = new FormData();
-        formData.append('id', ino); 
+        formData.append('id', ino);
         formData.append('title', shareRoom.title);
         const createRequest = { roomNo };
 
         // 각 채팅방 정보에 접근하여 reader 배열에서 id가 ino인 사용자가 포함되어 있는지 확인
         const isAlreadyJoined = roomData.some(room => room.reader.some(reader => reader.id === ino));
-        
+
         if (isAlreadyJoined) {
           setAddResultModal('이미 문의한 글입니다.');
         } else {
@@ -118,7 +120,16 @@ const ReadComponent = ({ roomNo }) => {
   };
 
   const handleClickDelete = () => {
-    deleteOne(roomNo);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleConfirmDelete = async () => {
+    await deleteOne(roomNo);
+    setShowModal(false);
     setResult('삭제되었습니다');
   };
 
@@ -174,12 +185,12 @@ const ReadComponent = ({ roomNo }) => {
               <React.Fragment key={index}>
                 {index === 0 ? (
                   <div id={`child-first-${index}`} className="row-span-2 relative overflow-hidden">
-                    <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full" alt="..."/>
+                    <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full" alt="..." />
                   </div>
                 ) : index >= 1 && index <= 4 ? (
                   <>
                     <div id={`child-${index}`} className="relative overflow-hidden">
-                      <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full" alt="..."/>
+                      <img src={`${host}/api/shareRoom/display/${imgFile}`} className="position-absolute object-cover w-full h-full" alt="..." />
                     </div>
                   </>
                 ) : null}
@@ -301,7 +312,7 @@ const ReadComponent = ({ roomNo }) => {
                   {shareRoom.content}
                 </p>
                 <div id="buttons" className="flex items-center w-full mt-8">
-                  { loginState.id !== shareRoom.id && (
+                  {loginState.id !== shareRoom.id && (
                     <div>
                       <button className="inline-flex items-center justify-center w-[211px] mr-4 px-4 text-white bg-blue-600 h-[56px] text-sm leading-6 font-bold rounded-sm cursor-pointer transition-all duration-150 ease-out">
                         <span onClick={handleClickAdd}>문의하기</span>
@@ -335,6 +346,12 @@ const ReadComponent = ({ roomNo }) => {
       </div>
       {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeResultModal} />}
       {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
+      <ConfirmationModal
+        show={showModal}
+        message={'게시글 삭제 시 해당 글과 관련된 모든 채팅방이 삭제됩니다. 그래도 삭제하시겠습니까?'}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseModal}
+      />
     </div>
   );
 }

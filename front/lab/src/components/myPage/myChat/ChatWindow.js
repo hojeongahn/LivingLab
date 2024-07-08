@@ -79,7 +79,6 @@ const ChatWindow = ({ room }) => {
         console.error('참여자 정보 불러오기 실패: ', error);
       }
     };
-
     fetchParticipants();
   }, [room.roomId]);
 

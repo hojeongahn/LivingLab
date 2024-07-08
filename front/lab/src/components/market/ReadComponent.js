@@ -14,6 +14,7 @@ import ResultModal from '../common/ResultModal';
 import { likeClick, unlikeClick, likeInfo } from '../../api/likeApi';
 import InfoModal from '../common/InfoModal';
 import BasicModal from '../common/BasicModal';
+import ConfirmationModal from '../common/ConfirmationModal';
 
 const initState = {
   marketNo: 0,
@@ -136,7 +137,12 @@ const ReadComponent = ({ marketNo }) => {
   };
 
   const handleClickDelete = () => {
-    deleteOne(marketNo);
+    setShowModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    await deleteOne(marketNo);
+    setShowModal(false);
     setResult('삭제되었습니다');
   };
 
@@ -273,9 +279,14 @@ const ReadComponent = ({ marketNo }) => {
         </div>
         {result && <ResultModal title={'알림'} content={`${result}`} callbackFn={closeDeleteModal} />}
         {addResultModal && <BasicModal title={'알림'} content={`${addResultModal}`} callbackFn={closeBasicModal} />}
-        <ModalComponent show={showModal} onClose={handleCloseModal} />
         {/* 좋아요 기능 알림 모달 */}
         {info && <InfoModal title={'알림'} content={`${info}`} callbackFn={closeInfoModal} />}
+        <ConfirmationModal
+        show={showModal}
+        message={'게시글 삭제 시 해당 글과 관련된 모든 채팅방이 삭제됩니다. 그래도 삭제하시겠습니까?'}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseModal}
+      />
       </div>
     </div>
   );

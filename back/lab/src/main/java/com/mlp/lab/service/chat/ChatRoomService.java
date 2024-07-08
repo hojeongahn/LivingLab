@@ -139,6 +139,10 @@ public class ChatRoomService {
         return new ChatRoomDataResponseDto.ChatHistory(chatHistory);
     }
 
+    public void deleteChatRoom(Long chatRoomId) {
+        chatRoomRepository.deleteById(chatRoomId);
+    }
+
     // ------ 세부 사항 -------
 
     public ChatRoomDataResponseDto.Info findRoomByBuyNo(Long buyNo) {
@@ -193,6 +197,10 @@ public class ChatRoomService {
         return chatRoom;
     }
 
+    public List<ChatRoom> findRoomMarket(Long marketNo){
+        return chatRoomRepository.findByMarket_MarketNo(marketNo);
+    }
+
     public int getMarketRoomlength(Long marketNo) {
         List<ChatRoom> chatRoom = chatRoomRepository.findByMarket_MarketNo(marketNo);
         int result = chatRoom.size(); // size가 1이면 마지막 채팅방(게시글 삭제)
@@ -227,6 +235,10 @@ public class ChatRoomService {
             ChatRoomDataResponseDto.Info.of(chatRoom.get(i));
         }
         return chatRoom;
+    }
+
+    public List<ChatRoom> findRoomShare(Long roomNo){
+        return chatRoomRepository.findByShareRoom_RoomNo(roomNo);
     }
 
     public int getShareRoomlength(Long roomNo) {
