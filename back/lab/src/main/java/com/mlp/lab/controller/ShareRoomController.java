@@ -1,23 +1,5 @@
 package com.mlp.lab.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.mlp.lab.dto.ShareRoomDto;
-import com.mlp.lab.entity.ShareRoom;
-import com.mlp.lab.dto.MyActivityDto;
-import com.mlp.lab.dto.PageRequestDto;
-import com.mlp.lab.dto.PageResponseDto;
-import com.mlp.lab.dto.RoomPageRequestDto;
-import com.mlp.lab.dto.RoomPageResponseDto;
-import com.mlp.lab.service.ShareRoomService;
-import com.mlp.lab.util.CustomFileUtilShareRoom;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +11,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.mlp.lab.dto.MyActivityDto;
+import com.mlp.lab.dto.PageRequestDto;
+import com.mlp.lab.dto.PageResponseDto;
+import com.mlp.lab.dto.RoomPageRequestDto;
+import com.mlp.lab.dto.RoomPageResponseDto;
+import com.mlp.lab.dto.ShareRoomDto;
+import com.mlp.lab.entity.ShareRoom;
+import com.mlp.lab.entity.chat.ChatRoom;
+import com.mlp.lab.repository.chat.ChatRoomRepository;
+import com.mlp.lab.service.ShareRoomService;
+import com.mlp.lab.service.chat.ChatRoomService;
+import com.mlp.lab.util.CustomFileUtilShareRoom;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
@@ -36,19 +38,24 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequiredArgsConstructor
 public class ShareRoomController {
     private final ShareRoomService shareRoomService;
+    private final ChatRoomService chatRoomService;
     private final CustomFileUtilShareRoom fileUtil;
-
 
     @GetMapping("/list")
     public RoomPageResponseDto<ShareRoomDto> List(RoomPageRequestDto roomPageRequestDto,
-    @RequestParam(required = false, value = "search") String search,
-    @RequestParam(required = false, value = "sort") String sort) {
-        return shareRoomService.list(roomPageRequestDto,search,sort);
+            @RequestParam(required = false, value = "search") String search,
+            @RequestParam(required = false, value = "sort") String sort) {
+        return shareRoomService.list(roomPageRequestDto, search, sort);
     }
 
     @DeleteMapping("/{roomNo}")
     public Map<String, String> remove(@PathVariable(name = "roomNo") Long roomNo) {
-        log.info("Remove :" + roomNo);
+        List<ChatRoom> chatRooms = chatRoomService.findRoomShare(roomNo);
+        if (chatRooms != null && !chatRooms.isEmpty()) {
+            for (ChatRoom chatRoom : chatRooms) {
+                chatRoomService.deleteChatRoom(chatRoom.getChatroomId());
+            }
+        }
         shareRoomService.remove(roomNo);
         return Map.of("RESULT", "SUCCESS");
     }
@@ -97,7 +104,7 @@ public class ShareRoomController {
             uploadedFileNames.addAll(newUploadFileNames);
         }
         shareRoomService.modify(shareRoomDto);
-        
+
         if (oldFileNames != null && oldFileNames.size() > 0) {
             List<String> removeFiles = oldFileNames
                     .stream()
@@ -113,7 +120,7 @@ public class ShareRoomController {
         shareRoomDto.setRoomNo(roomNo);
 
         shareRoomService.hide(shareRoomDto);
-        
+
         return Map.of("RESULT", "SUCCESS");
     }
 
@@ -138,11 +145,11 @@ public class ShareRoomController {
     }
 
     @GetMapping("/mylistall") // 작성한 게시물 조회 (전체)
-    public PageResponseDto<ShareRoomDto> mylistall(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
+    public PageResponseDto<ShareRoomDto> mylistall(PageRequestDto pageRequestDto,
+            @RequestParam(required = false, value = "id") Long id) {
         return shareRoomService.mylistall(pageRequestDto, id);
     }
 
-    
     @DeleteMapping("/like/shareRoom/{roomNo}")
     public Map<String, String> removeLike(@PathVariable(name = "roomNo") Long roomNo) {
         log.info("Remove :" + roomNo);

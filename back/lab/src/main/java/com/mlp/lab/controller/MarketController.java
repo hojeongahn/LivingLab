@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mlp.lab.dto.MarketDto;
+import com.mlp.lab.dto.MyActivityDto;
 import com.mlp.lab.dto.PageRequestDto;
 import com.mlp.lab.dto.PageResponseDto;
 import com.mlp.lab.entity.Market;
-import com.mlp.lab.dto.MarketDto;
-import com.mlp.lab.dto.MyActivityDto;
+import com.mlp.lab.entity.chat.ChatRoom;
 import com.mlp.lab.service.MarketService;
+import com.mlp.lab.service.chat.ChatRoomService;
 import com.mlp.lab.util.CustomFileUtilMarket;
 
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MarketController {
     private final MarketService marketService;
+    private final ChatRoomService chatRoomService;
     private final CustomFileUtilMarket fileUtil;
 
     @GetMapping("/list") // 목록조회(검색기능 포함)
@@ -50,12 +53,18 @@ public class MarketController {
 
     // 글 삭제 (이미지 포함)
     @DeleteMapping("/delete/{marketNo}")
-    public void delete(@PathVariable(name = "marketNo") int marketNo) {
-        List<String> uploadFileNames = marketService.read(marketNo).getUploadFileNames();
+    public void delete(@PathVariable(name = "marketNo") Long marketNo) {
+        List<String> uploadFileNames = marketService.read(marketNo.intValue()).getUploadFileNames();
         if (uploadFileNames != null && uploadFileNames.size() > 0) {
             fileUtil.deleteFiles(uploadFileNames);
         }
-        marketService.delete(marketNo);
+        List<ChatRoom> chatRooms = chatRoomService.findRoomMarket(marketNo);
+        if (chatRooms != null && !chatRooms.isEmpty()) {
+            for (ChatRoom chatRoom : chatRooms) {
+                chatRoomService.deleteChatRoom(chatRoom.getChatroomId());
+            }
+        }
+        marketService.delete(marketNo.intValue());
     }
 
     @GetMapping("/display/{fileName}") // 목록조회
@@ -125,7 +134,8 @@ public class MarketController {
     }
 
     @GetMapping("/mylistall") // 작성한 게시물 조회 (전체)
-    public PageResponseDto<MarketDto> mylistall(PageRequestDto pageRequestDto, @RequestParam(required = false, value = "id") Long id) {
+    public PageResponseDto<MarketDto> mylistall(PageRequestDto pageRequestDto,
+            @RequestParam(required = false, value = "id") Long id) {
         return marketService.mylistall(pageRequestDto, id);
     }
 

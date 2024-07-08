@@ -113,6 +113,7 @@ public class ShareRoomService {
         return shareRoomDto;
     }
 
+    @Transactional
     public void remove(Long roomNo) {
         shareRoomRepository.deleteById(roomNo.intValue());
     }
